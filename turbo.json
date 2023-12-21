@@ -1,0 +1,41 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "pipeline": {
+    "build": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        "dist/**",
+        ".output/**"
+      ],
+      "cache": false
+    },
+    "generate": {
+      "dependsOn": [
+        "^generate"
+      ],
+      "outputs": [
+        "dist/**",
+        ".nuxt/**",
+        ".output/**"
+      ]
+    },
+    "lint": {
+      "outputs": []
+    },
+    "lint:fix": {
+      "outputs": []
+    },
+    "prepare": {
+      "cache": false
+    },
+    "dev": {
+      "cache": false
+    },
+    "test": {
+      "outputs": [],
+      "cache": false
+    }
+  }
+}

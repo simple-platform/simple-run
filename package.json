@@ -1,0 +1,39 @@
+{
+  "name": "simple-run",
+  "version": "0.0.0",
+  "packageManager": "bun@1.0.14",
+  "license": "GPL-3.0-or-later",
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "deps": "bun install",
+    "prepare": "husky install && turbo run prepare",
+    "build": "turbo run build",
+    "generate": "turbo run generate",
+    "dev": "turbo run dev --parallel",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "lint:fix": "turbo run lint:fix"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^2.4.6",
+    "@commitlint/cli": "^18.4.3",
+    "@commitlint/config-conventional": "^18.4.3",
+    "bun-types": "latest",
+    "commitizen": "^4.3.0",
+    "cz-conventional-changelog": "^3.3.0",
+    "eslint": "^8.56.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.2.0",
+    "turbo": "^1.11.2"
+  },
+  "lint-staged": {
+    "apps/**/*.{js,ts,vue,json}": [
+      "eslint --fix"
+    ]
+  }
+}
