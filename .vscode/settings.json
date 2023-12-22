@@ -46,6 +46,7 @@
     "automerge",
     "commitlint",
     "nuxt",
-    "nuxtjs"
+    "nuxtjs",
+    "tailwindcss"
   ]
 }

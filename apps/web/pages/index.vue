@@ -1,5 +1,5 @@
 <template>
   <section>
-    Main Page
+    Home Page
   </section>
 </template>

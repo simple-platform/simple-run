@@ -1,5 +1,5 @@
 {
-  "extends": "@simple-run/tsconfig/vue.json",
+  "extends": "@simple-run/tsconfig/nuxt.json",
   "include": [
     "."
   ],

@@ -2,13 +2,22 @@
   "name": "@simple-run/ui",
   "version": "0.0.0",
   "private": true,
-  "main": "./index.ts",
-  "types": "./index.ts",
+  "main": "nuxt.mjs",
+  "files": [
+    "global.css",
+    "postcss.config"
+  ],
   "scripts": {
     "lint": "eslint . --fix"
   },
   "devDependencies": {
+    "@nuxt/kit": "^3.8.2",
+    "@nuxtjs/tailwindcss": "^6.10.1",
     "@simple-run/tsconfig": "*",
+    "autoprefixer": "^10.4.16",
+    "nuxt": "^3.8.2",
+    "postcss": "^8.4.32",
+    "tailwindcss": "^3.4.0",
     "vue": "^3.3.13"
   }
 }
