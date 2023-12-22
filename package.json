@@ -1,6 +1,8 @@
 {
   "name": "simple-run",
+  "type": "module",
   "private": true,
+  "packageManager": "bun@1.0.14",
   "license": "GPL-3.0-or-later",
   "scripts": {
     "prepare": "husky install",
@@ -10,6 +12,7 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "devDependencies": {
+    "@antfu/eslint-config": "^2.4.6",
     "@commitlint/cli": "^18.4.3",
     "@commitlint/config-conventional": "^18.4.3",
     "@simple-run/tsconfig": "*",
@@ -21,7 +24,6 @@
     "prettier": "^3.1.1",
     "turbo": "latest"
   },
-  "packageManager": "bun@1.0.14",
   "workspaces": [
     "apps/*",
     "packages/*"
