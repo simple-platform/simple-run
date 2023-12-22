@@ -17,11 +17,11 @@
   "devDependencies": {
     "@nuxt/devtools": "latest",
     "@nuxtjs/eslint-config-typescript": "^12.1.0",
-    "eslint": "^8.53.0",
+    "eslint": "^8.56.0",
     "@simple-run/eslint-config-custom": "*",
     "nuxt": "^3.8.2",
     "@simple-run/tsconfig": "*",
-    "vue": "^3.3.8",
+    "vue": "^3.3.13",
     "vue-router": "^4.2.5"
   }
 }
