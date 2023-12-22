@@ -1,5 +1,5 @@
 {
-  "name": "@simple-run/eslint-config-custom",
+  "name": "@simple-run/eslint-config",
   "license": "GPL-3.0-or-later",
   "version": "0.0.0",
   "private": true,
