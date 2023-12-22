@@ -11,11 +11,11 @@ const styles = ['bg', 'text', 'placeholder', 'border', 'ring']
 const scales = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900]
 
 const colorMap = {
+  danger: 'red',
+  info: 'blue',
   primary: 'indigo',
   success: 'green',
-  danger: 'red',
   warning: 'yellow',
-  info: 'blue',
 }
 
 function simple({ addComponents }) {
@@ -38,9 +38,6 @@ function simple({ addComponents }) {
 }
 
 module.exports = {
-  jit: true,
-  darkMode: 'media',
-
   content: [
     './components/**/*.{js,vue,ts}',
     './layouts/**/*.vue',
@@ -53,12 +50,18 @@ module.exports = {
     'node_modules/@simple-flow/ui/components/**/*.{js,vue,ts}',
   ],
 
+  darkMode: 'media',
+
+  jit: true,
+
+  plugins: [
+    require('@tailwindcss/forms'),
+    require('@tailwindcss/typography'),
+    require('flowbite/plugin'),
+    plugin(simple),
+  ],
+
   theme: {
-    extend: {
-      fontFamily: {
-        sans: ['Inter var', ...defaultTheme.fontFamily.sans],
-      },
-    },
     colors: {
       ...colors,
       ...Object.keys(colorMap).map((color) => {
@@ -67,12 +70,11 @@ module.exports = {
         return kvp
       }),
     },
-  },
 
-  plugins: [
-    require('@tailwindcss/forms'),
-    require('@tailwindcss/typography'),
-    require('flowbite/plugin'),
-    plugin(simple),
-  ],
+    extend: {
+      fontFamily: {
+        sans: ['Inter var', ...defaultTheme.fontFamily.sans],
+      },
+    },
+  },
 }
