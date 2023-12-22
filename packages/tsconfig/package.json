@@ -6,7 +6,5 @@
   "publishConfig": {
     "access": "public"
   },
-  "devDependencies": {
-    "@vue/tsconfig": "^0.5.1"
-  }
+  "devDependencies": {}
 }

@@ -1,31 +1,28 @@
 {
-  "name": "web",
+  "name": "@simple-run/web",
+  "type": "module",
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "vite --port 3000",
-    "build": "run-p type-check \"build-only {@}\" --",
-    "preview": "vite preview",
-    "build-only": "vite build",
-    "type-check": "vue-tsc --noEmit -p tsconfig.app.json --composite false",
-    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
+    "build": "nuxt build",
+    "dev": "nuxt dev --port 3000",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "lint": "eslint . --fix"
   },
   "dependencies": {
-    "@simple-run/ui": "*",
-    "vue": "^3.3.13"
+    "@simple-run/ui": "*"
   },
   "devDependencies": {
-    "@rushstack/eslint-patch": "^1.6.1",
-    "@tsconfig/node18": "^18.2.2",
-    "@types/node": "^20.10.5",
-    "@vitejs/plugin-vue": "^4.5.2",
-    "eslint": "^8.56.0",
-    "@simple-run/eslint-config-custom": "*",
-    "eslint-plugin-vue": "^9.19.2",
-    "npm-run-all2": "^6.1.1",
+    "@nuxt/devtools": "latest",
+    "@nuxtjs/eslint-config-typescript": "^12.1.0",
     "@simple-run/tsconfig": "*",
-    "typescript": "~5.3.3",
-    "vite": "^4.5.1",
-    "vue-tsc": "^1.8.26"
+    "eslint": "^8.56.0",
+    "flowbite": "^2.2.1",
+    "flowbite-vue": "^0.1.2",
+    "nuxt": "^3.8.2",
+    "vue": "^3.3.13",
+    "vue-router": "^4.2.5"
   }
 }

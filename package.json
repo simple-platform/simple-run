@@ -1,7 +1,12 @@
 {
   "name": "simple-run",
+  "type": "module",
   "private": true,
+  "packageManager": "pnpm@8.11.0",
   "license": "GPL-3.0-or-later",
+  "engines": {
+    "node": ">=v21.3.0"
+  },
   "scripts": {
     "prepare": "husky install",
     "build": "turbo run build",
@@ -10,6 +15,7 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "devDependencies": {
+    "@antfu/eslint-config": "^2.4.6",
     "@commitlint/cli": "^18.4.3",
     "@commitlint/config-conventional": "^18.4.3",
     "@simple-run/tsconfig": "*",
@@ -21,11 +27,6 @@
     "prettier": "^3.1.1",
     "turbo": "latest"
   },
-  "packageManager": "bun@1.0.14",
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
   "lint-staged": {
     "apps/**/*.{js,ts,vue}": [
       "eslint --fix"
