@@ -1,0 +1,24 @@
+{
+  "name": "simple-run",
+  "license": "GPL-3.0-or-later",
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "lint": "turbo lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+  },
+  "devDependencies": {
+    "@simple-run/eslint-config": "*",
+    "@simple-run/typescript-config": "*",
+    "prettier": "^3.1.0",
+    "turbo": "latest"
+  },
+  "engines": {
+    "node": ">=21"
+  },
+  "packageManager": "bun@1.0.14",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
+}
