@@ -2,7 +2,7 @@
   "extends": "@simple-run/tsconfig/nuxt.json",
   "include": [
     "."
-  ],
+, "components/index.ts"  ],
   "exclude": [
     "dist",
     "build",

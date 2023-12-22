@@ -2,8 +2,11 @@
   "name": "simple-run",
   "type": "module",
   "private": true,
-  "packageManager": "bun@1.0.14",
+  "packageManager": "pnpm@8.11.0",
   "license": "GPL-3.0-or-later",
+  "engines": {
+    "node": ">=v21.3.0"
+  },
   "scripts": {
     "prepare": "husky install",
     "build": "turbo run build",
@@ -24,10 +27,6 @@
     "prettier": "^3.1.1",
     "turbo": "latest"
   },
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
   "lint-staged": {
     "apps/**/*.{js,ts,vue}": [
       "eslint --fix"

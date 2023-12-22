@@ -48,6 +48,9 @@ module.exports = {
     './plugins/**/*.{js,ts}',
     './app.vue',
     './error.vue',
+    'node_modules/flowbite-vue/**/*.{js,jsx,ts,tsx,vue}',
+    'node_modules/flowbite/**/*.{js,jsx,ts,tsx}',
+    'node_modules/@simple-flow/ui/components/**/*.{js,vue,ts}',
   ],
 
   theme: {
@@ -67,6 +70,9 @@ module.exports = {
   },
 
   plugins: [
+    require('@tailwindcss/forms'),
+    require('@tailwindcss/typography'),
+    require('flowbite/plugin'),
     plugin(simple),
   ],
 }
