@@ -15,10 +15,10 @@
     "@simple-run/tsconfig": "*",
     "commitizen": "^4.3.0",
     "cz-conventional-changelog": "^3.3.0",
-    "eslint": "^8.48.0",
+    "eslint": "^8.56.0",
     "husky": "^8.0.3",
     "lint-staged": "^15.2.0",
-    "prettier": "^3.0.3",
+    "prettier": "^3.1.1",
     "turbo": "latest"
   },
   "packageManager": "bun@1.0.14",
