@@ -2,10 +2,10 @@
   "name": "simple-run",
   "type": "module",
   "private": true,
-  "packageManager": "pnpm@8.11.0",
+  "packageManager": "pnpm@8.12.1",
   "license": "GPL-3.0-or-later",
   "engines": {
-    "node": ">=v21.3.0"
+    "node": ">=21.5.0"
   },
   "scripts": {
     "prepare": "husky install",
