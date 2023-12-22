@@ -5,16 +5,15 @@ const devtoolsEnabled = process.env.NODE_ENV !== 'production'
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  ssr: false,
-  devtools: { enabled: devtoolsEnabled },
-
   app: {
     baseURL: '/run',
-    rootId: 'root',
     head: {
       title: 'Simple Run',
     },
+    rootId: 'root',
   },
+
+  devtools: { enabled: devtoolsEnabled },
 
   modules: [
     '@nuxtjs/tailwindcss',
@@ -22,6 +21,8 @@ export default defineNuxtConfig({
   ],
 
   postcss,
+
+  ssr: false,
 
   tailwindcss: {
     cssPath: '@simple-run/ui/global.css',
