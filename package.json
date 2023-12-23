@@ -1,36 +1,43 @@
 {
   "name": "simple-run",
   "type": "module",
+  "version": "0.0.0",
   "private": true,
   "packageManager": "pnpm@8.12.1",
   "license": "GPL-3.0-or-later",
   "engines": {
-    "node": ">=21.5.0"
+    "node": ">=21"
   },
   "scripts": {
-    "prepare": "husky install",
-    "build": "turbo run build",
-    "dev": "turbo run dev",
-    "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "lint": "turbo lint",
+    "type-check": "turbo type-check",
+    "clean": "turbo clean",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "prepare": "husky install"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^2.4.6",
     "@commitlint/cli": "^18.4.3",
     "@commitlint/config-conventional": "^18.4.3",
-    "@simple-run/tsconfig": "*",
+    "@simple-run/typescript-config": "*",
     "commitizen": "^4.3.0",
     "cz-conventional-changelog": "^3.3.0",
     "eslint": "^8.56.0",
     "eslint-plugin-format": "^0.1.0",
     "eslint-plugin-perfectionist": "^2.5.0",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.5",
     "husky": "^8.0.3",
     "lint-staged": "^15.2.0",
     "prettier": "^3.1.1",
+    "prettier-plugin-tailwindcss": "^0.5.7",
     "turbo": "latest"
   },
   "lint-staged": {
-    "apps/**/*.{js,ts,vue}": [
+    "apps/**/*.{js,ts,jsx,tsx}": [
       "eslint --fix"
     ]
   }

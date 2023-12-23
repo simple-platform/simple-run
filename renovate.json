@@ -3,7 +3,6 @@
   "extends": [
     "config:base",
     ":dependencyDashboard",
-    "github>nuxt/renovate-config-nuxt",
     ":labels(dependencies,devops)",
     ":maintainLockFilesWeekly",
     ":enableVulnerabilityAlerts",
