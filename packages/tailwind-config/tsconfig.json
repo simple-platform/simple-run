@@ -1,5 +1,5 @@
 {
-  "extends": "@simple-run/typescript-config/react-library.json",
+  "extends": "@simple-run/typescript-config/base.json",
   "include": [
     "."
   ],

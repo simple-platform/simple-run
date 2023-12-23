@@ -15,6 +15,8 @@ export default antfu({
     perfectionist,
   },
 
+  react: true,
+
   rules: {
     ...perfectionistNatural.rules,
 
@@ -22,5 +24,4 @@ export default antfu({
   },
 
   typescript: true,
-  vue: true,
 })
