@@ -2,26 +2,37 @@
 @tailwind components;
 @tailwind utilities;
 
-h1 {
-  @apply text-3xl font-semibold text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight;
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-outfit);
+  @apply text-gray-900 sm:truncate sm:tracking-tight;
 }
 
-/* h2 {
-  @apply text-2xl font-semibold text-gray-900 sm:truncate sm:text-2xl sm:tracking-tight;
+@supports (not (font-variation-settings: normal)) {
+  h1, h2, h3, h4, h5, h6 {
+    font-family: Inter, ui-sans-serif, system-ui;
+  }
+}
+
+h1 {
+  @apply text-3xl  sm:text-3xl font-semibold;
+}
+
+h2 {
+  @apply text-2xl  sm:text-2xl font-semibold;
 }
 
 h3 {
-  @apply text-xl font-semibold text-gray-900 sm:truncate sm:text-xl sm:tracking-tight;
+  @apply text-xl sm:text-xl font-semibold;
 }
 
 h4 {
-  @apply text-lg font-medium text-gray-900 sm:truncate sm:text-lg sm:tracking-tight;
+  @apply text-lg sm:text-lg font-medium;
 }
 
 h5 {
-  @apply text-base font-medium text-gray-900 sm:truncate sm:text-base sm:tracking-tight;
+  @apply text-base sm:text-base font-medium;
 }
 
 h6 {
-  @apply text-sm font-medium text-gray-900 sm:truncate sm:text-sm sm:tracking-tight;
-} */
+  @apply text-sm sm:text-sm font-medium;
+}

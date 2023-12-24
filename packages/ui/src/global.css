@@ -1,11 +1,11 @@
 :root {
-  font-family: InterVariable, sans-serif, system-ui !important;
+  font-family: InterVariable, ui-sans-serif, system-ui;
   font-feature-settings: 'liga' 1, 'calt' 1, 'zero' 1, 'ss01' 1, 'ss02' 1, 'cv11' 1, 'tnum' 1;
   scrollbar-gutter: stable;
 }
 
 @supports (not (font-variation-settings: normal)) {
-  :root { font-family: Inter, sans-serif, system-ui !important; }
+  :root { font-family: Inter, ui-sans-serif, system-ui; }
 }
 
 @tailwind base;
