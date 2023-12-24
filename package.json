@@ -9,6 +9,7 @@
     "node": ">=21"
   },
   "scripts": {
+    "deps": "mix deps.get && pnpm install",
     "build": "turbo build",
     "dev": "turbo dev",
     "lint": "turbo lint",

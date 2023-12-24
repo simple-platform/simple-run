@@ -1,5 +1,7 @@
 {
   "recommendations": [
-    "bradlc.vscode-tailwindcss"
+    "bradlc.vscode-tailwindcss",
+    "streetsidesoftware.code-spell-checker",
+    "jakebecker.elixir-ls"
   ]
 }
