@@ -81,6 +81,8 @@
     "liga",
     "tailwindcss",
     "treeshake",
-    "tsup"
+    "tsup",
+    "uidotdev",
+    "usehooks"
   ]
 }
