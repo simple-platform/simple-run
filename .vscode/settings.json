@@ -76,6 +76,7 @@
     "antfu",
     "automerge",
     "commitlint",
+    "liga",
     "tailwindcss",
     "treeshake",
     "tsup"

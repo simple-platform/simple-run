@@ -65,6 +65,9 @@ importers:
       '@simple-run/ui':
         specifier: '*'
         version: link:../../packages/ui
+      inter-ui:
+        specifier: ^4.0.0
+        version: 4.0.0
       next:
         specifier: ^14.0.3
         version: 14.0.4(react-dom@18.2.0)(react@18.2.0)
@@ -3351,6 +3354,11 @@ packages:
       through: 2.3.8
       wrap-ansi: 7.0.0
     dev: true
+
+  /inter-ui@4.0.0:
+    resolution: {integrity: sha512-/2XKDS/6DJYZzBHRsFVrZ2l0NYhaRZXki3jUnpJu4DAZtsZdDUtOHfG5msc6ifwKg59eJiyqeIYBDNgvxz+7XQ==}
+    engines: {node: '>=20.0.0'}
+    dev: false
 
   /internal-slot@1.0.6:
     resolution: {integrity: sha512-Xj6dv+PsbtwyPpEflsejS+oIZxmMlV44zAhG479uYu89MsjcYOhCFnNyKrkJrihbsiasQyY0afoCl/9BLR65bg==}

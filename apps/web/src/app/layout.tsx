@@ -1,15 +1,18 @@
-// import type { Metadata } from 'next'
+import type { Metadata } from 'next'
+
+/* eslint perfectionist/sort-imports: "off" */
+
+import 'inter-ui/inter-variable-latin.css'
+import 'inter-ui/inter-latin.css'
 
 import '@simple-run/ui/global.css'
+import './local.css'
 
-// import { Inter } from 'next/font/google'
-
-// const inter = Inter({ subsets: ['latin'] })
-
-// export const metadata: Metadata = {
-//   description: 'Simple Run',
-//   title: 'Simple Run',
-// }
+// eslint-disable-next-line react-refresh/only-export-components
+export const metadata: Metadata = {
+  description: 'Run containerized applications easily on your local machine.',
+  title: 'Simple Run',
+}
 
 export default function RootLayout({
   children,
