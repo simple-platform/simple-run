@@ -6,13 +6,13 @@
     "**/*.css"
   ],
   "exports": {
-    "./styles.css": "./dist/index.css",
+    "./global.css": "./dist/global.css",
     "./card": "./src/card.tsx"
   },
   "scripts": {
-    "build": "tailwindcss -i ./src/styles.css -o dist/index.css",
+    "build": "tailwindcss -i ./src/global.css -o dist/global.css",
     "lint": "eslint src/",
-    "dev": "tailwindcss -i ./src/styles.css -o ./dist/index.css --watch",
+    "dev": "tailwindcss -i ./src/global.css -o ./dist/global.css --watch",
     "type-check": "tsc --noEmit"
   },
   "peerDependencies": {
