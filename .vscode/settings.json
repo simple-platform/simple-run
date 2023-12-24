@@ -77,9 +77,12 @@
     "automerge",
     "commitlint",
     "daisyui",
+    "heroicons",
     "liga",
     "tailwindcss",
     "treeshake",
-    "tsup"
+    "tsup",
+    "uidotdev",
+    "usehooks"
   ]
 }
