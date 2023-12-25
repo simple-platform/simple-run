@@ -5,8 +5,10 @@ defmodule Actions.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/", Actions do
+  scope "/repo", Actions do
     pipe_through :api
+
+    get "/:provider/:url", RepoController, :get_details
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

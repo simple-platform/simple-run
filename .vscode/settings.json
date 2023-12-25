@@ -71,6 +71,28 @@
     "toml"
   ],
 
+  "[css]": {
+    "editor.formatOnSave": true
+  },
+
+  "[elixir]": {
+    "editor.insertSpaces": true,
+    "editor.tabSize": 2,
+    "editor.wordBasedSuggestions": false,
+    "editor.formatOnType": true,
+    "editor.trimAutoWhitespace": false,
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true,
+    "files.trimFinalNewlines": true,
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "JakeBecker.elixir-ls"
+  },
+
+  "[phoenix-heex]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "JakeBecker.elixir-ls"
+  },
+
   // Spell check word safelist
   "cSpell.words": [
     "antfu",

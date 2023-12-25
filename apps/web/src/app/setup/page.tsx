@@ -2,8 +2,12 @@
 
 import { ChevronDoubleRightIcon } from '@heroicons/react/24/outline'
 import { Header } from '@simple-run/ui/header'
+import { get } from '@simple-run/ui/helpers'
 import { useEffect, useState } from 'react'
 import { useDebounce } from 'use-debounce'
+
+// eslint-disable-next-line node/prefer-global/process
+const actionsEndpoint = process.env.actionsEndpoint
 
 function RepoInput(isSmallDevice: boolean) {
   const placeholder = isSmallDevice
@@ -22,12 +26,29 @@ function RepoInput(isSmallDevice: boolean) {
   const [repoUrlValue, setRepoUrl] = useState('')
   const [repoUrl] = useDebounce(repoUrlValue, 1000)
 
+  async function getRepoDetails(repoUrl: string) {
+    const resp = await get(`${actionsEndpoint}/repo/github/${encodeURIComponent(repoUrl)}`)
+    const data = await resp.json()
+
+    if (resp.status !== 200) {
+      setError(data.error)
+      return
+    }
+
+    // eslint-disable-next-line no-console
+    console.log(data)
+  }
+
   useEffect(() => {
     if (repoUrl === '')
       return
 
-    if (!repoUrl.startsWith('https://'))
+    if (!repoUrl.startsWith('https://')) {
       setError(errorInvalidFormat)
+      return
+    }
+
+    getRepoDetails(repoUrl)
 
     return () => setError('')
   }, [repoUrl])
@@ -50,11 +71,11 @@ function RepoInput(isSmallDevice: boolean) {
         </label>
         <div className="join w-full">
           <input autoComplete="off" className="input input-bordered w-full join-item" name="github_url" onChange={e => setRepoUrl(e.target.value.trim().toLowerCase())} placeholder={placeholder} type="text" />
-          <button className="btn join-item input-bordered border-l-0">
+          <div className="btn join-item input-bordered border-l-0">
             <ChevronDoubleRightIcon className="w-6" />
-          </button>
+          </div>
         </div>
-        <span className="text-xs italic text-red-600 transition" hidden={!hasError}>{error}</span>
+        <span className="text-xs italic text-red-600 transition font-semibold" hidden={!hasError}>{error}</span>
       </div>
     </section>
   )

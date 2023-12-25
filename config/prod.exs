@@ -7,4 +7,5 @@ import Config
 # before starting your production server.
 config :actions, Actions.Endpoint,
   url: [host: "actions.run.simple.dev", port: 80],
-  cache_static_manifest: "priv/static/cache_manifest.json"
+  cache_static_manifest: "priv/static/cache_manifest.json",
+  cors_origin: ["https://simple.dev"]

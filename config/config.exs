@@ -40,6 +40,8 @@ config :phoenix, :json_library, Jason
 # Enable dev routes for dashboard and mailbox
 config :actions, dev_routes: true
 
+config :actions, cors_origin: ["http://localhost:3000"]
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"

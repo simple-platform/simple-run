@@ -44,5 +44,6 @@ defmodule Actions.Endpoint do
   plug Plug.MethodOverride
   plug Plug.Head
   plug Plug.Session, @session_options
+  plug CORSPlug, origin: Application.compile_env!(:actions, :cors_origin)
   plug Actions.Router
 end
