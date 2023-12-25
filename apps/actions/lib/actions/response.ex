@@ -1,4 +1,10 @@
 defmodule Actions.Response do
+  @moduledoc """
+  This module provides functions to handle HTTP responses.
+  It includes functions to convert data to JSON format and send the response.
+  It also handles error responses, converting the error reason to JSON format.
+  """
+
   import Plug.Conn, only: [put_resp_content_type: 2, send_resp: 3]
 
   def to_json({:ok, data}, status_code, conn) do
