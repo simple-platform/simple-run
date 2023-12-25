@@ -5,7 +5,7 @@ defmodule Actions.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/api", Actions do
+  scope "/", Actions do
     pipe_through :api
   end
 
@@ -22,7 +22,7 @@ defmodule Actions.Router do
       pipe_through [:fetch_session, :protect_from_forgery]
 
       live_dashboard "/dashboard", metrics: Actions.Telemetry
-      forward "/mailbox", Plug.Swoosh.MailboxPreview
+      # forward "/mailbox", Plug.Swoosh.MailboxPreview
     end
   end
 end
