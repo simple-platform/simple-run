@@ -80,6 +80,8 @@
     "heroicons",
     "Jbjt",
     "liga",
+    "Mailgun",
+    "reqlog",
     "tailwindcss",
     "treeshake",
     "tsup",

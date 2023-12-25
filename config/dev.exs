@@ -38,6 +38,3 @@ config :actions, Actions.Endpoint,
 # If desired, both `http:` and `https:` keys can be
 # configured to run both http and https servers on
 # different ports.
-
-# Enable dev routes for dashboard and mailbox
-config :actions, dev_routes: true
