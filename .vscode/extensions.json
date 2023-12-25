@@ -2,6 +2,7 @@
   "recommendations": [
     "bradlc.vscode-tailwindcss",
     "streetsidesoftware.code-spell-checker",
-    "jakebecker.elixir-ls"
+    "jakebecker.elixir-ls",
+    "github.vscode-github-actions"
   ]
 }
