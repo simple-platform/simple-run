@@ -13,14 +13,14 @@ defmodule Actions.RepoProviders.GitHub do
 
   @err_invalid_repo_url "Invalid repository URL"
 
-  @gql_repo_details """
+  @gql_repo_metadata """
   query($owner: String!, $name: String!) {
     repository(owner: $owner, name: $name) {
       description
       owner {
         avatarUrl
       }
-      default_branch: defaultBranchRef {
+      defaultBranchRef {
         name
       }
     }
@@ -28,25 +28,28 @@ defmodule Actions.RepoProviders.GitHub do
   """
 
   @impl RepoProvider
-  def get_details("https://" <> repo_path) do
-    case get_repo_info(repo_path) do
-      {:error, reason} -> {:error, reason}
-      {:ok, repo_info} -> {:ok, repo_info}
-    end
-  end
-
-  defp get_repo_info(repo_path) do
+  def get_metadata("https://" <> repo_path) do
     with {:ok, {org, repo}} <- String.split(repo_path, "/") |> get_org_and_repo(),
-         {:ok, %{:body => body}} <- query(@gql_repo_details, %{:owner => org, :name => repo}) do
-      %{"data" => data, "errors" => errors} = body
+         {:ok, %{:body => body}} <- query(@gql_repo_metadata, %{:owner => org, :name => repo}) do
+      errors = body |> Map.get("errors", [])
 
       case length(errors) > 0 do
-        false -> {:ok, data}
+        false -> {:ok, body["data"]["repository"] |> transform_metadata(org, repo)}
         true -> {:error, errors |> Enum.map(fn error -> error["message"] end)}
       end
     else
       {:error, reason} -> {:error, reason}
     end
+  end
+
+  defp transform_metadata(metadata, org, repo) do
+    %{
+      :org => org,
+      :name => repo,
+      :desc => metadata["description"],
+      :default_branch => metadata["defaultBranchRef"]["name"],
+      :icon_url => metadata["owner"]["avatarUrl"]
+    }
   end
 
   defp query(graphql, variables) do

@@ -18,7 +18,7 @@ defmodule Actions.RepoControllerTest do
     test "responds with error for nonexistent repos", %{conn: conn} do
       path = "/repo/github/#{@github_nonexistent_repo}"
 
-      RepoProviderMock |> expect(:get_details, fn _path -> {:error, :not_found} end)
+      RepoProviderMock |> expect(:get_metadata, fn _path -> {:error, :not_found} end)
 
       conn = get(conn, path)
       assert json_response(conn, 404) == %{"errors" => ["Repository not found"]}
@@ -28,7 +28,7 @@ defmodule Actions.RepoControllerTest do
       error = "Internal error"
       path = "/repo/github/#{@github_repo}"
 
-      RepoProviderMock |> expect(:get_details, fn _path -> {:error, [error]} end)
+      RepoProviderMock |> expect(:get_metadata, fn _path -> {:error, [error]} end)
 
       conn = get(conn, path)
       assert json_response(conn, 500) == %{"errors" => [error]}
@@ -38,7 +38,7 @@ defmodule Actions.RepoControllerTest do
       details = %{}
       path = "/repo/github/#{@github_repo}"
 
-      RepoProviderMock |> expect(:get_details, fn _path -> {:ok, details} end)
+      RepoProviderMock |> expect(:get_metadata, fn _path -> {:ok, details} end)
 
       conn = get(conn, path)
       assert json_response(conn, 200) == details

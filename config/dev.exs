@@ -38,5 +38,3 @@ config :actions, Actions.Endpoint,
 # If desired, both `http:` and `https:` keys can be
 # configured to run both http and https servers on
 # different ports.
-
-config :actions, :gh_app_pk_path, Path.expand("../gh-app-pk.pem", __DIR__)

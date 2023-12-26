@@ -17,16 +17,18 @@ defmodule Actions.RepoController do
       when a_provider in @supported_providers do
     provider = @providers[a_provider]
 
-    case provider.get_details(url) do
-      {:ok, details} ->
-        {:ok, details} |> to_json(200, conn)
-
-      {:error, :not_found} ->
-        {:error, @err_not_found} |> to_json(404, conn)
-
-      {:error, reason} ->
-        {:error, reason} |> to_json(500, conn)
+    case provider.get_metadata(url) do
+      {:ok, metadata} -> {:ok, metadata} |> to_json(200, conn)
+      {:error, :not_found} -> {:error, @err_not_found} |> to_json(404, conn)
+      {:error, reason} -> {:error, reason} |> to_json(500, conn)
     end
+
+    # with {:ok, metadata} <- provider.get_metadata(url) do
+    #   {:ok, metadata} |> to_json(200, conn)
+    # else
+    #   {:error, :not_found} -> {:error, @err_not_found} |> to_json(404, conn)
+    #   {:error, reason} -> {:error, reason} |> to_json(500, conn)
+    # end
   end
 
   def get_details(conn, %{"provider" => provider}) do
