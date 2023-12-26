@@ -5,8 +5,10 @@ defmodule Actions.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/api", Actions do
+  scope "/repo", Actions do
     pipe_through :api
+
+    get "/:provider/:url", RepoController, :get_metadata
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
@@ -22,7 +24,7 @@ defmodule Actions.Router do
       pipe_through [:fetch_session, :protect_from_forgery]
 
       live_dashboard "/dashboard", metrics: Actions.Telemetry
-      forward "/mailbox", Plug.Swoosh.MailboxPreview
+      # forward "/mailbox", Plug.Swoosh.MailboxPreview
     end
   end
 end

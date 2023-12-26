@@ -10,6 +10,13 @@ defmodule Actions.MixProject do
       deps_path: "../../deps",
       lockfile: "../../mix.lock",
       elixir: "~> 1.14",
+      test_coverage: [tool: ExCoveralls],
+      preferred_cli_env: [
+        coveralls: :test,
+        "coveralls.detail": :test,
+        "coveralls.post": :test,
+        "coveralls.html": :test
+      ],
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
@@ -40,8 +47,13 @@ defmodule Actions.MixProject do
       {:phoenix_live_dashboard, "~> 0.8.0"},
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},
-      {:jason, "~> 1.2"},
+      {:jason, "~> 1.4"},
       {:plug_cowboy, "~> 2.5"},
+      {:cors_plug, "~> 3.0"},
+      {:absinthe_client, "~> 0.1.0"},
+      {:req, git: "https://github.com/wojtekmach/req.git", override: true},
+      {:mox, "~> 1.0", only: :test},
+      {:excoveralls, "~> 0.18", only: :test},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false}
     ]
   end

@@ -1,9 +1,40 @@
 'use client'
 
-import { ChevronDoubleRightIcon } from '@heroicons/react/24/outline'
 import { Header } from '@simple-run/ui/header'
+import { get } from '@simple-run/ui/helpers'
 import { useEffect, useState } from 'react'
 import { useDebounce } from 'use-debounce'
+
+// eslint-disable-next-line node/prefer-global/process
+const actionsEndpoint = process.env.actionsEndpoint
+
+interface RepoMetadata {
+  defaultBranch: string
+  desc: string
+  iconUrl: string
+  name: string
+  org: string
+}
+
+function RepoCard(repoMetadata?: RepoMetadata) {
+  if (!repoMetadata)
+    return (<></>)
+
+  const { desc, iconUrl, name, org } = repoMetadata
+  const fullName = `${org}/${name}`
+
+  return (
+    <article className="card card-side bg-slate-50 dark:bg-slate-950 shadow-md rounded-md mt-6">
+      <figure className="p-3 w-32 min-w-32 flex">
+        <img alt={fullName} className="rounded-md" src={iconUrl} />
+      </figure>
+      <div className="card-body p-3">
+        <h3 className="card-title">{fullName}</h3>
+        <p className="line-clamp-3">{desc}</p>
+      </div>
+    </article>
+  )
+}
 
 function RepoInput(isSmallDevice: boolean) {
   const placeholder = isSmallDevice
@@ -12,24 +43,37 @@ function RepoInput(isSmallDevice: boolean) {
 
   const errorInvalidFormat = 'Please enter a valid repository URL'
 
-  const [error, setError] = useState('')
-  const [hasError, setHasError] = useState(false)
-
-  useEffect(() => {
-    setHasError(error !== '')
-  }, [error])
+  const [errors, setErrors] = useState<string[]>([])
 
   const [repoUrlValue, setRepoUrl] = useState('')
   const [repoUrl] = useDebounce(repoUrlValue, 1000)
+
+  const [repoMetadata, setRepoMetadata] = useState<RepoMetadata>()
+
+  async function getRepoMetadata(repoUrl: string) {
+    const resp = await get(`${actionsEndpoint}/repo/github/${encodeURIComponent(repoUrl)}`)
+    const data = await resp.json()
+
+    if (resp.status !== 200) {
+      setErrors(data.errors)
+      return
+    }
+
+    setRepoMetadata(data)
+  }
 
   useEffect(() => {
     if (repoUrl === '')
       return
 
-    if (!repoUrl.startsWith('https://'))
-      setError(errorInvalidFormat)
+    if (!repoUrl.startsWith('https://')) {
+      setErrors([errorInvalidFormat])
+      return
+    }
 
-    return () => setError('')
+    getRepoMetadata(repoUrl)
+
+    return () => setErrors([])
   }, [repoUrl])
 
   return (
@@ -48,13 +92,14 @@ function RepoInput(isSmallDevice: boolean) {
             </span>
           </span>
         </label>
-        <div className="join w-full">
-          <input autoComplete="off" className="input input-bordered w-full join-item" name="github_url" onChange={e => setRepoUrl(e.target.value.trim().toLowerCase())} placeholder={placeholder} type="text" />
-          <button className="btn join-item input-bordered border-l-0">
-            <ChevronDoubleRightIcon className="w-6" />
-          </button>
-        </div>
-        <span className="text-xs italic text-red-600 transition" hidden={!hasError}>{error}</span>
+
+        <input autoComplete="off" className="input input-bordered w-full join-item" name="github_url" onChange={e => setRepoUrl(e.target.value.trim().toLowerCase())} placeholder={placeholder} type="text" />
+
+        {errors.map((error, idx) =>
+          <span className="text-xs italic text-red-600 transition font-semibold" key={`err-${idx}`}>{error}</span>,
+        )}
+
+        {errors.length > 0 ? <></> : RepoCard(repoMetadata)}
       </div>
     </section>
   )

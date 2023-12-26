@@ -6,7 +6,7 @@ defmodule Actions.Endpoint do
   # Set :encryption_salt if you would also like to encrypt it.
   @session_options [
     store: :cookie,
-    key: "_actions_key",
+    key: "actions.run.simple",
     signing_salt: "eWy0cK0o",
     same_site: "Lax"
   ]
@@ -20,7 +20,7 @@ defmodule Actions.Endpoint do
   plug Plug.Static,
     at: "/",
     from: :actions,
-    gzip: false,
+    gzip: true,
     only: Actions.static_paths()
 
   # Code reloading can be explicitly enabled under the
@@ -31,7 +31,7 @@ defmodule Actions.Endpoint do
 
   plug Phoenix.LiveDashboard.RequestLogger,
     param_key: "request_logger",
-    cookie_key: "request_logger"
+    cookie_key: "reqlog.actions.run.simple.dev"
 
   plug Plug.RequestId
   plug Plug.Telemetry, event_prefix: [:phoenix, :endpoint]
@@ -44,5 +44,6 @@ defmodule Actions.Endpoint do
   plug Plug.MethodOverride
   plug Plug.Head
   plug Plug.Session, @session_options
+  plug CORSPlug, origin: Application.compile_env!(:actions, :cors_origin)
   plug Actions.Router
 end

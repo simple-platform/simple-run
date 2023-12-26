@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "mix phx.server",
-    "build": "mix compile --force"
+    "build": "mix compile --force",
+    "test": "MIX_ENV=test mix coveralls.html"
   }
 }
