@@ -13,11 +13,11 @@ defmodule Actions.RepoController do
 
   @err_not_found "Repository not found"
 
-  def get_details(conn, %{"provider" => provider, "url" => url})
-      when provider in @supported_providers do
-    the_provider = @providers[provider]
+  def get_details(conn, %{"provider" => a_provider, "url" => url})
+      when a_provider in @supported_providers do
+    provider = @providers[a_provider]
 
-    case the_provider.get_details(url) do
+    case provider.get_details(url) do
       {:ok, details} ->
         {:ok, details} |> to_json(200, conn)
 

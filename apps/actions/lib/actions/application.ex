@@ -13,8 +13,7 @@ defmodule Actions.Application do
 
       # Start the Endpoint (http/https)
       Actions.Endpoint,
-
-      {Phoenix.PubSub, name: Actions.PubSub},
+      {Phoenix.PubSub, name: Actions.PubSub}
 
       # Start a worker by calling: Actions.Worker.start_link(arg)
       # {Actions.Worker, arg}

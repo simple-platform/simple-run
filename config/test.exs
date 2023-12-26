@@ -7,4 +7,5 @@ config :actions, Actions.Endpoint,
   secret_key_base: "IOuzw29dStYzsq4YnrS+NfcBNCR9TICD9i4XMtVyR84aye15paOGTcZJGjSvXAO1",
   server: false
 
+config :actions, :http_client, Actions.HttpClientMock
 config :actions, :github_provider, Actions.RepoProviderMock

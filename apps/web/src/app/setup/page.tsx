@@ -16,12 +16,14 @@ function RepoInput(isSmallDevice: boolean) {
 
   const errorInvalidFormat = 'Please enter a valid repository URL'
 
-  const [error, setError] = useState('')
-  const [hasError, setHasError] = useState(false)
+  const [errors, setErrors] = useState<string[]>([])
+
+  // eslint-disable-next-line unused-imports/no-unused-vars
+  const [hasErrors, setHasErrors] = useState(false)
 
   useEffect(() => {
-    setHasError(error !== '')
-  }, [error])
+    setHasErrors(errors.length > 0)
+  }, [errors])
 
   const [repoUrlValue, setRepoUrl] = useState('')
   const [repoUrl] = useDebounce(repoUrlValue, 1000)
@@ -31,7 +33,7 @@ function RepoInput(isSmallDevice: boolean) {
     const data = await resp.json()
 
     if (resp.status !== 200) {
-      setError(data.error)
+      setErrors(data.errors)
       return
     }
 
@@ -44,13 +46,13 @@ function RepoInput(isSmallDevice: boolean) {
       return
 
     if (!repoUrl.startsWith('https://')) {
-      setError(errorInvalidFormat)
+      setErrors([errorInvalidFormat])
       return
     }
 
     getRepoDetails(repoUrl)
 
-    return () => setError('')
+    return () => setErrors([])
   }, [repoUrl])
 
   return (
@@ -75,7 +77,9 @@ function RepoInput(isSmallDevice: boolean) {
             <ChevronDoubleRightIcon className="w-6" />
           </div>
         </div>
-        <span className="text-xs italic text-red-600 transition font-semibold" hidden={!hasError}>{error}</span>
+        {errors.map((error, idx) =>
+          <span className="text-xs italic text-red-600 transition font-semibold" key={`err-${idx}`}>{error}</span>,
+        )}
       </div>
     </section>
   )

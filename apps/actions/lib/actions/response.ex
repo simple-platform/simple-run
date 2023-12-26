@@ -16,6 +16,12 @@ defmodule Actions.Response do
   def to_json({:error, reason}, status_code, conn) when is_binary(reason) do
     conn
     |> put_resp_content_type("application/json")
-    |> send_resp(status_code, Jason.encode!(%{error: reason}))
+    |> send_resp(status_code, Jason.encode!(%{errors: [reason]}))
+  end
+
+  def to_json({:error, errors}, status_code, conn) when is_list(errors) do
+    conn
+    |> put_resp_content_type("application/json")
+    |> send_resp(status_code, Jason.encode!(%{errors: errors}))
   end
 end
