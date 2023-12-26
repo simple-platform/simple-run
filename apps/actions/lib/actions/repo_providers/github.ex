@@ -47,8 +47,8 @@ defmodule Actions.RepoProviders.GitHub do
       :org => org,
       :name => repo,
       :desc => metadata["description"],
-      :default_branch => metadata["defaultBranchRef"]["name"],
-      :icon_url => metadata["owner"]["avatarUrl"]
+      :iconUrl => metadata["owner"]["avatarUrl"],
+      :defaultBranch => metadata["defaultBranchRef"]["name"]
     }
   end
 

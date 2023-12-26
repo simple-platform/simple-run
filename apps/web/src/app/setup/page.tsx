@@ -1,6 +1,5 @@
 'use client'
 
-import { ChevronDoubleRightIcon } from '@heroicons/react/24/outline'
 import { Header } from '@simple-run/ui/header'
 import { get } from '@simple-run/ui/helpers'
 import { useEffect, useState } from 'react'
@@ -8,6 +7,34 @@ import { useDebounce } from 'use-debounce'
 
 // eslint-disable-next-line node/prefer-global/process
 const actionsEndpoint = process.env.actionsEndpoint
+
+interface RepoDetails {
+  defaultBranch: string
+  desc: string
+  iconUrl: string
+  name: string
+  org: string
+}
+
+function ShowRepoDetails(repoDetails?: RepoDetails) {
+  if (!repoDetails)
+    return (<></>)
+
+  const { desc, iconUrl, name, org } = repoDetails
+  const fullName = `${org}/${name}`
+
+  return (
+    <article className="card card-side bg-slate-50 dark:bg-slate-950 shadow-md rounded-md mt-6">
+      <figure className="p-3 w-32 min-w-32 flex">
+        <img alt={fullName} className="rounded-md" src={iconUrl} />
+      </figure>
+      <div className="card-body p-3">
+        <h3 className="card-title">{fullName}</h3>
+        <p className="line-clamp-3">{desc}</p>
+      </div>
+    </article>
+  )
+}
 
 function RepoInput(isSmallDevice: boolean) {
   const placeholder = isSmallDevice
@@ -18,15 +45,10 @@ function RepoInput(isSmallDevice: boolean) {
 
   const [errors, setErrors] = useState<string[]>([])
 
-  // eslint-disable-next-line unused-imports/no-unused-vars
-  const [hasErrors, setHasErrors] = useState(false)
-
-  useEffect(() => {
-    setHasErrors(errors.length > 0)
-  }, [errors])
-
   const [repoUrlValue, setRepoUrl] = useState('')
   const [repoUrl] = useDebounce(repoUrlValue, 1000)
+
+  const [repoDetails, setRepoDetails] = useState<RepoDetails>()
 
   async function getRepoDetails(repoUrl: string) {
     const resp = await get(`${actionsEndpoint}/repo/github/${encodeURIComponent(repoUrl)}`)
@@ -37,8 +59,7 @@ function RepoInput(isSmallDevice: boolean) {
       return
     }
 
-    // eslint-disable-next-line no-console
-    console.log(data)
+    setRepoDetails(data)
   }
 
   useEffect(() => {
@@ -71,15 +92,14 @@ function RepoInput(isSmallDevice: boolean) {
             </span>
           </span>
         </label>
-        <div className="join w-full">
-          <input autoComplete="off" className="input input-bordered w-full join-item" name="github_url" onChange={e => setRepoUrl(e.target.value.trim().toLowerCase())} placeholder={placeholder} type="text" />
-          <div className="btn join-item input-bordered border-l-0">
-            <ChevronDoubleRightIcon className="w-6" />
-          </div>
-        </div>
+
+        <input autoComplete="off" className="input input-bordered w-full join-item" name="github_url" onChange={e => setRepoUrl(e.target.value.trim().toLowerCase())} placeholder={placeholder} type="text" />
+
         {errors.map((error, idx) =>
           <span className="text-xs italic text-red-600 transition font-semibold" key={`err-${idx}`}>{error}</span>,
         )}
+
+        {errors.length > 0 ? <></> : ShowRepoDetails(repoDetails)}
       </div>
     </section>
   )

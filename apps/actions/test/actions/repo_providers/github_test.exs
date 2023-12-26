@@ -63,8 +63,8 @@ defmodule Actions.RepoProviders.GitHubTest do
         :org => "simple-platform",
         :name => "simple-run",
         :desc => data["description"],
-        :icon_url => data["owner"]["avatarUrl"],
-        :default_branch => data["defaultBranchRef"]["name"]
+        :iconUrl => data["owner"]["avatarUrl"],
+        :defaultBranch => data["defaultBranchRef"]["name"]
       }
 
       HttpClientMock |> expect(:post!, fn _req, _params -> resp end)
