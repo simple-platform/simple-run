@@ -13,7 +13,7 @@ defmodule Actions.RepoController do
 
   @err_not_found "Repository not found"
 
-  def get_details(conn, %{"provider" => a_provider, "url" => url})
+  def get_metadata(conn, %{"provider" => a_provider, "url" => url})
       when a_provider in @supported_providers do
     provider = @providers[a_provider]
 
@@ -22,16 +22,9 @@ defmodule Actions.RepoController do
       {:error, :not_found} -> {:error, @err_not_found} |> to_json(404, conn)
       {:error, reason} -> {:error, reason} |> to_json(500, conn)
     end
-
-    # with {:ok, metadata} <- provider.get_metadata(url) do
-    #   {:ok, metadata} |> to_json(200, conn)
-    # else
-    #   {:error, :not_found} -> {:error, @err_not_found} |> to_json(404, conn)
-    #   {:error, reason} -> {:error, reason} |> to_json(500, conn)
-    # end
   end
 
-  def get_details(conn, %{"provider" => provider}) do
+  def get_metadata(conn, %{"provider" => provider}) do
     {:error, "Unsupported provider: #{provider}"} |> to_json(422, conn)
   end
 end

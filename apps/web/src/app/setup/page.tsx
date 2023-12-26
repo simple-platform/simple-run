@@ -8,7 +8,7 @@ import { useDebounce } from 'use-debounce'
 // eslint-disable-next-line node/prefer-global/process
 const actionsEndpoint = process.env.actionsEndpoint
 
-interface RepoDetails {
+interface RepoMetadata {
   defaultBranch: string
   desc: string
   iconUrl: string
@@ -16,11 +16,11 @@ interface RepoDetails {
   org: string
 }
 
-function ShowRepoDetails(repoDetails?: RepoDetails) {
-  if (!repoDetails)
+function RepoCard(repoMetadata?: RepoMetadata) {
+  if (!repoMetadata)
     return (<></>)
 
-  const { desc, iconUrl, name, org } = repoDetails
+  const { desc, iconUrl, name, org } = repoMetadata
   const fullName = `${org}/${name}`
 
   return (
@@ -48,9 +48,9 @@ function RepoInput(isSmallDevice: boolean) {
   const [repoUrlValue, setRepoUrl] = useState('')
   const [repoUrl] = useDebounce(repoUrlValue, 1000)
 
-  const [repoDetails, setRepoDetails] = useState<RepoDetails>()
+  const [repoMetadata, setRepoMetadata] = useState<RepoMetadata>()
 
-  async function getRepoDetails(repoUrl: string) {
+  async function getRepoMetadata(repoUrl: string) {
     const resp = await get(`${actionsEndpoint}/repo/github/${encodeURIComponent(repoUrl)}`)
     const data = await resp.json()
 
@@ -59,7 +59,7 @@ function RepoInput(isSmallDevice: boolean) {
       return
     }
 
-    setRepoDetails(data)
+    setRepoMetadata(data)
   }
 
   useEffect(() => {
@@ -71,7 +71,7 @@ function RepoInput(isSmallDevice: boolean) {
       return
     }
 
-    getRepoDetails(repoUrl)
+    getRepoMetadata(repoUrl)
 
     return () => setErrors([])
   }, [repoUrl])
@@ -99,7 +99,7 @@ function RepoInput(isSmallDevice: boolean) {
           <span className="text-xs italic text-red-600 transition font-semibold" key={`err-${idx}`}>{error}</span>,
         )}
 
-        {errors.length > 0 ? <></> : ShowRepoDetails(repoDetails)}
+        {errors.length > 0 ? <></> : RepoCard(repoMetadata)}
       </div>
     </section>
   )

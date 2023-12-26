@@ -8,7 +8,7 @@ defmodule Actions.Router do
   scope "/repo", Actions do
     pipe_through :api
 
-    get "/:provider/:url", RepoController, :get_details
+    get "/:provider/:url", RepoController, :get_metadata
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
