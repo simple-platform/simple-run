@@ -27,19 +27,4 @@ defmodule Actions.RepoController do
   def get_metadata(conn, %{"provider" => provider}) do
     {:error, "Unsupported provider: #{provider}"} |> to_json(422, conn)
   end
-
-  def get_files(conn, %{"provider" => a_provider, "repo" => repo})
-      when a_provider in @supported_providers do
-    provider = @providers[a_provider]
-
-    case provider.get_files(repo) do
-      {:ok, files} -> {:ok, files} |> to_json(200, conn)
-      {:error, :not_found} -> {:error, @err_not_found} |> to_json(404, conn)
-      {:error, reason} -> {:error, reason} |> to_json(500, conn)
-    end
-  end
-
-  def get_files(conn, %{"provider" => provider}) do
-    {:error, "Unsupported provider: #{provider}"} |> to_json(422, conn)
-  end
 end
