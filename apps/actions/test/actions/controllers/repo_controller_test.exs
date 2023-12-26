@@ -5,7 +5,6 @@ defmodule Actions.RepoControllerTest do
   alias Actions.RepoProviderMock
 
   @gitlab_repo URI.encode_www_form("https://gitlab.com/simple-platform/simple-run")
-
   @github_repo URI.encode_www_form("https://github.com/simple-platform/simple-run")
   @github_nonexistent_repo URI.encode_www_form("https://github.com/simple-platform/nonexistent")
 

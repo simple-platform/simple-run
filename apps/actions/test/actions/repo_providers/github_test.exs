@@ -51,7 +51,18 @@ defmodule Actions.RepoProviders.GitHubTest do
               "owner" => %{
                 "avatarUrl" => "https://avatars.githubusercontent.com/u/121924292?s=48&v=4"
               },
-              "defaultBranchRef" => %{"name" => "main"}
+              "contents" => %{
+                "entries" => [
+                  %{"name" => ".dockerignore", "type" => "blob"},
+                  %{"name" => ".github", "type" => "tree"},
+                  %{"name" => ".gitignore", "type" => "blob"},
+                  %{"name" => "apps", "type" => "tree"},
+                  %{"name" => "docker-compose.yaml", "type" => "blob"},
+                  %{"name" => "Dockerfile", "type" => "blob"},
+                  %{"name" => "package.json", "type" => "blob"},
+                  %{"name" => "packages", "type" => "tree"}
+                ]
+              }
             }
           }
         }
@@ -64,7 +75,7 @@ defmodule Actions.RepoProviders.GitHubTest do
         :name => "simple-run",
         :desc => data["description"],
         :iconUrl => data["owner"]["avatarUrl"],
-        :defaultBranch => data["defaultBranchRef"]["name"]
+        :dockerFiles => ["docker-compose.yaml", "Dockerfile"]
       }
 
       HttpClientMock |> expect(:post!, fn _req, _params -> resp end)
