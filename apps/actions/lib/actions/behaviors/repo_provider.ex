@@ -3,5 +3,7 @@ defmodule Actions.Behaviors.RepoProvider do
   Provides behavior for fetching repository details.
   """
 
+  @callback get_files(binary()) :: {:error, :not_found} | {:error, binary()} | {:ok, list()}
+
   @callback get_metadata(binary()) :: {:error, :not_found} | {:error, binary()} | {:ok, map()}
 end

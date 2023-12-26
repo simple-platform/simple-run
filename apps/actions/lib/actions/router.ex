@@ -11,6 +11,12 @@ defmodule Actions.Router do
     get "/:provider/:url", RepoController, :get_metadata
   end
 
+  scope "/files", Actions do
+    pipe_through :api
+
+    get "/:provider/:repo", RepoController, :get_files
+  end
+
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:actions, :dev_routes) do
     # If you want to use the LiveDashboard in production, you should put
