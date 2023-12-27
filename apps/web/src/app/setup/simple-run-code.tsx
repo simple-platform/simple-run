@@ -16,7 +16,7 @@ export function SimpleRunCode() {
   const { name, org } = repoMetadata
   const { host, protocol } = window.location
 
-  const baseUrl = `${protocol}://${host}/run`
+  const baseUrl = `${protocol}//${host}/run`
 
   const info = `p:gh|o:${org}|r:${name}|f:${fileToRun}`
   const url = `${baseUrl}/${info}`
