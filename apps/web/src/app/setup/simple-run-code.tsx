@@ -24,8 +24,6 @@ export function SimpleRunCode() {
   const image = 'simple-run-locally@2x.png'
   const imageUrl = host.startsWith('localhost') ? image : `${baseUrl}/${image}`
 
-  // https://github.com/go-gitea/gitea
-
   const code = `<a href="${url}" target="_blank" alt="Run Locally"><img src="${imageUrl}" style="height: 40px;" alt="Run Locally"/></a>`
 
   const md = `
