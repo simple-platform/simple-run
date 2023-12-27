@@ -7,6 +7,7 @@ import 'inter-ui/inter-latin.css'
 
 import '@simple-run/ui/global.css'
 import './local.css'
+import { StoreProvider } from './store-provider'
 
 const outfit = Outfit({
   display: 'swap',
@@ -28,7 +29,9 @@ export default function RootLayout({
 }): JSX.Element {
   return (
     <html lang="en">
-      <body className={outfit.variable}>{children}</body>
+      <body className={outfit.variable}>
+        <StoreProvider>{children}</StoreProvider>
+      </body>
     </html>
   )
 }

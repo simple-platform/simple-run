@@ -3,6 +3,7 @@
     "bradlc.vscode-tailwindcss",
     "streetsidesoftware.code-spell-checker",
     "jakebecker.elixir-ls",
-    "github.vscode-github-actions"
+    "github.vscode-github-actions",
+    "vscode-icons-team.vscode-icons"
   ]
 }
