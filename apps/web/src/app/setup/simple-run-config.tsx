@@ -21,7 +21,7 @@ export function SimpleRunConfig() {
     return <RepoNotReady />
 
   return (
-    <section className="mt-3 md:mt-6">
+    <section>
       <div className="w-full">
         <label className="label">
           <span className="label-text-alt">

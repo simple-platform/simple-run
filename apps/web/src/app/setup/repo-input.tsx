@@ -50,7 +50,7 @@ export function RepoInput() {
   }, [repoUrl, getRepoMetadata, dispatch])
 
   return (
-    <div className="p-3 md:p-6 shadow rounded-lg bg-slate-200 dark:bg-slate-800">
+    <section>
       <label className="label">
         <span className="label-text-alt">
           <strong>GitHub URL</strong>
@@ -70,6 +70,6 @@ export function RepoInput() {
       {errors.map((error, idx) =>
         <span className="text-xs italic text-red-600 transition font-semibold" key={`err-${idx}`}>{error}</span>,
       )}
-    </div>
+    </section>
   )
 }

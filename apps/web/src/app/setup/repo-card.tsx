@@ -12,7 +12,7 @@ export function RepoCard() {
   const fullName = `${org}/${name}`
 
   return (
-    <article className="card card-side bg-slate-50 dark:bg-slate-950 shadow-md rounded-md mt-3 md:mt-6 transition">
+    <article className="card card-side bg-slate-50 dark:bg-slate-950 shadow-md rounded-md transition">
       <figure className="p-1.5 md:p-3 w-20 min-w-20 md:w-28 md:min-w-28 flex">
         <img alt={fullName} className="rounded-md" src={iconUrl} />
       </figure>
