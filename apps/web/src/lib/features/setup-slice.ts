@@ -28,6 +28,7 @@ export const setup = createSlice({
     },
     setRepoMetadata(state, action: PayloadAction<RepoMetadata>) {
       state.errors = []
+      state.fileToRun = ''
       state.repoMetadata = action.payload
     },
   },
