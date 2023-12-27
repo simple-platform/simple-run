@@ -44,9 +44,9 @@ export function SimpleRunCode() {
         </div>
         <div className="flex flex-col md:flex-row space-y-3 md:space-y-0 md:space-x-6">
           <div className="w-full flex bg-slate-950 rounded-lg">
-            <code className="p-3 md:p-6 text-sm break-all">{code}</code>
+            <code className="p-3 md:p-6 text-sm break-all text-orange-300">{code}</code>
             <div>
-              <ClipboardDocumentListIcon className="w-4 h-4 relative right-3 top-3 cursor-pointer hover:text-orange-300 active:text-indigo-300" onClick={() => navigator.clipboard.writeText(code)} />
+              <ClipboardDocumentListIcon className="w-4 h-4 relative right-3 top-3 cursor-pointer text-slate-50 hover:text-orange-300 active:text-indigo-300" onClick={() => navigator.clipboard.writeText(code)} />
             </div>
           </div>
           <div className="flex items-center justify-center bg-slate-50 dark:bg-slate-950 p-3 md:p-6 rounded-lg">
