@@ -2,7 +2,7 @@
 
 ## Overview
 
-Welcome! _Simple Run_ simplifies how you run software projects on your local machine. It's centered around a _"Run Locally"_ button that project maintainers can add to their README.md files. This button is your gateway to hassle-free project setup. _Simple Run_ clones the repository to your machine when clicked and sets everything up using a docker-compose.yaml or Dockerfile. Our goal is to create a powerful and easy-to-use tool that can run any project on your local machine using containers — simplifying the process of getting started.
+Welcome! **Simple Run** simplifies how you run software projects on your local machine. It's centered around a **_"Run Locally"_** button that project maintainers can add to their README.md files. This button is your gateway to hassle-free project setup. **Simple Run** clones the repository to your machine when clicked and sets everything up using a docker-compose.yaml or Dockerfile. Our goal is to create a powerful and easy-to-use tool that can run any project on your local machine using containers — simplifying the process of getting started.
 
 ## Motivation
 
