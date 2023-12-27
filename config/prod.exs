@@ -8,4 +8,6 @@ import Config
 config :actions, Actions.Endpoint,
   url: [host: "actions.run.simple.dev", port: 80],
   cache_static_manifest: "priv/static/cache_manifest.json",
-  cors_origin: ["https://simple.dev"]
+  cors_origin: ["https://simple.dev"],
+  pixel_image_url: "https://simple.dev/run/pixel.png",
+  button_image_url: "https://simple.dev/run/simple-run-locally@2x.png"
