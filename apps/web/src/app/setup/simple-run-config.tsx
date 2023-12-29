@@ -86,8 +86,6 @@ export function SimpleRunConfig() {
     )
   }
 
-  // https://github.com/simple-platform/simple-run
-
   return (
     <section>
       <SimpleRunYamlFound />
