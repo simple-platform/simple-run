@@ -3,7 +3,6 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-
 # Credo is a static code analysis tool for the Elixir language with a focus on teaching and code consistency.
 # https://github.com/rrrene/credo
 #
@@ -18,7 +17,7 @@ name: Credo
 
 on:
   push:
-    branches: main
+    branches: [main]
   pull_request:
     branches:
       - main
@@ -38,8 +37,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        otp: ["25"]
-        elixir: ["1.14.2"]
+        otp: ['25']
+        elixir: [1.14.2]
     steps:
       - uses: actions/checkout@v4
       - uses: erlef/setup-beam@a1c4bb2505898b603ab8afc063b68fbfa7c8ad55
