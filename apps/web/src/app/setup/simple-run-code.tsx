@@ -43,21 +43,21 @@ export function SimpleRunCode() {
     <section className="max-w-sm md:max-w-4xl w-full mt-3 md:mt-6">
       <div className="p-3 md:p-6 space-y-3 md:space-y-6 shadow rounded-lg bg-slate-200 dark:bg-slate-800">
         <div className="test-sm mb-3 md:mb-6">
-          <p className="text-sm">
+          <div className="text-sm">
             Please add this code to your repository&apos;s
             {' '}
             <pre className="inline">README.md</pre>
             {' '}
             and you&apos;ll be all set!
-          </p>
-          <p className="text-xs italic">
+          </div>
+          <div className="text-xs italic">
             <strong>Note:</strong>
             {' '}
             we currently only support
             {' '}
             <pre className="inline">MacOS</pre>
             . Non-Mac users will not see the button to run your project locally.
-          </p>
+          </div>
         </div>
         <div className="flex flex-col md:flex-row space-y-3 md:space-y-0 md:space-x-6">
           <div className="w-full flex bg-slate-950 rounded-lg">

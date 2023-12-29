@@ -12,6 +12,6 @@ services:
       - ./.code-server:/root/.local/share/code-server
     environment:
       - SIMPLE_RUN_GH_TOKEN=$SIMPLE_RUN_GH_TOKEN
-      - SIMPLE_RUN_PIXEL_IMG_URL="http://3000.simple.local/run/pixel.png"
-      - SIMPLE_RUN_BUTTON_IMG_URL="http://3000.simple.local/run/simple-run-locally@2x.png"
+      - SIMPLE_RUN_WEB_URL="http://3000.simple.local"
+      - SIMPLE_RUN_ACTIONS_URL="http://4000.simple.local"
       
