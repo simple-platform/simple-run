@@ -4,7 +4,7 @@ let actionsEndpoint = 'https://actions.run.simple.dev'
 
 // eslint-disable-next-line node/prefer-global/process
 if (process.env.NODE_ENV === 'development')
-  actionsEndpoint = 'http://localhost:4000'
+  actionsEndpoint = 'http://4000.simple.local'
 
 module.exports = {
   basePath: '/run',

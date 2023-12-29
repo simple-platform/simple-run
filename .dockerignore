@@ -1,0 +1,9 @@
+.code-server
+.elixir_ls
+.turbo
+.next
+_build
+deps
+dist
+coverage
+node_modules

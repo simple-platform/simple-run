@@ -40,12 +40,20 @@ config :phoenix, :json_library, Jason
 # Enable dev routes for dashboard and mailbox
 config :actions, dev_routes: true
 
-config :actions, cors_origin: ["http://localhost:3000"]
+config :actions, cors_origin: ["http://3000.simple.local", "http://localhost:3000"]
 
 config :actions, :github_token, System.get_env("SIMPLE_RUN_GH_TOKEN")
 
-config :actions, :pixel_image_url, "http://localhost:3000/run/pixel.png"
-config :actions, :button_image_url, "http://localhost:3000/run/simple-run-locally@2x.png"
+config :actions,
+       :pixel_image_url,
+       System.get_env("SIMPLE_RUN_PIXEL_IMG_URL", "http://localhost:3000/run/pixel.png")
+
+config :actions,
+       :button_image_url,
+       System.get_env(
+         "SIMPLE_RUN_BUTTON_IMG_URL",
+         "http://localhost:3000/run/simple-run-locally@2x.png"
+       )
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

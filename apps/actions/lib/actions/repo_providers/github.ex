@@ -8,7 +8,7 @@ defmodule Actions.RepoProviders.GitHub do
 
   @behaviour RepoProvider
 
-  @gh_token Application.compile_env(:actions, :github_token)
+  @gh_token Application.compile_env!(:actions, :github_token)
   @req Application.compile_env(:actions, :http_client, HttpClient)
 
   @err_invalid_repo_url "Invalid repository URL"
