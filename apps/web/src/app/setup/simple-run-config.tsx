@@ -2,7 +2,7 @@
 
 import { useDispatch } from 'react-redux'
 
-import type { NameFilePair } from '../../lib/features/setup-slice'
+import type { NameFilePair, SimplerunConfig } from '../../lib/features/setup-slice'
 import type { AppDispatch } from '../../lib/store'
 
 import { setFileToRun } from '../../lib/features/setup-slice'
@@ -31,6 +31,27 @@ function showFiles(step: string, files: NameFilePair[]) {
         }
       </ol>
     </li>
+  )
+}
+
+function showConfig(config: SimplerunConfig) {
+  return (
+    <section>
+      <div className="text-sm mt-3 md:mt-6 mb-1.5 md:mb-3">We&apos;ll use the following execution order to run your project locally.</div>
+      <div className="text-sm bg-slate-50 dark:bg-slate-950 w-full rounded p-1.5 md:p-3 space-y-1.5 md:space-y-3">
+        <ol className="space-y-1.5 md:space-y-3">
+          {config.prescripts && config.prescripts.length > 0
+            ? showFiles('Pre Scripts', config.prescripts)
+            : null}
+
+          {showFiles('Containers', config.containers)}
+
+          {config.postscripts && config.postscripts.length > 0
+            ? showFiles('Post Scripts', config.postscripts)
+            : null}
+        </ol>
+      </div>
+    </section>
   )
 }
 
@@ -67,29 +88,10 @@ export function SimpleRunConfig() {
 
   // https://github.com/simple-platform/simple-run
 
-  if (simplerun.config) {
-    const { config } = simplerun
-
-    return (
-      <section>
-        <SimpleRunYamlFound />
-        <div className="text-sm mt-3 md:mt-6 mb-1.5 md:mb-3">We&apos;ll use the following execution order to run your project locally.</div>
-        <section className="text-sm bg-slate-50 dark:bg-slate-950 w-full rounded p-1.5 md:p-3 space-y-1.5 md:space-y-3">
-          <ol className="space-y-1.5 md:space-y-3">
-            {config.prescripts && config.prescripts.length > 0
-              ? showFiles('Pre Scripts', config.prescripts)
-              : null}
-
-            {showFiles('Containers', config.containers)}
-
-            {config.postscripts && config.postscripts.length > 0
-              ? showFiles('Post Scripts', config.postscripts)
-              : null}
-          </ol>
-        </section>
-      </section>
-    )
-  }
-
-  return <SimpleRunConfigError />
+  return (
+    <section>
+      <SimpleRunYamlFound />
+      {simplerun.config ? showConfig(simplerun.config) : <SimpleRunConfigError />}
+    </section>
+  )
 }

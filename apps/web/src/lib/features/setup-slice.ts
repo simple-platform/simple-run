@@ -7,13 +7,15 @@ export interface NameFilePair {
   name: string
 }
 
+export interface SimplerunConfig {
+  containers: NameFilePair[]
+  postscripts?: NameFilePair[]
+  prescripts?: NameFilePair[]
+  version: string
+}
+
 interface Simplerun {
-  config?: {
-    containers: NameFilePair[]
-    postscripts?: NameFilePair[]
-    prescripts?: NameFilePair[]
-    version: string
-  }
+  config?: SimplerunConfig
   error?: string
 }
 

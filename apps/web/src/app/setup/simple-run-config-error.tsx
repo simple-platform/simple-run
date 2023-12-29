@@ -13,7 +13,7 @@ export function SimpleRunConfigError() {
           is invalid.
         </div>
         <div>
-          Please resolve Simple Run configuration issues and try again.
+          We won&apos;t be able to run your project locally until Simple Run configuration issues are resolved.
         </div>
       </div>
     </div>

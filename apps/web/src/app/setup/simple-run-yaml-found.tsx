@@ -12,7 +12,7 @@ export function SimpleRunYamlFound() {
           {' '}
           at your repo root.
         </div>
-        <div>We&apos;ll use that to run your project locally.</div>
+        <div>We&apos;ll use Simple Run configuration to run your project locally.</div>
       </div>
     </div>
   )
