@@ -13,7 +13,7 @@ export function SimpleRunCode() {
   const fileToRun = useAppStore(state => state.setup.fileToRun)
   const repoMetadata = useAppStore(state => state.setup.repoMetadata)
 
-  if (fileToRun === '')
+  if (fileToRun === '' && !repoMetadata.simplerun?.config)
     return null
 
   const { name, org } = repoMetadata
@@ -21,9 +21,13 @@ export function SimpleRunCode() {
 
   const baseUrl = `${protocol}//${host}/run`
 
-  const info = `p:gh|o:${org}|r:${name}|f:${fileToRun}`
-  const url = `${baseUrl}/${info}`
+  const parts = ['p:gh', `o:${org}`, `r:${name}`]
+  if (fileToRun)
+    parts.push(`f:${fileToRun}`)
 
+  const info = parts.join('|')
+
+  const url = `${baseUrl}/${info}`
   const imageUrl = `${actionsEndpoint}/img/${info}`
 
   const code = `<a href="${url}" target="_blank" alt="Run Locally"><img src="${imageUrl}" style="height: 40px;" alt="Run Locally"/></a>`
