@@ -15,6 +15,8 @@ defmodule Actions.RepoProviders.GitHubTest do
 
   @simple_run_config "version: 1.0.0\n\nprescripts:\n  - name: Environment Setup\n    file: ./scripts/local-setup.sh\n\ncontainers:\n  - name: Local Development Environment\n    file: ./docker-compose.yaml\n\npostscripts:\n  - name: Open VSCode\n    file: ./scripts/open-browser.sh\n"
 
+  @err_invalid_simplerun_config "Invalid Simple Run config"
+
   setup do
     HttpClientMock
     |> expect(:new, fn [url: @api_url, headers: @req_headers] ->
@@ -136,6 +138,54 @@ defmodule Actions.RepoProviders.GitHubTest do
             ],
             "postscripts" => [%{"name" => "Open VSCode", "file" => "./scripts/open-browser.sh"}]
           }
+        }
+      }
+
+      HttpClientMock |> expect(:post!, fn _req, _params -> resp end)
+
+      assert GitHub.get_metadata(@valid_repo_url) == {:ok, expected}
+    end
+
+    test "includes error when simple-run config is invalid" do
+      resp = %{
+        :body => %{
+          "data" => %{
+            "repository" => %{
+              "description" => "Run containerized applications easily on your local machine.",
+              "owner" => %{
+                "avatarUrl" => "https://avatars.githubusercontent.com/u/121924292?s=48&v=4"
+              },
+              "contents" => %{
+                "entries" => [
+                  %{"name" => ".dockerignore", "type" => "blob"},
+                  %{"name" => ".github", "type" => "tree"},
+                  %{"name" => ".gitignore", "type" => "blob"},
+                  %{"name" => "apps", "type" => "tree"},
+                  %{"name" => "docker-compose.yaml", "type" => "blob"},
+                  %{"name" => "Dockerfile", "type" => "blob"},
+                  %{"name" => "package.json", "type" => "blob"},
+                  %{"name" => "packages", "type" => "tree"},
+                  %{"name" => "simple-run.yaml", "type" => "blob"}
+                ]
+              },
+              "simplerun" => %{
+                "text" => "version: 1\n\n:-=^!"
+              }
+            }
+          }
+        }
+      }
+
+      data = resp.body["data"]["repository"]
+
+      expected = %{
+        :org => "simple-platform",
+        :name => "simple-run",
+        :desc => data["description"],
+        :iconUrl => data["owner"]["avatarUrl"],
+        :dockerFiles => ["docker-compose.yaml", "Dockerfile"],
+        :simplerun => %{
+          :error => @err_invalid_simplerun_config
         }
       }
 

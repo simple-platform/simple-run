@@ -12,6 +12,7 @@ defmodule Actions.RepoProviders.GitHub do
   @req Application.compile_env(:actions, :http_client, HttpClient)
 
   @err_invalid_repo_url "Invalid repository URL"
+  @err_invalid_simplerun_config "Invalid Simple Run config"
 
   @gql_repo_metadata """
   query($owner: String!, $name: String!) {
@@ -88,7 +89,7 @@ defmodule Actions.RepoProviders.GitHub do
   defp get_simplerun_config(%{"text" => config}) do
     case YamlElixir.read_from_string(config) do
       {:ok, config} -> %{config: config}
-      {:error, reason} -> %{error: reason}
+      {:error, _reason} -> %{error: @err_invalid_simplerun_config}
     end
   end
 
