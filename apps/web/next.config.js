@@ -12,6 +12,8 @@ module.exports = {
 
   env: { actionsEndpoint },
 
+  output: 'export',
+
   poweredByHeader: false,
   reactStrictMode: true,
 
