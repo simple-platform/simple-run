@@ -2,12 +2,28 @@ import type { PayloadAction } from '@reduxjs/toolkit'
 
 import { createSlice } from '@reduxjs/toolkit'
 
+export interface NameFilePair {
+  file: string
+  name: string
+}
+
+interface Simplerun {
+  config?: {
+    containers: NameFilePair[]
+    postscripts?: NameFilePair[]
+    prescripts?: NameFilePair[]
+    version: string
+  }
+  error?: string
+}
+
 export interface RepoMetadata {
   desc: string
   dockerFiles: string[]
   iconUrl: string
   name: string
   org: string
+  simplerun?: Simplerun
 }
 
 const initialState = {
