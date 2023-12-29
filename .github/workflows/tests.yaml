@@ -1,0 +1,63 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  test:
+    name: Build and test
+    runs-on: ubuntu-latest
+    env:
+      MIX_ENV: test
+      MIX_TEST_PARTITION: 1
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 21.5.0
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8.13.1
+          run_install: false
+      - uses: erlef/setup-beam@a1c4bb2505898b603ab8afc063b68fbfa7c8ad55
+        with:
+          elixir-version: 1.16.0
+          otp-version: 26.0
+      - name: Setup pnpm
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+      - name: Restore node dependencies cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: ${{ runner.os }}-pnpm-
+      - name: Restore elixir dependencies cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            deps
+            _build
+          key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
+          restore-keys: ${{ runner.os }}-mix-
+      - name: Install dependencies
+        run: pnpm deps
+      - name: Analyze code
+        run: |
+          mix format --check-formatted
+          mix compile --warnings-as-errors
+      - name: Run tests and upload coverage
+        uses: JuliaMathias/elixir-coverage-feedback-action@v0.5.3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          partition_count: 1
+          coverage_threshold: 80
+          coverage_tool: excoveralls
