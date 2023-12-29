@@ -1,0 +1,17 @@
+services:
+  code-server:
+    image: simple-platform/simple-run:dev-0.0.0
+    build:
+      context: .
+      dockerfile: dev.dockerfile
+    ports:
+      - 80:8080
+      - 8080:8080
+    volumes:
+      - .:/workspace
+      - ./.code-server:/root/.local/share/code-server
+    environment:
+      - SIMPLE_RUN_GH_TOKEN=$SIMPLE_RUN_GH_TOKEN
+      - SIMPLE_RUN_WEB_ENDPOINT=http://3000.simple.local
+      - SIMPLE_RUN_ACTIONS_ENDPOINT=http://4000.simple.local
+      
