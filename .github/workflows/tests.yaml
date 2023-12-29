@@ -16,6 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       MIX_ENV: test
+      MIX_TEST_PARTITION: 1
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -29,6 +30,10 @@ jobs:
         with:
           elixir-version: 1.16.0
           otp-version: 26.0
+      - name: Setup pnpm
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
       - name: Restore node dependencies cache
         uses: actions/cache@v3
         with:
@@ -53,5 +58,6 @@ jobs:
         uses: JuliaMathias/elixir-coverage-feedback-action@v0.5.3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          partition_count: 1
           coverage_threshold: 80
           coverage_tool: excoveralls
