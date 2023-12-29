@@ -6,7 +6,7 @@ prescripts:
 
 containers:
   - name: Local Development Environment
-    file: docker-compose.yaml
+    file: ./docker-compose.yaml
 
 postscripts:
   - name: Open VSCode

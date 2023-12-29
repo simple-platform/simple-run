@@ -124,6 +124,7 @@
     "rvest",
     "sarif",
     "selfsigned",
+    "simplerun",
     "tailwindcss",
     "treeshake",
     "tsup",
