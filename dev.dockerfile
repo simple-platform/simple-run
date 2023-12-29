@@ -1,7 +1,7 @@
 FROM node:21.5.0
 
 RUN apt-get update && apt-get install -y \
-    elixir erlang-dev erlang-xmerl erlang-os-mon && \
+    lsof elixir erlang-dev erlang-xmerl erlang-os-mon && \
     mix local.hex && \
     mix local.rebar
 
