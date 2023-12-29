@@ -8,6 +8,7 @@ import type { AppDispatch } from '../../lib/store'
 import { setFileToRun } from '../../lib/features/setup-slice'
 import { useAppStore } from '../../lib/store'
 import { RepoNotReady } from './repo-not-ready'
+import { SimpleRunConfigError } from './simple-run-config-error'
 import { SimpleRunYamlFound } from './simple-run-yaml-found'
 
 function showFiles(step: string, files: NameFilePair[]) {
@@ -89,4 +90,6 @@ export function SimpleRunConfig() {
       </section>
     )
   }
+
+  return <SimpleRunConfigError />
 }
