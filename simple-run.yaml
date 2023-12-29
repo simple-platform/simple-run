@@ -1,0 +1,13 @@
+version: 1.0.0
+
+prescripts:
+  - name: Environment Setup
+    file: ./scripts/local-setup.sh
+
+containers:
+  - name: Local Development Environment
+    file: docker-compose.yaml
+
+postscripts:
+  - name: Open VSCode
+    file: ./scripts/open-browser.sh
