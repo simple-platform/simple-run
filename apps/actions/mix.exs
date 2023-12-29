@@ -50,6 +50,7 @@ defmodule Actions.MixProject do
       {:jason, "~> 1.4"},
       {:plug_cowboy, "~> 2.5"},
       {:cors_plug, "~> 3.0"},
+      {:yaml_elixir, "~> 2.8"},
       {:absinthe_client, "~> 0.1.0"},
       {:req, git: "https://github.com/wojtekmach/req.git", override: true},
       {:mox, "~> 1.0", only: :test},

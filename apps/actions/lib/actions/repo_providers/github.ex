@@ -12,6 +12,7 @@ defmodule Actions.RepoProviders.GitHub do
   @req Application.compile_env(:actions, :http_client, HttpClient)
 
   @err_invalid_repo_url "Invalid repository URL"
+  @err_invalid_simplerun_config "Invalid Simple Run config"
 
   @gql_repo_metadata """
   query($owner: String!, $name: String!) {
@@ -26,6 +27,11 @@ defmodule Actions.RepoProviders.GitHub do
             name
             type
           }
+        }
+      }
+    	simplerun: object(expression: "HEAD:simple-run.yaml") {
+        ...on Blob {
+          text
         }
       }
     }
@@ -49,11 +55,12 @@ defmodule Actions.RepoProviders.GitHub do
 
   defp transform_metadata(metadata, org, repo) do
     %{
-      :org => org,
-      :name => repo,
-      :desc => metadata["description"],
-      :iconUrl => metadata["owner"]["avatarUrl"],
-      :dockerFiles => get_docker_files(metadata["contents"])
+      org: org,
+      name: repo,
+      desc: metadata["description"],
+      iconUrl: metadata["owner"]["avatarUrl"],
+      dockerFiles: get_docker_files(metadata["contents"]),
+      simplerun: get_simplerun_config(metadata["simplerun"])
     }
   end
 
@@ -78,6 +85,15 @@ defmodule Actions.RepoProviders.GitHub do
   end
 
   defp get_docker_files(_), do: []
+
+  defp get_simplerun_config(%{"text" => config}) do
+    case YamlElixir.read_from_string(config) do
+      {:ok, config} -> %{config: config}
+      {:error, _reason} -> %{error: @err_invalid_simplerun_config}
+    end
+  end
+
+  defp get_simplerun_config(nil), do: nil
 
   defp get_org_and_repo(["github.com", org, repo]), do: {:ok, {org, repo}}
   defp get_org_and_repo(_invalid), do: {:error, @err_invalid_repo_url}
