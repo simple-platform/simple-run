@@ -76,6 +76,7 @@ func main() {
 				Message: "",
 				Icon:    icon,
 			},
+			OnUrlOpen: func(url string) { println(url) },
 		},
 	})
 
