@@ -5,6 +5,8 @@
     "jakebecker.elixir-ls",
     "vscode-icons-team.vscode-icons",
     "ms-azuretools.vscode-docker",
-    "dbaeumer.vscode-eslint"
+    "dbaeumer.vscode-eslint",
+    "rust-lang.rust-analyzer",
+    "swellaby.rust-pack"
   ]
 }
