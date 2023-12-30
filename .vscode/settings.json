@@ -130,6 +130,7 @@
     "tsup",
     "uidotdev",
     "usehooks",
-    "vsintellicode"
+    "vsintellicode",
+    "wailsjs"
   ]
 }

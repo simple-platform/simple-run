@@ -62,3 +62,7 @@ erl_crash.dump
 .elixir_ls
 
 .code-server
+
+bin
+apps/agent/frontend/wailsjs
+!apps/agent/build

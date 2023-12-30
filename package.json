@@ -42,6 +42,7 @@
   "lint-staged": {
     "apps/**/*.{js,ts,jsx,tsx}": [
       "eslint --fix"
-    ]
+    ],
+    "!(apps/agent/frontend/wailsjs)/**/*.{js,ts}": []
   }
 }
