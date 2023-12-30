@@ -11,5 +11,13 @@
   "author": {
     "name": "Simple",
     "email": "contact@simple.dev"
+  },
+  "info": {
+    "protocols": [
+      {
+        "scheme": "simplerun",
+        "description": "Simple Run"
+      }
+    ]
   }
 }
