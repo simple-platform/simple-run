@@ -9,7 +9,7 @@
     "node": ">=21"
   },
   "scripts": {
-    "deps": "mix deps.get && pnpm install",
+    "deps": "mix deps.get && pnpm install && cd apps/agent && go mod vendor -v && go mod tidy -v && go mod verify",
     "build": "turbo build",
     "dev": "turbo run dev --parallel",
     "test": "turbo run test",

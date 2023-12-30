@@ -5,5 +5,8 @@
   "scripts": {
     "dev": "wails dev",
     "build": "wails build"
+  },
+  "dependencies": {
+    "next": "^14.0.3"
   }
 }
