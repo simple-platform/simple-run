@@ -64,5 +64,5 @@ erl_crash.dump
 .code-server
 
 bin
-apps/agent/frontend/wailsjs
+apps/agent-ui/wailsjs
 !apps/agent/build

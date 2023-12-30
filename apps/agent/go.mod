@@ -1,4 +1,4 @@
-module changeme
+module simple.dev/run
 
 go 1.21
 

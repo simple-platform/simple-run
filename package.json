@@ -43,6 +43,6 @@
     "apps/**/*.{js,ts,jsx,tsx}": [
       "eslint --fix"
     ],
-    "!(apps/agent/frontend/wailsjs)/**/*.{js,ts}": []
+    "!(apps/agent-ui/wailsjs)/**/*.{js,ts}": []
   }
 }
