@@ -1,0 +1,9 @@
+{
+  "name": "@simple-run/agent",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "wails dev",
+    "build": "wails build"
+  }
+}

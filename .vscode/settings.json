@@ -96,10 +96,13 @@
   // Spell check word safelist
   "cSpell.words": [
     "antfu",
+    "appicon",
+    "assetserver",
     "automerge",
     "cachex",
     "certfile",
     "codeql",
+    "Colour",
     "commitlint",
     "daisyui",
     "defmock",
@@ -108,6 +111,8 @@
     "esbenp",
     "excoveralls",
     "Fira",
+    "Frameless",
+    "Fullscreen",
     "GHAS",
     "goimports",
     "heroicons",
@@ -118,6 +123,7 @@
     "liga",
     "Mailgun",
     "Meslo",
+    "outputfilename",
     "reduxjs",
     "rehype",
     "reqlog",
@@ -126,10 +132,14 @@
     "selfsigned",
     "simplerun",
     "tailwindcss",
+    "Titlebar",
     "treeshake",
     "tsup",
     "uidotdev",
     "usehooks",
-    "vsintellicode"
+    "vsintellicode",
+    "wailsapp",
+    "wailsjs",
+    "wailsjsdir"
   ]
 }

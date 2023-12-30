@@ -1,0 +1,21 @@
+{
+  "extends": "@simple-run/typescript-config/nextjs.json",
+  "compilerOptions": {
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "strictNullChecks": true
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "../agent/frontend/dist/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

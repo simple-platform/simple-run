@@ -1,0 +1,15 @@
+{
+  "$schema": "https://wails.io/schemas/config.v2.json",
+  "name": "Simple Run",
+  "outputfilename": "simplerun",
+  "frontend:dir": "../agent-ui",
+  "frontend:install": "pnpm install",
+  "frontend:build": "pnpm run _build",
+  "frontend:dev:watcher": "pnpm run _dev",
+  "frontend:dev:serverUrl": "http://localhost:3333",
+  "wailsjsdir": "../agent-ui",
+  "author": {
+    "name": "Simple",
+    "email": "contact@simple.dev"
+  }
+}
