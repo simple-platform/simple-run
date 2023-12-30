@@ -66,4 +66,5 @@ erl_crash.dump
 bin
 apps/agent-ui/wailsjs
 apps/agent/frontend
+apps/agent/vendor
 !apps/agent/build
