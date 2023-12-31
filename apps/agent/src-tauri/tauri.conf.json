@@ -63,13 +63,15 @@
     },
     "windows": [
       {
-        "fullscreen": false,
-        "height": 768,
-        "resizable": true,
         "title": "Simple Run",
-        "width": 1280,
         "titleBarStyle": "Overlay",
-        "hiddenTitle": true
+        "resizable": true,
+        "hiddenTitle": true,
+        "fullscreen": false,
+        "width": 1280,
+        "height": 768,
+        "minWidth": 1280,
+        "minHeight": 768
       }
     ]
   }

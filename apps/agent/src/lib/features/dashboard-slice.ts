@@ -1,25 +1,38 @@
-import type { PayloadAction } from '@reduxjs/toolkit'
-
-import { createSlice } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import { Store } from 'tauri-plugin-store-api'
 
 interface Project {
+  id: string
   org: string
   repo: string
 }
 
-const initialState = {
-  projects: <Project[]>[],
+const stores = {
+  projects: new Store('projects.dat'),
 }
 
-export const dashboard = createSlice({
-  initialState,
-  name: 'dashboard',
-  reducers: {
-    addProject(state, action: PayloadAction<Project>) {
-      state.projects.push(action.payload)
-    },
-  },
+const initialState = {
+  projects: <Project[]>[],
+  projectsLoaded: false,
+}
+
+export const loadProjects = createAsyncThunk('dashboard/loadProjects', async () => {
+  return (await stores.projects.entries()) as [key: string, value: Omit<Project, 'id'>][]
 })
 
-export const { addProject } = dashboard.actions
+export const dashboard = createSlice({
+  extraReducers(builder) {
+    builder.addCase(loadProjects.fulfilled, (state, action) => {
+      state.projects = action.payload.map(([id, project]) => ({ id, ...project }))
+      state.projectsLoaded = true
+    })
+  },
+
+  initialState,
+  name: 'dashboard',
+
+  reducers: {},
+})
+
+// export const { } = dashboard.actions
 export default dashboard.reducer
