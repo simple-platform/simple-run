@@ -4,6 +4,7 @@ import { listen } from '@tauri-apps/api/event'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
+import type { AppInfo } from '../../lib/features/dashboard-slice'
 import type { AppDispatch, RootState } from '../../lib/store'
 
 import { addApplication, loadApplications } from '../../lib/features/dashboard-slice'
@@ -18,7 +19,11 @@ export default function Home(): JSX.Element {
 
   useEffect(() => {
     listen('run-requested', (e) => {
-      dispatch(addApplication(e.payload as string))
+      dispatch(addApplication(e.payload as AppInfo))
+    })
+
+    listen('run-request-failed', (e) => {
+      console.error(e.payload)
     })
 
     dispatch(loadApplications())

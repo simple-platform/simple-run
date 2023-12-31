@@ -2,11 +2,15 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { md5 } from 'hash-wasm'
 import { Store } from 'tauri-plugin-store-api'
 
-export interface Application {
-  fileToRun: string
-  id: string
+export interface AppInfo {
+  file_to_run: string
   org: string
   repo: string
+}
+
+export interface Application extends Omit<AppInfo, 'file_to_run'> {
+  fileToRun: string
+  id: string
 }
 
 const stores = {
@@ -18,35 +22,12 @@ const initialState = {
   applicationsLoaded: false,
 }
 
-async function buildApplication(code: string): Promise<Application | undefined> {
+async function buildApplication(appInfo: AppInfo): Promise<Application | undefined> {
   const provider = 'https://github.com'
-
-  let org = ''
-  let repo = ''
-  let fileToRun = ''
-
-  code.split('&').forEach((piece) => {
-    const [key, val] = piece.split('=')
-
-    if (key === 'o') {
-      org = val
-      return
-    }
-
-    if (key === 'r') {
-      repo = val
-      return
-    }
-
-    if (key === 'f')
-      fileToRun = val
-  })
-
-  if (org === '' || repo === '')
-    return
+  const { file_to_run, org, repo } = appInfo
 
   return {
-    fileToRun,
+    fileToRun: file_to_run,
     id: await md5(`${provider}/${org}/${repo}`),
     org,
     repo,
@@ -57,12 +38,8 @@ export const loadApplications = createAsyncThunk('dashboard/loadApplications', a
   return (await stores.applications.entries()) as [key: string, value: Omit<Application, 'id'>][]
 })
 
-export const addApplication = createAsyncThunk('dashboard/addApplication', async (request: string) => {
-  const code = request.replace('simplerun:gh?', '').trim()
-  if (code === '')
-    return
-
-  const application = await buildApplication(code)
+export const addApplication = createAsyncThunk('dashboard/addApplication', async (appInfo: AppInfo) => {
+  const application = await buildApplication(appInfo)
   if (!application)
     return
 
