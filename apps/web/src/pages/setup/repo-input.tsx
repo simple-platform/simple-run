@@ -1,5 +1,3 @@
-'use client'
-
 import { get } from '@simple-run/ui/helpers'
 import { useCallback, useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'

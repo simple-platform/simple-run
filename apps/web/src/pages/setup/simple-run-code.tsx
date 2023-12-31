@@ -1,5 +1,3 @@
-'use client'
-
 import { ClipboardDocumentListIcon } from '@heroicons/react/24/outline'
 import Markdown from 'react-markdown'
 import rehypeRaw from 'rehype-raw'
@@ -25,7 +23,7 @@ export function SimpleRunCode() {
   if (fileToRun)
     parts.push(`f:${fileToRun}`)
 
-  const info = parts.join('|')
+  const info = parts.join('!')
 
   const url = `${baseUrl}/${info}`
   const imageUrl = `${actionsEndpoint}/img/${info}`
