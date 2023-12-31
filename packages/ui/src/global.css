@@ -13,7 +13,8 @@
 @tailwind utilities;
 
 :root,
-body {
+body,
+div#__next {
   @apply h-full;
 }
 

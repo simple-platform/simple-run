@@ -1,5 +1,3 @@
-'use client'
-
 import { useDispatch } from 'react-redux'
 
 import type { NameFilePair, SimplerunConfig } from '../../lib/features/setup-slice'
