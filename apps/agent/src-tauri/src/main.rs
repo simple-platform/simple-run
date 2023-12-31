@@ -1,6 +1,10 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+mod simple_run;
+
+use std::error::Error;
+
 use tauri::{
     AppHandle, CustomMenuItem, GlobalWindowEvent, Manager, SystemTray, SystemTrayEvent,
     SystemTrayMenu,
@@ -36,7 +40,18 @@ fn window_event_handler(e: GlobalWindowEvent) {
     }
 }
 
+fn setup_app(_app: &mut tauri::App) -> Result<(), Box<dyn Error>> {
+    tauri_plugin_deep_link::register("simplerun", move |request| {
+        simple_run::handle_run_request(request);
+    })
+    .unwrap();
+
+    Ok(())
+}
+
 fn main() {
+    tauri_plugin_deep_link::prepare("dev.simple.run");
+
     let dashboard_menu_item = CustomMenuItem::new("dashboard", "Open Dashboard");
     let quit_menu_item = CustomMenuItem::new("quit", "Quit Simple Run");
 
@@ -48,6 +63,7 @@ fn main() {
     let system_tray = SystemTray::new().with_menu(menu);
 
     tauri::Builder::default()
+        .setup(setup_app)
         .system_tray(system_tray)
         .on_system_tray_event(system_tray_event_handler)
         .on_window_event(window_event_handler)
