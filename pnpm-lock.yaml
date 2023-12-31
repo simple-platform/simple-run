@@ -64,9 +64,21 @@ importers:
 
   apps/agent:
     dependencies:
+      '@heroicons/react':
+        specifier: ^2.1.1
+        version: 2.1.1(react@18.2.0)
+      '@reduxjs/toolkit':
+        specifier: ^2.0.1
+        version: 2.0.1(react-redux@9.0.4)(react@18.2.0)
       '@simple-run/ui':
         specifier: '*'
         version: link:../../packages/ui
+      '@tauri-apps/api':
+        specifier: ^1.5.3
+        version: 1.5.3
+      hash-wasm:
+        specifier: ^4.11.0
+        version: 4.11.0
       inter-ui:
         specifier: ^4.0.0
         version: 4.0.1
@@ -79,6 +91,12 @@ importers:
       react-dom:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
+      react-redux:
+        specifier: ^9.0.4
+        version: 9.0.4(@types/react@18.2.46)(react@18.2.0)(redux@5.0.1)
+      tauri-plugin-store-api:
+        specifier: github:tauri-apps/tauri-plugin-store#v1
+        version: github.com/tauri-apps/tauri-plugin-store/7d2632996f290b0f18cc5f8a2b2791046400690e
     devDependencies:
       '@simple-run/tailwind-config':
         specifier: '*'
@@ -1216,6 +1234,11 @@ packages:
       postcss-selector-parser: 6.0.10
       tailwindcss: 3.4.0
     dev: true
+
+  /@tauri-apps/api@1.5.3:
+    resolution: {integrity: sha512-zxnDjHHKjOsrIzZm6nO5Xapb/BxqUq1tc7cGkFXsFkGTsSWgCPH1D8mm0XS9weJY2OaR73I3k3S+b7eSzJDfqA==}
+    engines: {node: '>= 14.6.0', npm: '>= 6.6.0', yarn: '>= 1.19.1'}
+    dev: false
 
   /@tauri-apps/cli-darwin-arm64@1.5.9:
     resolution: {integrity: sha512-7C2Jf8f0gzv778mLYb7Eszqqv1bm9Wzews81MRTqKrUIcC+eZEtDXLex+JaEkEzFEUrgIafdOvMBVEavF030IA==}
@@ -3532,6 +3555,10 @@ packages:
     dependencies:
       has-symbols: 1.0.3
     dev: true
+
+  /hash-wasm@4.11.0:
+    resolution: {integrity: sha512-HVusNXlVqHe0fzIzdQOGolnFN6mX/fqcrSAOcTBXdvzrXVHwTz11vXeKRmkR5gTuwVpvHZEIyKoePDvuAR+XwQ==}
+    dev: false
 
   /hasown@2.0.0:
     resolution: {integrity: sha512-vUptKVTpIJhcczKBbgnS+RtcuYMB8+oNzPK2/Hp3hanz8JmpATdmmgLgSaadVREkDm+e2giHwY3ZRkyjSIDDFA==}
@@ -6736,4 +6763,12 @@ packages:
 
   /zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
+    dev: false
+
+  github.com/tauri-apps/tauri-plugin-store/7d2632996f290b0f18cc5f8a2b2791046400690e:
+    resolution: {tarball: https://codeload.github.com/tauri-apps/tauri-plugin-store/tar.gz/7d2632996f290b0f18cc5f8a2b2791046400690e}
+    name: tauri-plugin-store-api
+    version: 0.0.0
+    dependencies:
+      '@tauri-apps/api': 1.5.3
     dev: false

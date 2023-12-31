@@ -10,11 +10,17 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@heroicons/react": "^2.1.1",
+    "@reduxjs/toolkit": "^2.0.1",
     "@simple-run/ui": "*",
+    "@tauri-apps/api": "^1.5.3",
+    "hash-wasm": "^4.11.0",
     "inter-ui": "^4.0.0",
     "next": "^14.0.3",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-redux": "^9.0.4",
+    "tauri-plugin-store-api": "github:tauri-apps/tauri-plugin-store#v1"
   },
   "devDependencies": {
     "@simple-run/tailwind-config": "*",

@@ -1,8 +1,6 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-mod simple_run;
-
 use std::error::Error;
 
 use tauri::{
@@ -40,9 +38,11 @@ fn window_event_handler(e: GlobalWindowEvent) {
     }
 }
 
-fn setup_app(_app: &mut tauri::App) -> Result<(), Box<dyn Error>> {
+fn global_event_handlers(app: &mut tauri::App) -> Result<(), Box<dyn Error>> {
+    let handle = app.handle();
+
     tauri_plugin_deep_link::register("simplerun", move |request| {
-        simple_run::handle_run_request(request);
+        handle.emit_all("run-requested", request).unwrap();
     })
     .unwrap();
 
@@ -63,10 +63,11 @@ fn main() {
     let system_tray = SystemTray::new().with_menu(menu);
 
     tauri::Builder::default()
-        .setup(setup_app)
+        .setup(global_event_handlers)
         .system_tray(system_tray)
         .on_system_tray_event(system_tray_event_handler)
         .on_window_event(window_event_handler)
+        .plugin(tauri_plugin_store::Builder::default().build())
         .run(tauri::generate_context!())
-        .expect("Error while running Simple Run.");
+        .expect("Error while running Simple Run");
 }

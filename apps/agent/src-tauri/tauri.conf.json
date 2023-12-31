@@ -12,7 +12,11 @@
   },
   "tauri": {
     "allowlist": {
-      "all": false
+      "all": false,
+      "window": {
+        "all": false,
+        "startDragging": true
+      }
     },
     "systemTray": {
       "iconPath": "icons/icon.png",
@@ -59,11 +63,15 @@
     },
     "windows": [
       {
-        "fullscreen": false,
-        "height": 768,
-        "resizable": true,
         "title": "Simple Run",
-        "width": 1280
+        "titleBarStyle": "Overlay",
+        "resizable": true,
+        "hiddenTitle": true,
+        "fullscreen": false,
+        "width": 1280,
+        "height": 768,
+        "minWidth": 1280,
+        "minHeight": 768
       }
     ]
   }

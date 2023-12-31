@@ -1,5 +1,14 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
+
 export default function Home(): JSX.Element {
-  return <h1>Simple Run</h1>
+  const { push } = useRouter()
+
+  useEffect(() => {
+    push('/dashboard')
+  }, [push])
+
+  return <></>
 }

@@ -2496,6 +2496,7 @@ dependencies = [
  "tauri",
  "tauri-build",
  "tauri-plugin-deep-link",
+ "tauri-plugin-store",
 ]
 
 [[package]]
@@ -2836,6 +2837,18 @@ dependencies = [
  "tauri-utils",
  "windows-sys 0.48.0",
  "winreg 0.50.0",
+]
+
+[[package]]
+name = "tauri-plugin-store"
+version = "0.0.0"
+source = "git+https://github.com/tauri-apps/plugins-workspace?branch=v1#27d610387cf2fcf416d2d7148b24641599a08e1a"
+dependencies = [
+ "log",
+ "serde",
+ "serde_json",
+ "tauri",
+ "thiserror",
 ]
 
 [[package]]
