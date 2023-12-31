@@ -73,6 +73,12 @@ importers:
       '@simple-run/ui':
         specifier: '*'
         version: link:../../packages/ui
+      '@tauri-apps/api':
+        specifier: ^1.5.3
+        version: 1.5.3
+      hash-wasm:
+        specifier: ^4.11.0
+        version: 4.11.0
       inter-ui:
         specifier: ^4.0.0
         version: 4.0.1
@@ -3549,6 +3555,10 @@ packages:
     dependencies:
       has-symbols: 1.0.3
     dev: true
+
+  /hash-wasm@4.11.0:
+    resolution: {integrity: sha512-HVusNXlVqHe0fzIzdQOGolnFN6mX/fqcrSAOcTBXdvzrXVHwTz11vXeKRmkR5gTuwVpvHZEIyKoePDvuAR+XwQ==}
+    dev: false
 
   /hasown@2.0.0:
     resolution: {integrity: sha512-vUptKVTpIJhcczKBbgnS+RtcuYMB8+oNzPK2/Hp3hanz8JmpATdmmgLgSaadVREkDm+e2giHwY3ZRkyjSIDDFA==}
