@@ -12,8 +12,8 @@ export default function Setup(): JSX.Element {
       <Head>
         <title>Setup your app with Simple Run</title>
       </Head>
-      <Header className="text-center max-w-4xl" title="Let's setup your application to run locally!" />
-      <section className="max-w-sm md:max-w-4xl w-full mt-6 md:mt-12">
+      <Header className="text-center w-full" title="Let's setup your application to run locally!" />
+      <section className="w-full mt-6 md:mt-12">
         <div className="p-3 md:p-6 space-y-3 md:space-y-6 shadow rounded-lg bg-slate-200 dark:bg-slate-800">
           <RepoInput />
           <RepoCard />

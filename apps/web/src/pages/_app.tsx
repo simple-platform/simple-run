@@ -43,7 +43,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
       </style>
 
-      <main className="h-full"><Component {...pageProps} /></main>
+      <main className="h-full w-full max-w-sm md:max-w-5xl"><Component {...pageProps} /></main>
     </StoreProvider>
   )
 }

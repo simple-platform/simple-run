@@ -42,7 +42,7 @@ export function SimpleRunCode() {
   `
 
   return (
-    <section className="max-w-sm md:max-w-4xl w-full mt-3 md:mt-6">
+    <section className="w-full mt-3 md:mt-6">
       <div className="p-3 md:p-6 space-y-3 md:space-y-6 shadow rounded-lg bg-slate-200 dark:bg-slate-800">
         <div className="test-sm mb-3 md:mb-6">
           <div className="text-sm">
