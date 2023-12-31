@@ -7,6 +7,7 @@ import 'inter-ui/inter-latin.css'
 
 import '@simple-run/ui/global.css'
 import './local.css'
+import Titlebar from './titlebar'
 
 const outfit = Outfit({
   display: 'swap',
@@ -29,7 +30,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={outfit.variable}>
-        {children}
+        <Titlebar />
+        <main>{children}</main>
       </body>
     </html>
   )
