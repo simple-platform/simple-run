@@ -1,12 +1,16 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use std::error::Error;
+mod simple_run;
+
+use std::{error::Error, sync::Arc};
 
 use tauri::{
     AppHandle, CustomMenuItem, GlobalWindowEvent, Manager, SystemTray, SystemTrayEvent,
     SystemTrayMenu,
 };
+
+const ERR_INVALID_CASE: &str = "This case is not possible!";
 
 fn system_tray_event_handler(app: &AppHandle, event: SystemTrayEvent) {
     match event {
@@ -14,11 +18,13 @@ fn system_tray_event_handler(app: &AppHandle, event: SystemTrayEvent) {
             "dashboard" => {
                 let window = app.get_window("main").unwrap();
                 match window.is_visible() {
-                    Ok(true) => {}
+                    Ok(true) => {
+                        let _ = window.set_focus();
+                    }
                     Ok(false) => {
                         let _ = window.show();
                     }
-                    Err(_) => unimplemented!("This case is not possible!"),
+                    Err(_) => unimplemented!("{}", ERR_INVALID_CASE),
                 }
             }
             "quit" => app.exit(0),
@@ -39,10 +45,14 @@ fn window_event_handler(e: GlobalWindowEvent) {
 }
 
 fn global_event_handlers(app: &mut tauri::App) -> Result<(), Box<dyn Error>> {
-    let handle = app.handle();
+    let handle = Arc::new(app.handle());
+    let window = Arc::new(app.get_window("main").unwrap());
 
     tauri_plugin_deep_link::register("simplerun", move |request| {
-        handle.emit_all("run-requested", request).unwrap();
+        let app_handle = handle.clone();
+        let main_window = window.clone();
+
+        simple_run::handle_run_request(app_handle, main_window, request);
     })
     .unwrap();
 
