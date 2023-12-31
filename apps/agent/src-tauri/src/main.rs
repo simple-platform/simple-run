@@ -67,6 +67,7 @@ fn main() {
         .system_tray(system_tray)
         .on_system_tray_event(system_tray_event_handler)
         .on_window_event(window_event_handler)
+        .plugin(tauri_plugin_store::Builder::default().build())
         .run(tauri::generate_context!())
-        .expect("Error while running Simple Run.");
+        .expect("Error while running Simple Run");
 }
