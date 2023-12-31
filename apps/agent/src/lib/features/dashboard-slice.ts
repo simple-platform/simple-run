@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { md5 } from 'hash-wasm'
 import { Store } from 'tauri-plugin-store-api'
 
-interface Project {
+export interface Application {
   fileToRun: string
   id: string
   org: string
@@ -10,15 +10,15 @@ interface Project {
 }
 
 const stores = {
-  projects: new Store('projects.dat'),
+  applications: new Store('applications.dat'),
 }
 
 const initialState = {
-  projects: <Project[]>[],
-  projectsLoaded: false,
+  applications: <Application[]>[],
+  applicationsLoaded: false,
 }
 
-async function buildProject(code: string): Promise<Project | undefined> {
+async function buildApplication(code: string): Promise<Application | undefined> {
   const provider = 'https://github.com'
 
   let org = ''
@@ -53,38 +53,38 @@ async function buildProject(code: string): Promise<Project | undefined> {
   }
 }
 
-export const loadProjects = createAsyncThunk('dashboard/loadProjects', async () => {
-  return (await stores.projects.entries()) as [key: string, value: Omit<Project, 'id'>][]
+export const loadApplications = createAsyncThunk('dashboard/loadApplications', async () => {
+  return (await stores.applications.entries()) as [key: string, value: Omit<Application, 'id'>][]
 })
 
-export const addProject = createAsyncThunk('dashboard/addProject', async (request: string) => {
+export const addApplication = createAsyncThunk('dashboard/addApplication', async (request: string) => {
   const code = request.replace('simplerun:gh?', '').trim()
   if (code === '')
     return
 
-  const project = await buildProject(code)
-  if (!project)
+  const application = await buildApplication(code)
+  if (!application)
     return
 
-  const { id, ...value } = project
-  await stores.projects.set(id, value)
-  await stores.projects.save()
+  const { id, ...value } = application
+  await stores.applications.set(id, value)
+  await stores.applications.save()
 
-  return project
+  return application
 })
 
 export const dashboard = createSlice({
   extraReducers(builder) {
     builder
-      .addCase(loadProjects.fulfilled, (state, action) => {
-        state.projects = action.payload.map(([id, project]) => ({ id, ...project }))
-        state.projectsLoaded = true
+      .addCase(loadApplications.fulfilled, (state, action) => {
+        state.applications = action.payload.map(([id, application]) => ({ id, ...application }))
+        state.applicationsLoaded = true
       })
-      .addCase(addProject.fulfilled, (state, action) => {
+      .addCase(addApplication.fulfilled, (state, action) => {
         if (!action.payload)
           return
 
-        state.projects.push(action.payload)
+        state.applications.push(action.payload)
       })
   },
 

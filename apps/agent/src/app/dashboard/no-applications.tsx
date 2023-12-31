@@ -1,10 +1,10 @@
-import { CubeIcon } from '@heroicons/react/24/outline'
+import { Square3Stack3DIcon } from '@heroicons/react/24/outline'
 
-export default function NoProjects() {
+export default function NoApplications() {
   return (
     <section className="h-full flex flex-col items-center justify-center space-y-3">
-      <CubeIcon className="w-24 h-24" />
-      <h1 className="text-2xl font-semibold">Your projects will show up here</h1>
+      <Square3Stack3DIcon className="w-24 h-24" />
+      <h1 className="text-2xl font-semibold">Your applications will show up here</h1>
       <div>
         Get started by clicking
         {' '}

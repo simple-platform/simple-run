@@ -6,31 +6,31 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import type { AppDispatch, RootState } from '../../lib/store'
 
-import { addProject, loadProjects } from '../../lib/features/dashboard-slice'
-import NoProjects from './no-projects'
-import ProjectList from './project-list'
+import { addApplication, loadApplications } from '../../lib/features/dashboard-slice'
+import ApplicationList from './application-list'
+import NoApplications from './no-applications'
 
 export default function Home(): JSX.Element {
   const dispatch = useDispatch<AppDispatch>()
 
-  const projects = useSelector((state: RootState) => state.dashboard.projects)
-  const projectsLoaded = useSelector((state: RootState) => state.dashboard.projectsLoaded)
+  const applications = useSelector((state: RootState) => state.dashboard.applications)
+  const applicationsLoaded = useSelector((state: RootState) => state.dashboard.applicationsLoaded)
 
   useEffect(() => {
     listen('run-requested', (e) => {
-      dispatch(addProject(e.payload as string))
+      dispatch(addApplication(e.payload as string))
     })
 
-    dispatch(loadProjects())
+    dispatch(loadApplications())
   }, [dispatch])
 
   return (
     <main className="h-full">
       {
-        projects.length > 0
-          ? <ProjectList />
-          : (projectsLoaded && projects.length === 0)
-              ? <NoProjects />
+        applications.length > 0
+          ? <ApplicationList />
+          : (applicationsLoaded && applications.length === 0)
+              ? <NoApplications />
               : null
       }
     </main>
