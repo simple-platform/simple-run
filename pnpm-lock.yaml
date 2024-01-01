@@ -62,6 +62,8 @@ importers:
 
   apps/actions: {}
 
+  apps/client: {}
+
   apps/web:
     dependencies:
       '@heroicons/react':

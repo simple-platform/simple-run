@@ -1,0 +1,10 @@
+{
+  "name": "@simple-run/client",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "mix phx.server",
+    "build": "mix compile --force",
+    "test": "MIX_ENV=test mix coveralls.html"
+  }
+}
