@@ -4,7 +4,7 @@ import Config
 # you can enable the server option below.
 config :actions, Actions.Endpoint,
   http: [ip: {127, 0, 0, 1}, port: 4002],
-  secret_key_base: "IOuzw29dStYzsq4YnrS+NfcBNCR9TICD9i4XMtVyR84aye15paOGTcZJGjSvXAO1",
+  secret_key_base: "KQc8/FFHjT07NPfs1gvylW0kMBLHXtyHsU8mquvNE9Y+TdywKbv5WzMzyRAppBXL",
   server: false
 
 config :actions, :http_client, Actions.HttpClientMock

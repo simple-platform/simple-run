@@ -17,12 +17,13 @@ config :actions,
 # Configures the endpoint
 config :actions, Actions.Endpoint,
   url: [host: "localhost"],
+  adapter: Phoenix.Endpoint.Cowboy2Adapter,
   render_errors: [
     formats: [json: Actions.ErrorJSON],
     layout: false
   ],
   pubsub_server: Actions.PubSub,
-  live_view: [signing_salt: "aBaJbjtV"]
+  live_view: [signing_salt: "1yUQh1yW"]
 
 # Sample configuration:
 #
@@ -31,6 +32,8 @@ config :actions, Actions.Endpoint,
 #       format: "$date $time [$level] $metadata$message\n",
 #       metadata: [:user_id]
 #
+import Config
+
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
@@ -39,7 +42,7 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
-# Enable dev routes for dashboard and mailbox
+# Enable dev routes for dashboard
 config :actions, dev_routes: true
 
 config :actions, cors_origin: [web_endpoint]

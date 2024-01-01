@@ -13,7 +13,7 @@ config :actions, Actions.Endpoint,
   check_origin: false,
   code_reloader: true,
   debug_errors: true,
-  secret_key_base: "4O92nzbrmSzspz0032Zh26ie5ON35lqR1vdvS0D8zYJ3nYvkpAiqkJu7mrCQWB+o",
+  secret_key_base: "TqQgamIoigC5ffJ0xODSIJIBjU7GLZH1rxrrrpQ90AQoViMXv0RtfxhZJsxHGM2W",
   watchers: []
 
 # ## SSL Support
