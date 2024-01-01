@@ -17,7 +17,7 @@ defmodule Client.Router do
   scope "/", Client do
     pipe_through :browser
 
-    get "/", PageController, :home
+    get "/", DashboardController, :home
   end
 
   # Other scopes may use custom stacks.

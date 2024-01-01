@@ -7,6 +7,7 @@
     "ms-azuretools.vscode-docker",
     "dbaeumer.vscode-eslint",
     "rust-lang.rust-analyzer",
-    "swellaby.rust-pack"
+    "swellaby.rust-pack",
+    "phoenixframework.phoenix"
   ]
 }
