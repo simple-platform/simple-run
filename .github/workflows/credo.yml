@@ -37,8 +37,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        otp: ['25']
-        elixir: [1.14.2]
+        otp: [26.2.1]
+        elixir: [1.15.7]
     steps:
       - uses: actions/checkout@v4
       - uses: erlef/setup-beam@a1c4bb2505898b603ab8afc063b68fbfa7c8ad55
