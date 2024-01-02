@@ -9,11 +9,12 @@ defmodule Client.Application do
   def start(_type, _args) do
     children = [
       Client.Telemetry,
+
       # Start a worker by calling: Client.Worker.start_link(arg)
       # {Client.Worker, arg},
+
       # Start to serve requests, typically the last entry
       Client.Endpoint,
-
       {Phoenix.PubSub, name: Client.PubSub}
     ]
 
