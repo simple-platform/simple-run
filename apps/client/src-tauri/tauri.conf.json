@@ -15,7 +15,10 @@
         "scope": [
           {
             "args": [
-              "start"
+              "--client",
+              {
+                "validator": "\\S+"
+              }
             ],
             "name": "../burrito_out/desktop",
             "sidecar": true
