@@ -41,7 +41,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "you.app.simple-run",
+      "identifier": "dev.simple.run",
       "longDescription": "",
       "macOS": {
         "entitlements": null,

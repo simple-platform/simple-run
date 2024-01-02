@@ -5,7 +5,6 @@
   "scripts": {
     "dev": "rm -rf burrito_out && rm -rf ../../_build/dev/rel/desktop && mix ex_tauri dev",
     "build": "mix compile --force",
-    "test": "MIX_ENV=test mix coveralls.html",
-    "prepare": "mix ex_tauri.install"
+    "test": "MIX_ENV=test mix coveralls.html"
   }
 }
