@@ -14,7 +14,7 @@
 
 :root,
 body {
-  @apply h-full;
+  @apply h-full select-none cursor-default;
 }
 
 * {

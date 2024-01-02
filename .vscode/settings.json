@@ -71,6 +71,15 @@
     "toml"
   ],
 
+  "elixirLS.suggestSpecs": false,
+  "elixirLS.dialyzerEnabled": true,
+  "elixirLS.signatureAfterComplete": false,
+  "elixirLS.fetchDeps": false,
+
+  "files.associations": {
+    "*.heex": "phoenix-heex"
+  },
+
   "[css]": {
     "editor.formatOnSave": true
   },
@@ -78,7 +87,7 @@
   "[elixir]": {
     "editor.insertSpaces": true,
     "editor.tabSize": 2,
-    "editor.wordBasedSuggestions": "matchingDocuments",
+    "editor.wordBasedSuggestions": false,
     "editor.formatOnType": true,
     "editor.trimAutoWhitespace": false,
     "files.trimTrailingWhitespace": true,

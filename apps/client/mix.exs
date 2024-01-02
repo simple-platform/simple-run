@@ -60,7 +60,8 @@ defmodule Client.MixProject do
       {:ex_tauri, git: "https://github.com/filipecabaco/ex_tauri.git"},
       {:mox, "~> 1.0", only: :test},
       {:excoveralls, "~> 0.18", only: :test},
-      {:credo, "~> 1.7", only: [:dev, :test], runtime: false}
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
+      {:ex_heroicons, "~> 2.0.0"}
     ]
   end
 
