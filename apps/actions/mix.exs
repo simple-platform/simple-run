@@ -9,7 +9,7 @@ defmodule Actions.MixProject do
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
       lockfile: "../../mix.lock",
-      elixir: "~> 1.16",
+      elixir: "~> 1.15.7",
       test_coverage: [tool: ExCoveralls],
       preferred_cli_env: [
         coveralls: :test,
@@ -52,7 +52,7 @@ defmodule Actions.MixProject do
       {:cors_plug, "~> 3.0"},
       {:yaml_elixir, "~> 2.8"},
       {:absinthe_client, "~> 0.1.0"},
-      {:req, git: "https://github.com/wojtekmach/req.git", override: true},
+      {:req, "~> 0.3"},
       {:mox, "~> 1.0", only: :test},
       {:excoveralls, "~> 0.18", only: :test},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false}

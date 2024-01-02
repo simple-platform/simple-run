@@ -89,6 +89,12 @@ config :actions, :button_image_url, "#{web_endpoint}/run/simple-run-locally@2x.p
 
 config :actions, :github_token, System.get_env("SIMPLE_RUN_GH_TOKEN")
 
+config :ex_tauri,
+  version: "1.5.4",
+  app_name: "Simple Run",
+  host: "localhost",
+  port: 5000
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"

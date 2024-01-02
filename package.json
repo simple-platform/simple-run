@@ -17,7 +17,7 @@
     "type-check": "turbo type-check",
     "clean": "turbo clean",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "prepare": "husky install",
+    "prepare": "husky install && mix deps.compile && MIX_ENV=test mix deps.compile",
     "dashboard": "open http://localhost:4000/dev/dashboard"
   },
   "devDependencies": {

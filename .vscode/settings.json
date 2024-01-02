@@ -95,6 +95,7 @@
 
   // Spell check word safelist
   "cSpell.words": [
+    "aarch",
     "antfu",
     "appicon",
     "assetserver",
@@ -115,6 +116,7 @@
     "esbuild",
     "excoveralls",
     "Fira",
+    "floki",
     "Frameless",
     "Fullscreen",
     "GHAS",

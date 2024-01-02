@@ -4,16 +4,24 @@ defmodule Client.MixProject do
   def project do
     [
       app: :client,
-      version: "0.1.0",
+      version: "0.0.0",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
       lockfile: "../../mix.lock",
-      elixir: "~> 1.14",
+      elixir: "~> 1.15.7",
+      test_coverage: [tool: ExCoveralls],
+      preferred_cli_env: [
+        coveralls: :test,
+        "coveralls.detail": :test,
+        "coveralls.post": :test,
+        "coveralls.html": :test
+      ],
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+      releases: releases()
     ]
   end
 
@@ -23,7 +31,7 @@ defmodule Client.MixProject do
   def application do
     [
       mod: {Client.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :inets, :os_mon]
     ]
   end
 
@@ -48,7 +56,10 @@ defmodule Client.MixProject do
       {:telemetry_poller, "~> 1.0"},
       {:gettext, "~> 0.20"},
       {:jason, "~> 1.2"},
-      {:plug_cowboy, "~> 2.5"}
+      {:plug_cowboy, "~> 2.5"},
+      {:ex_tauri, git: "https://github.com/filipecabaco/ex_tauri.git"},
+      {:mox, "~> 1.0", only: :test},
+      {:excoveralls, "~> 0.18", only: :test}
     ]
   end
 
@@ -61,6 +72,19 @@ defmodule Client.MixProject do
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
       "assets.build": ["tailwind default", "esbuild default"],
       "assets.deploy": ["tailwind default --minify", "esbuild default --minify", "phx.digest"]
+    ]
+  end
+
+  defp releases do
+    [
+      desktop: [
+        steps: [:assemble, &Burrito.wrap/1],
+        burrito: [
+          targets: [
+            "aarch64-apple-darwin": [os: :darwin, cpu: :aarch64]
+          ]
+        ]
+      ]
     ]
   end
 end
