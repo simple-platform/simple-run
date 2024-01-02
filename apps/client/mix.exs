@@ -82,7 +82,7 @@ defmodule Client.MixProject do
         steps: [:assemble, &Burrito.wrap/1],
         burrito: [
           targets: [
-            "aarch64-apple-darwin": [os: :darwin, cpu: :aarch64]
+            "x86_64-apple-darwin": [os: :darwin, cpu: :x86_64]
           ]
         ]
       ]

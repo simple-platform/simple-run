@@ -64,7 +64,5 @@ erl_crash.dump
 .code-server
 
 bin
-apps/agent-ui/wailsjs
-apps/agent/frontend
-apps/agent/vendor
-!apps/agent/build
+
+burrito_out

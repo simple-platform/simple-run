@@ -10,7 +10,7 @@ fn main() {
             Ok(())
         })
         .run(tauri::generate_context!())
-        .expect("error while running tauri application");
+        .expect("Error while running Simple Run");
 }
 fn start_server() {
     tauri::async_runtime::spawn(async move {

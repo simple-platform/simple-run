@@ -1,7 +1,7 @@
 {
   "build": {
     "beforeBuildCommand": "",
-    "beforeDevCommand": "",
+    "beforeDevCommand": "mix phx.server",
     "devPath": "http://localhost:5000",
     "distDir": "http://localhost:5000"
   },
@@ -41,7 +41,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "you.app.simple-run",
+      "identifier": "dev.simple.run",
       "longDescription": "",
       "macOS": {
         "entitlements": null,
