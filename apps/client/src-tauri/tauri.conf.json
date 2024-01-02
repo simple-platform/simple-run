@@ -7,7 +7,7 @@
   },
   "package": {
     "productName": "Simple Run",
-    "version": "0.1.0"
+    "version": "0.0.0"
   },
   "tauri": {
     "allowlist": {
@@ -51,7 +51,7 @@
         "signingIdentity": null
       },
       "resources": [],
-      "shortDescription": "",
+      "shortDescription": "Run containerized applications easily on your local machine.",
       "targets": "all",
       "windows": {
         "certificateThumbprint": null,

@@ -3,8 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "mix phx.server",
+    "dev": "mix ex_tauri dev",
     "build": "mix compile --force",
-    "test": "MIX_ENV=test mix coveralls.html"
+    "test": "MIX_ENV=test mix coveralls.html",
+    "prepare": "mix ex_tauri.install"
   }
 }
