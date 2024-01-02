@@ -88,9 +88,6 @@ defmodule Client do
       import Client.CoreComponents
       import Client.Gettext
 
-      # Petal Components
-      use PetalComponents
-
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS
 

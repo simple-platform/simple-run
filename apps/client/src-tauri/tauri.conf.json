@@ -1,4 +1,5 @@
 {
+  "$schema": "../node_modules/@tauri-apps/cli/schema.json",
   "build": {
     "beforeBuildCommand": "",
     "beforeDevCommand": "mix phx.server",
@@ -11,6 +12,7 @@
   },
   "tauri": {
     "allowlist": {
+      "all": false,
       "shell": {
         "scope": [
           {
@@ -22,7 +24,15 @@
           }
         ],
         "sidecar": true
+      },
+      "window": {
+        "all": false,
+        "startDragging": true
       }
+    },
+    "systemTray": {
+      "iconPath": "icons/icon.png",
+      "iconAsTemplate": true
     },
     "bundle": {
       "active": true,
@@ -68,10 +78,14 @@
     "windows": [
       {
         "title": "Simple Run",
-        "width": 800,
+        "titleBarStyle": "Overlay",
+        "resizable": true,
+        "hiddenTitle": true,
         "fullscreen": false,
-        "height": 600,
-        "resizable": true
+        "width": 1280,
+        "height": 768,
+        "minWidth": 1280,
+        "minHeight": 768
       }
     ]
   }

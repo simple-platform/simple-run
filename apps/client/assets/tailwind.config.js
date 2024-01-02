@@ -13,8 +13,18 @@ module.exports = {
     './js/**/*.js',
     '../lib/client.ex',
     '../lib/client/**/*.*ex',
-    '../../../deps/petal_components/**/*.*ex',
   ],
+
+  daisyui: {
+    base: true, // applies background color and foreground color for root element by default
+    darkTheme: 'night', // name of one of the included themes for dark mode
+    logs: true, // Shows info about daisyUI version and used config in the console when building your CSS
+    prefix: '', // prefix for daisyUI classnames (components, modifiers and responsive class names. Not colors)
+    styled: true, // include daisyUI colors and design decisions for all components
+    themeRoot: ':root', // The element that receives theme color CSS variables
+    themes: ['bumblebee', 'night'], // false: only light + dark | true: all themes | array: specific themes like this ["light", "dark", "cupcake"]
+    utils: true, // adds responsive and modifier utility classes
+  },
 
   darkMode: 'media',
 
@@ -23,6 +33,7 @@ module.exports = {
   plugins: [
     require('@tailwindcss/forms'),
     require('@tailwindcss/typography'),
+    require('daisyui'),
 
     // Allows prefixing tailwind classes with LiveView classes to add rules
     // only when LiveView classes are applied, for example:
@@ -37,16 +48,7 @@ module.exports = {
 
   theme: {
     extend: {
-      colors: {
-        danger: colors.red,
-        gray: colors.slate,
-        info: colors.sky,
-        primary: colors.indigo,
-        secondary: colors.pink,
-        success: colors.green,
-        warning: colors.yellow,
-      },
-
+      colors,
       extend: {
         fontFamily: {
           sans: ['InterVariable', ...defaultTheme.fontFamily.sans],
