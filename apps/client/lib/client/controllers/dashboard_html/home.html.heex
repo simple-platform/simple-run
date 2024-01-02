@@ -1,3 +1,20 @@
-<section>
+<section class="h-full">
   <h1>Simple Run v<%= Application.spec(:phoenix, :vsn) %></h1>
+  <div>
+    <.button color="primary" label="Primary" />
+    <.button color="secondary" label="Secondary" />
+    <.button color="white" label="White" />
+    <.button color="pure_white" label="Pure White" />
+    <.button color="info" label="Info" />
+    <.button color="success" label="Success" />
+    <.button color="warning" label="Warning" />
+    <.button color="danger" label="Danger" />
+    <.button color="gray" label="Gray" />
+    <.button color="light" label="Light" />
+  </div>
+  <div>
+    <.icon name={:home} class="h-10 text-gray-700 dark:text-gray-300" />
+    <.icon name={:academic_cap} class="h-10 text-pink-700 dark:text-pink-300" />
+    <.icon name={:adjustments_horizontal} class="h-10 text-green-700 dark:text-green-300" />
+  </div>
 </section>

@@ -2412,11 +2412,9 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d66dc143e6b11c1eddc06d5c423cfc97062865baf299914ab64caa38182078fe"
 
 [[package]]
-name = "simplerun"
-version = "0.0.0"
+name = "simple_run"
+version = "0.1.0"
 dependencies = [
- "base64 0.21.5",
- "rand 0.8.5",
  "serde",
  "serde_json",
  "tauri",

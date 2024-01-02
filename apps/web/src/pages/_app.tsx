@@ -31,12 +31,12 @@ export default function App({ Component, pageProps }: AppProps) {
       <style global jsx>
         {`
         h1, h2, h3, h4, h5, h6 {
-          font-family: ${outfit.style.fontFamily};
+          font-family: ${outfit.style.fontFamily}, InterVariable, ui-sans-serif, system-ui;
         }
 
         @supports (not (font-variation-settings: normal)) {
           h1, h2, h3, h4, h5, h6 {
-            font-family: Inter, ui-sans-serif, system-ui;
+            font-family: ${outfit.style.fontFamily}, Inter, ui-sans-serif, system-ui;
           }
         }
       `}

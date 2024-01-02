@@ -96,6 +96,7 @@
   // Spell check word safelist
   "cSpell.words": [
     "aarch",
+    "alpinejs",
     "antfu",
     "appicon",
     "assetserver",

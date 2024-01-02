@@ -17,6 +17,9 @@
 //     import "some-package"
 //
 
+import '../vendor/alpinejs/collapse@3.13.3.min.js'
+import '../vendor/alpinejs/alpinejs@3.13.3.min.js'
+
 // Establish Phoenix Socket and LiveView configuration.
 import { Socket } from 'phoenix'
 

@@ -15,10 +15,7 @@
         "scope": [
           {
             "args": [
-              "--client",
-              {
-                "validator": "\\S+"
-              }
+              "start"
             ],
             "name": "../burrito_out/desktop",
             "sidecar": true
@@ -44,7 +41,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "dev.simple.run",
+      "identifier": "you.app.simple-run",
       "longDescription": "",
       "macOS": {
         "entitlements": null,
