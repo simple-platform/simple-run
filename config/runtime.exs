@@ -101,7 +101,7 @@ if config_env() == :prod do
         """
 
     config :client, Client.Endpoint,
-      http: [ip: {127, 0, 0, 1}, port: 5000],
+      http: [ip: {127, 0, 0, 1}, port: 3156],
       secret_key_base: secret_key_base
 
     # ## Using releases

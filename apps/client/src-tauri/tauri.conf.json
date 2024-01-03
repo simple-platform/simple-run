@@ -3,8 +3,8 @@
   "build": {
     "beforeBuildCommand": "",
     "beforeDevCommand": "mix phx.server",
-    "devPath": "http://localhost:5000",
-    "distDir": "http://localhost:5000"
+    "devPath": "http://localhost:3156",
+    "distDir": "http://localhost:3156"
   },
   "package": {
     "productName": "Simple Run",

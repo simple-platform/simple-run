@@ -1,9 +1,11 @@
 {
   "cSpell.words": [
     "Fullscreen",
+    "healthz",
     "icns",
     "Maximizable",
     "Minimizable",
+    "reqwest",
     "simplerun",
     "tauri",
     "unmaximize",

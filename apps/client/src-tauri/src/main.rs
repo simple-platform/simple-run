@@ -1,13 +1,16 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+use base64::Engine;
+use rand::{distributions::Standard, Rng};
+
 use tauri::{
     api::process::{Command, CommandEvent},
     AppHandle, CustomMenuItem, GlobalWindowEvent, Manager, SystemTray, SystemTrayEvent,
     SystemTrayMenu,
 };
 
-const ERR_INVALID_CASE: &str = "This case is not possible!";
+const SERVER_ENDPOINT: &str = "http://127.0.0.1:3156";
 
 fn main() {
     tauri_plugin_deep_link::prepare("dev.simple.run");
@@ -24,6 +27,7 @@ fn main() {
 
     tauri::Builder::default()
         .setup(|_app| {
+            setup_deep_linking();
             start_server();
             check_server_started();
             Ok(())
@@ -38,7 +42,8 @@ fn main() {
 fn start_server() {
     tauri::async_runtime::spawn(async move {
         let (mut rx, mut _child) = Command::new_sidecar("desktop")
-            .expect("failed to setup `desktop` sidecar")
+            .expect("Failed to setup `desktop` sidecar")
+            .args(["--client", &generate_secret_key_base()])
             .spawn()
             .expect("Failed to spawn packaged node");
 
@@ -50,24 +55,44 @@ fn start_server() {
     });
 }
 
-fn check_server_started() {
-    let sleep_interval = std::time::Duration::from_millis(200);
-    let host = "localhost".to_string();
-    let port = "5000".to_string();
-    let addr = format!("{}:{}", host, port);
+fn generate_secret_key_base() -> String {
+    let random_bytes: Vec<u8> = rand::thread_rng().sample_iter(Standard).take(64).collect();
+    base64::engine::general_purpose::STANDARD_NO_PAD.encode(random_bytes)
+}
 
-    println!(
-        "Waiting for your phoenix dev server to start on {}...",
-        addr
-    );
+fn check_server_started() {
+    let sleep_interval = std::time::Duration::from_millis(100);
+    println!("Waiting for the server to start on {}...", SERVER_ENDPOINT);
 
     loop {
-        if std::net::TcpStream::connect(addr.clone()).is_ok() {
-            break;
+        let client = reqwest::blocking::Client::new();
+
+        match client.get(format!("{}/healthz", SERVER_ENDPOINT)).send() {
+            Ok(res) => {
+                if res.status() == 200 {
+                    break;
+                }
+            }
+            Err(_) => {}
         }
 
         std::thread::sleep(sleep_interval);
     }
+}
+
+fn setup_deep_linking() {
+    tauri_plugin_deep_link::register("simplerun", move |request| {
+        let payload = serde_json::json!({
+            "request": &request
+        });
+
+        let client = reqwest::blocking::Client::new();
+        let _ = client
+            .post(format!("{}/api/application", SERVER_ENDPOINT))
+            .json(&payload)
+            .send();
+    })
+    .unwrap();
 }
 
 fn system_tray_event_handler(app: &AppHandle, event: SystemTrayEvent) {
@@ -82,7 +107,7 @@ fn system_tray_event_handler(app: &AppHandle, event: SystemTrayEvent) {
                     Ok(false) => {
                         let _ = window.show();
                     }
-                    Err(_) => unimplemented!("{}", ERR_INVALID_CASE),
+                    Err(_) => unimplemented!("This case is not possible!"),
                 }
             }
             "quit" => app.exit(0),

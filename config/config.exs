@@ -93,7 +93,7 @@ config :ex_tauri,
   version: "1.5.4",
   app_name: "Simple Run",
   host: "localhost",
-  port: 5000
+  port: 3156
 
 config :ex_heroicons, type: "outline"
 

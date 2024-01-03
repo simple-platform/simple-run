@@ -17,6 +17,8 @@ defmodule Client.Router do
   scope "/", Client do
     pipe_through :browser
 
+    get "/healthz", HealthCheckController, :get_status
+
     live "/", DashboardLive
   end
 
