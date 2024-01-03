@@ -8,6 +8,7 @@
     "dbaeumer.vscode-eslint",
     "rust-lang.rust-analyzer",
     "swellaby.rust-pack",
-    "phoenixframework.phoenix"
+    "phoenixframework.phoenix",
+    "fallenmax.mithril-emmet"
   ]
 }

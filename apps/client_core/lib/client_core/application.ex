@@ -7,9 +7,19 @@ defmodule ClientCore.Application do
 
   @impl true
   def start(_type, _args) do
+    {:ok, db} =
+      CubDB.start_link(
+        name: :db,
+        auto_compact: true,
+        auto_file_sync: true,
+        data_dir: System.user_home!() |> Path.join(".simple/run/data")
+      )
+
     children = [
       # Starts a worker by calling: ClientCore.Worker.start_link(arg)
       # {ClientCore.Worker, arg}
+
+      {ClientCore.Managers.Application, db}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

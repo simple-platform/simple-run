@@ -1,18 +1,5 @@
 defmodule ClientCore do
   @moduledoc """
-  Documentation for `ClientCore`.
+  Documentation for the ClientCore module.
   """
-
-  @doc """
-  Hello world.
-
-  ## Examples
-
-      iex> ClientCore.hello()
-      :world
-
-  """
-  def hello do
-    :world
-  end
 end
