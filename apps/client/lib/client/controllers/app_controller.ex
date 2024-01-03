@@ -1,13 +1,13 @@
 defmodule Client.AppController do
   use Client, :controller
 
-  def register_app(conn, %{"request" => request}) do
-    IO.puts("!!!")
-    IO.puts(request)
-    IO.puts("!!!")
+  import Client.Response
+  alias ClientCore.Api.Application
 
-    conn
-    |> put_resp_content_type("application/json")
-    |> send_resp(200, Jason.encode!(%{ok: true}))
+  def register_app(conn, %{"request" => request}) do
+    case Application.register(request) do
+      :ok -> {:ok, true} |> to_json(201, conn)
+      {:error, reason} -> {:error, reason} |> to_json(422, conn)
+    end
   end
 end

@@ -7,7 +7,7 @@ import { InvalidRequest } from './invalid-request'
 import Loading from './loading'
 
 function closeTab() {
-  window.close()
+  window.setTimeout(window.close, 3000)
   return null
 }
 

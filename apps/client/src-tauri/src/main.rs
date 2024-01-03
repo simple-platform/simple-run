@@ -27,9 +27,9 @@ fn main() {
 
     tauri::Builder::default()
         .setup(|_app| {
-            setup_deep_linking();
             start_server();
             check_server_started();
+            setup_deep_linking();
             Ok(())
         })
         .system_tray(system_tray)
@@ -82,6 +82,8 @@ fn check_server_started() {
 
 fn setup_deep_linking() {
     tauri_plugin_deep_link::register("simplerun", move |request| {
+        check_server_started();
+
         let payload = serde_json::json!({
             "request": &request
         });
