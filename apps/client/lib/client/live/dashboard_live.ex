@@ -22,13 +22,31 @@ defmodule Client.DashboardLive do
 
   def render(assigns) do
     ~H"""
-    <section class="h-full w-full flex justify-center items-center">
+    <section class="h-full w-full">
       <%= if @no_apps do %>
         <.no_apps />
       <% else %>
-        <div :for={{id, app} <- @streams.apps} id={id}>
-          <%= inspect(app) %>
-        </div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th class="w-full">Name</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr :for={{id, app} <- @streams.apps} id={id} class="hover">
+              <td>
+                <div class="font-medium"><%= app.name %></div>
+                <div class="text-xs italic">
+                  <a href={app.url} target="_blank" class="link link-hover"><%= app.url %></a>
+                </div>
+              </td>
+              <td><%= app.state %></td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
       <% end %>
     </section>
     """
