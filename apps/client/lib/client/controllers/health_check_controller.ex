@@ -1,9 +1,8 @@
 defmodule Client.HealthCheckController do
   use Client, :controller
+  import Client.Response
 
   def get_status(conn, _params) do
-    conn
-    |> put_resp_content_type("application/json")
-    |> send_resp(200, Jason.encode!(%{ok: true}))
+    {:ok, true} |> to_json(200, conn)
   end
 end

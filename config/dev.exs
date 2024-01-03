@@ -48,7 +48,9 @@ config :client, Client.Endpoint,
     patterns: [
       ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
-      ~r"lib/client/(controllers|live|components)/.*(ex|heex)$"
+      ~r"lib/client/(controllers|live|components)/.*(ex|heex)$",
+      ~r"../client_core/lib/client_core/.*(ex)$",
+      ~r"../client_core/lib/client_core/(api|managers)/.*(ex)$"
     ]
   ]
 

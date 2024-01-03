@@ -7,7 +7,7 @@ defmodule SimpleRun.MixProject do
       version: "0.0.0",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      apps: [:actions, :client]
+      apps: [:actions, :client, :client_core]
     ]
   end
 
