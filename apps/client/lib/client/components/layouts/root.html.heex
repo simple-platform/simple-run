@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" class="[scrollbar-gutter:stable]">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="csrf-token" content={get_csrf_token()} />
+    <.live_title>
+      <%= assigns[:page_title] || "Simple Run" %>
+    </.live_title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link phx-track-static rel="stylesheet" href={~p"/fonts/inter/inter.css"} />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
+    <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
+    </script>
+  </head>
+  <body>
+    <section
+      class="text-xs tracking-wide flex items-center justify-center h-7 fixed w-full font-medium"
+      data-tauri-drag-region
+    >
+      Simple Run
+    </section>
+    <%= @inner_content %>
+  </body>
+</html>

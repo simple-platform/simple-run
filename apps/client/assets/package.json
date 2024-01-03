@@ -1,0 +1,7 @@
+{
+  "name": "@simplerun/client-assets",
+  "private": true,
+  "dependencies": {
+    "daisyui": "^4.4.24"
+  }
+}

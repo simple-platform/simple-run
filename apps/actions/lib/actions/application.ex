@@ -8,15 +8,14 @@ defmodule Actions.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      # Start the Telemetry supervisor
       Actions.Telemetry,
 
-      # Start the Endpoint (http/https)
+      # Start a worker by calling: Actions.Worker.start_link(arg)
+      # {Actions.Worker, arg},
+
+      # Start to serve requests, typically the last entry
       Actions.Endpoint,
       {Phoenix.PubSub, name: Actions.PubSub}
-
-      # Start a worker by calling: Actions.Worker.start_link(arg)
-      # {Actions.Worker, arg}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

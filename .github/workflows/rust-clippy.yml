@@ -11,10 +11,10 @@ name: Rust Code Analyzer
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [main]
   pull_request:
     # The branches below must be a subset of the branches above
-    branches: [ "main" ]
+    branches: [main]
   schedule:
     - cron: '43 18 * * 3'
 
@@ -31,7 +31,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install Rust toolchain
-        uses: actions-rs/toolchain@16499b5e05bf2e26879000db0c1d13f7e13fa3af #@v1
+        uses: actions-rs/toolchain@16499b5e05bf2e26879000db0c1d13f7e13fa3af # @v1
         with:
           profile: minimal
           toolchain: stable
@@ -39,11 +39,11 @@ jobs:
           override: true
 
       - name: Install required cargo
-        run: cd apps/agent/src-tauri && cargo install clippy-sarif sarif-fmt
+        run: cd apps/client/src-tauri && cargo install clippy-sarif sarif-fmt
 
       - name: Run rust-clippy
         run:
-          cd apps/agent/src-tauri && cargo clippy
+          cd apps/client/src-tauri && cargo clippy
           --all-features
           --message-format=json | clippy-sarif | tee rust-clippy-results.sarif | sarif-fmt
         continue-on-error: true
@@ -51,5 +51,5 @@ jobs:
       - name: Upload analysis results to GitHub
         uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: apps/agent/src-tauri/rust-clippy-results.sarif
+          sarif_file: apps/client/src-tauri/rust-clippy-results.sarif
           wait-for-processing: true

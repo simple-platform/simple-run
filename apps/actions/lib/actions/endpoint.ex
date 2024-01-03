@@ -7,7 +7,7 @@ defmodule Actions.Endpoint do
   @session_options [
     store: :cookie,
     key: "actions.run.simple",
-    signing_salt: "eWy0cK0o",
+    signing_salt: "S7ZMQCrw",
     same_site: "Lax"
   ]
 
@@ -20,7 +20,7 @@ defmodule Actions.Endpoint do
   plug Plug.Static,
     at: "/",
     from: :actions,
-    gzip: true,
+    gzip: false,
     only: Actions.static_paths()
 
   # Code reloading can be explicitly enabled under the
