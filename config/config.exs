@@ -20,7 +20,7 @@ config :client, Client.Endpoint,
     formats: [html: Client.ErrorHTML, json: Client.ErrorJSON],
     layout: false
   ],
-  pubsub_server: Client.PubSub,
+  pubsub_server: ClientCore.PubSub,
   live_view: [signing_salt: "MEho23Jd"]
 
 # Configure esbuild (the version is required)

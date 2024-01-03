@@ -159,6 +159,7 @@
     "maxlength",
     "Meslo",
     "minlength",
+    "noreply",
     "novalidate",
     "nowrap",
     "outdir",

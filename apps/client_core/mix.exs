@@ -33,6 +33,7 @@ defmodule ClientCore.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:phoenix, "~> 1.7.10"},
       {:cubdb, "~> 2.0.2"},
       {:elixir_uuid, "~> 1.2.1"},
       {:mox, "~> 1.0", only: :test},

@@ -1,4 +1,4 @@
-defmodule ClientCore.Api.Application do
+defmodule ClientCore.Api.Applications do
   @moduledoc """
   This module provides functions for interacting with the application manager.
   """
@@ -15,13 +15,26 @@ defmodule ClientCore.Api.Application do
     request = request |> String.trim() |> String.downcase()
 
     case process_request(request, "github") do
-      {:ok, app} -> GenServer.call(@name, {:add, app})
-      {:error, reason} -> {:error, reason}
+      {:ok, app} ->
+        GenServer.call(@name, {:add, app})
+        broadcast({:app_registered, app})
+        :ok
+
+      {:error, reason} ->
+        {:error, reason}
     end
   end
 
   def register(_) do
     {:error, "Invalid application registration request"}
+  end
+
+  def subscribe do
+    Phoenix.PubSub.subscribe(ClientCore.PubSub, "applications")
+  end
+
+  defp broadcast(message) do
+    Phoenix.PubSub.broadcast(ClientCore.PubSub, "applications", message)
   end
 
   defp process_request(request, provider) do
