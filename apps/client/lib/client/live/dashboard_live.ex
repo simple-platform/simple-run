@@ -26,7 +26,7 @@ defmodule Client.DashboardLive do
       <%= if @no_apps do %>
         <.no_apps />
       <% else %>
-        <table class="table">
+        <table class="table text-sm">
           <thead>
             <tr>
               <th class="w-full">Name</th>
@@ -39,7 +39,9 @@ defmodule Client.DashboardLive do
               <td>
                 <div class="font-medium"><%= app.name %></div>
                 <div class="text-xs italic">
-                  <a href={app.url} target="_blank" class="link link-hover"><%= app.url %></a>
+                  <a href={app.url} target="_blank" class="link link-hover font-light">
+                    <%= app.url %>
+                  </a>
                 </div>
               </td>
               <td><%= app.state %></td>
