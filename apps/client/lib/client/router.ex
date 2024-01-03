@@ -22,6 +22,12 @@ defmodule Client.Router do
     live "/", DashboardLive
   end
 
+  scope "/api", Client do
+    pipe_through :api
+
+    post "/application", AppController, :register_app
+  end
+
   # Other scopes may use custom stacks.
   # scope "/api", Client do
   #   pipe_through :api

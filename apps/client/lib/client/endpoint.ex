@@ -6,7 +6,7 @@ defmodule Client.Endpoint do
   # Set :encryption_salt if you would also like to encrypt it.
   @session_options [
     store: :cookie,
-    key: "_client_key",
+    key: "client.run.simple",
     signing_salt: "Rkk6o6wj",
     same_site: "Lax"
   ]
