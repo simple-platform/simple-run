@@ -13,7 +13,8 @@
 }
 
 :root,
-body {
+body,
+div[data-phx-main] {
   @apply h-full select-none cursor-default;
 }
 

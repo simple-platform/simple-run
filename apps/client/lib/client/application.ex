@@ -15,7 +15,7 @@ defmodule Client.Application do
 
       # Start to serve requests, typically the last entry
       Client.Endpoint,
-      {Phoenix.PubSub, name: Client.PubSub}
+      {Phoenix.PubSub, name: ClientCore.PubSub}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

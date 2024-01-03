@@ -71,13 +71,24 @@
     "toml"
   ],
 
-  "elixirLS.suggestSpecs": false,
   "elixirLS.dialyzerEnabled": true,
   "elixirLS.signatureAfterComplete": false,
   "elixirLS.fetchDeps": false,
 
   "files.associations": {
     "*.heex": "phoenix-heex"
+  },
+
+  "emmet.includeLanguages": {
+    "elixir": "html",
+    "phoenix-heex": "html"
+  },
+
+  "emmet.triggerExpansionOnTab": true,
+
+  "tailwindCSS.includeLanguages": {
+    "phoenix-heex": "html",
+    "elixir": "html"
   },
 
   "[css]": {
@@ -116,6 +127,7 @@
     "codeql",
     "Colour",
     "commitlint",
+    "cubdb",
     "daisyui",
     "datastructure",
     "defmock",
@@ -147,6 +159,7 @@
     "maxlength",
     "Meslo",
     "minlength",
+    "noreply",
     "novalidate",
     "nowrap",
     "outdir",
