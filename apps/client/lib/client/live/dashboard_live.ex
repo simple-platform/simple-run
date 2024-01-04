@@ -53,7 +53,12 @@ defmodule Client.DashboardLive do
   end
 
   def handle_info({:app_registered, app}, socket) do
-    socket = update(socket, :no_apps, fn -> false end)
-    {:noreply, stream_insert(socket, :apps, app, at: 0)}
+    socket = update(socket, :no_apps, fn _ -> false end)
+    {:noreply, stream_insert(socket, :apps, app)}
+  end
+
+  def handle_info({:app_updated, app}, socket) do
+    # https://github.com/simple-platform/simple-run
+    {:noreply, stream_insert(socket, :apps, app)}
   end
 end

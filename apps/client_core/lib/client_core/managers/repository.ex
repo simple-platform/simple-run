@@ -2,19 +2,25 @@ defmodule ClientCore.Managers.Repository do
   @moduledoc """
   This module manages interactions with repositories.
   """
-  alias ClientCore.Entities.Application
   use GenServer
 
-  @name :repository_manager
+  alias ClientCore.Entities.Application, as: App
 
-  def start_link(_state) do
-    GenServer.start_link(__MODULE__, nil, name: @name)
+  @name :repository_manager
+  @app_manager :application_manager
+
+  def start_link(state) do
+    GenServer.start_link(__MODULE__, state, name: @name)
   end
 
   def init(state) do
     {:ok, state}
   end
 
-  def handle_call({:clone, %Application{url: url} = _app}, _from, state) do
+  def handle_cast({:clone, %App{url: url} = app}, state) do
+    IO.puts("!!! Cloning repo: #{url} ...")
+
+    GenServer.cast(@app_manager, {:update, %App{app | state: :cloning}})
+    {:noreply, state}
   end
 end

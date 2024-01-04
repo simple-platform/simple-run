@@ -26,6 +26,7 @@ defmodule ClientCore.Managers.Application do
   alias ClientCore.Entities.Application, as: App
 
   @name :application_manager
+  @repo_manager :repository_manager
 
   @min_key {:apps, "00000000-0000-0000-0000-000000000000"}
   @max_key {:apps, "ffffffff-ffff-ffff-ffff-ffffffffffff"}
@@ -57,16 +58,27 @@ defmodule ClientCore.Managers.Application do
          {:ok, url} <- get_repo_url(app),
          {:ok, app} <- enrich_app(%App{app | url: url}) do
       CubDB.put(db, {:apps, app.id}, app)
+
       broadcast({:app_registered, app})
+      GenServer.cast(@repo_manager, {:clone, app})
 
       {:reply, :ok, db}
     else
-      {:error, reason} -> {:reply, {:error, reason}}
+      {:error, reason} -> {:reply, {:error, reason}, db}
     end
   end
 
-  def handle_call({:register, _request}, _from, _state) do
-    {:reply, {:error, @err_invalid_reg_req}}
+  def handle_call({:register, _request}, _from, db) do
+    {:reply, {:error, @err_invalid_reg_req}, db}
+  end
+
+  def handle_cast({:update, %App{id: id} = app}, db) do
+    app = %App{app | updated_at: DateTime.utc_now() |> DateTime.to_unix()}
+
+    CubDB.put(db, {:apps, id}, app)
+    broadcast({:app_updated, app})
+
+    {:noreply, db}
   end
 
   defp broadcast(message) do
