@@ -26,28 +26,23 @@ defmodule Client.DashboardLive do
       <%= if @no_apps do %>
         <.no_apps />
       <% else %>
+        <h1 class="text-xl m-4">Applications</h1>
         <table class="table text-sm">
           <thead>
             <tr>
               <th class="w-full">Name</th>
               <th>State</th>
               <th></th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
             <tr :for={{id, app} <- @streams.apps} id={id} class="hover">
-              <td class="flex items-center">
-                <img src={app.image_url} class="h-10 w-10 mr-1.5" />
-                <div>
-                  <div><%= app.name %></div>
-                  <div class="text-xs italic">
-                    <a href={app.url} target="_blank" class="link link-hover font-light">
-                      <%= app.url %>
-                    </a>
-                  </div>
-                </div>
+              <td>
+                <div><%= app.name %></div>
               </td>
               <td><%= app.state %></td>
+              <td></td>
               <td></td>
             </tr>
           </tbody>

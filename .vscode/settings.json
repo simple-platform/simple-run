@@ -72,11 +72,21 @@
   ],
 
   "elixirLS.dialyzerEnabled": true,
-  "elixirLS.signatureAfterComplete": false,
+  "elixirLS.signatureAfterComplete": true,
   "elixirLS.fetchDeps": false,
 
   "files.associations": {
-    "*.heex": "phoenix-heex"
+    "*.heex": "phoenix-heex",
+    "*.css": "tailwindcss"
+  },
+
+  "tailwindCSS.includeLanguages": {
+    "elixir": "html",
+    "phoenix-heex": "html"
+  },
+
+  "editor.quickSuggestions": {
+    "strings": true
   },
 
   "emmet.includeLanguages": {
@@ -85,11 +95,6 @@
   },
 
   "emmet.triggerExpansionOnTab": true,
-
-  "tailwindCSS.includeLanguages": {
-    "phoenix-heex": "html",
-    "elixir": "html"
-  },
 
   "[css]": {
     "editor.formatOnSave": true
