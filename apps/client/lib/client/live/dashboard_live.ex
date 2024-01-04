@@ -30,18 +30,21 @@ defmodule Client.DashboardLive do
           <thead>
             <tr>
               <th class="w-full">Name</th>
-              <th>Status</th>
+              <th>State</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
             <tr :for={{id, app} <- @streams.apps} id={id} class="hover">
-              <td>
-                <div class="font-medium"><%= app.name %></div>
-                <div class="text-xs italic">
-                  <a href={app.url} target="_blank" class="link link-hover font-light">
-                    <%= app.url %>
-                  </a>
+              <td class="flex items-center">
+                <img src={app.image_url} class="h-10 w-10 mr-1.5" />
+                <div>
+                  <div><%= app.name %></div>
+                  <div class="text-xs italic">
+                    <a href={app.url} target="_blank" class="link link-hover font-light">
+                      <%= app.url %>
+                    </a>
+                  </div>
                 </div>
               </td>
               <td><%= app.state %></td>

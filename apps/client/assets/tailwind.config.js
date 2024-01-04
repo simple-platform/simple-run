@@ -22,7 +22,7 @@ module.exports = {
     prefix: '', // prefix for daisyUI classnames (components, modifiers and responsive class names. Not colors)
     styled: true, // include daisyUI colors and design decisions for all components
     themeRoot: ':root', // The element that receives theme color CSS variables
-    themes: ['bumblebee', 'night'], // false: only light + dark | true: all themes | array: specific themes like this ["light", "dark", "cupcake"]
+    themes: ['winter', 'night'], // false: only light + dark | true: all themes | array: specific themes like this ["light", "dark", "cupcake"]
     utils: true, // adds responsive and modifier utility classes
   },
 

@@ -70,11 +70,22 @@ defmodule ClientCore.Api.Applications do
   defp generate_app(%Application{org: org, repo: repo} = app) do
     url = "https://github.com/#{org}/#{repo}"
 
+    client = Tentacat.Client.new()
+
+    repo_details =
+      case Tentacat.Repositories.repo_get(client, org, repo) do
+        {200, res, _} -> res
+        {:ok, _, _} -> %{}
+        _ -> %{}
+      end
+
     %Application{
       app
       | id: UUID.uuid5(:url, url),
         name: "#{org}/#{repo}",
         url: url,
+        clone_url: repo_details |> Map.get("clone_url"),
+        image_url: repo_details |> Map.get("owner", %{}) |> Map.get("avatar_url"),
         created_at: DateTime.utc_now() |> DateTime.to_unix()
     }
   end

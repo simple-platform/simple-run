@@ -9,6 +9,8 @@ defmodule ClientCore.Entities.Application do
     :repo,
     :name,
     :url,
+    :image_url,
+    :clone_url,
     :file_to_run,
     :state,
     :created_at,
