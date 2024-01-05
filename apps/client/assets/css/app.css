@@ -18,10 +18,6 @@ div[data-phx-main] {
   @apply h-full select-none cursor-default;
 }
 
-* {
-  @apply antialiased;
-}
-
 *,
 *::before,
 *::after {

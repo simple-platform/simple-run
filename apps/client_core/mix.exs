@@ -25,7 +25,7 @@ defmodule ClientCore.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger],
+      extra_applications: [:logger, :porcelain],
       mod: {ClientCore.Application, []}
     ]
   end
@@ -34,6 +34,7 @@ defmodule ClientCore.MixProject do
   defp deps do
     [
       {:phoenix, "~> 1.7.10"},
+      {:porcelain, "~> 2.0.3"},
       {:cubdb, "~> 2.0.2"},
       {:elixir_uuid, "~> 1.2.1"},
       {:mox, "~> 1.0", only: :test},
