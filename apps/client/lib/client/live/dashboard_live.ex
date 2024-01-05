@@ -26,25 +26,24 @@ defmodule Client.DashboardLive do
       <%= if @no_apps do %>
         <.no_apps />
       <% else %>
+        <h1 class="text-xl m-4">Applications</h1>
         <table class="table text-sm">
           <thead>
             <tr>
               <th class="w-full">Name</th>
-              <th>Status</th>
+              <th>State</th>
+              <th></th>
               <th></th>
             </tr>
           </thead>
           <tbody>
             <tr :for={{id, app} <- @streams.apps} id={id} class="hover">
               <td>
-                <div class="font-medium"><%= app.name %></div>
-                <div class="text-xs italic">
-                  <a href={app.url} target="_blank" class="link link-hover font-light">
-                    <%= app.url %>
-                  </a>
-                </div>
+                <div><%= app.name %></div>
+                <div class="text-xs text-red-500 italic"><%= app.error %></div>
               </td>
               <td><%= app.state %></td>
+              <td></td>
               <td></td>
             </tr>
           </tbody>
@@ -55,7 +54,11 @@ defmodule Client.DashboardLive do
   end
 
   def handle_info({:app_registered, app}, socket) do
-    socket = update(socket, :no_apps, fn -> false end)
-    {:noreply, stream_insert(socket, :apps, app, at: 0)}
+    socket = update(socket, :no_apps, fn _ -> false end)
+    {:noreply, stream_insert(socket, :apps, app)}
+  end
+
+  def handle_info({:app_updated, app}, socket) do
+    {:noreply, stream_insert(socket, :apps, app)}
   end
 end

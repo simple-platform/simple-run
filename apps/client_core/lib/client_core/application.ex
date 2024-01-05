@@ -19,7 +19,8 @@ defmodule ClientCore.Application do
       # Starts a worker by calling: ClientCore.Worker.start_link(arg)
       # {ClientCore.Worker, arg}
 
-      {ClientCore.Managers.Application, db}
+      {ClientCore.Managers.Application, db},
+      ClientCore.Managers.Repository
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
