@@ -12,6 +12,7 @@ defmodule ClientCore.Api.Applications do
   end
 
   def start(app) do
+    set_state(app, :starting)
     GenServer.cast(@name, {:start, app})
   end
 
