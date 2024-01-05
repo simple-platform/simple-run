@@ -4,10 +4,11 @@ defmodule ClientCore.Managers.Repository do
   """
   use GenServer
 
+  alias ClientCore.Utils.Git
+  alias ClientCore.Api.Applications
   alias ClientCore.Entities.Application, as: App
 
   @name :repository_manager
-  @app_manager :application_manager
 
   def start_link(state) do
     GenServer.start_link(__MODULE__, state, name: @name)
@@ -17,10 +18,14 @@ defmodule ClientCore.Managers.Repository do
     {:ok, state}
   end
 
-  def handle_cast({:clone, %App{url: url} = app}, state) do
-    IO.puts("!!! Cloning repo: #{url} ...")
+  def handle_cast({:clone, %App{url: url, path: path} = app}, state) do
+    {:ok, app} = app |> Applications.set_state(:cloning)
 
-    GenServer.cast(@app_manager, {:update, %App{app | state: :cloning}})
+    case Git.clone(url, path) do
+      :ok -> app |> Applications.start()
+      {:error, reason} -> app |> Applications.set_state(:cloning_failed, reason)
+    end
+
     {:noreply, state}
   end
 end

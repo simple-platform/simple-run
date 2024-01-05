@@ -40,6 +40,7 @@ defmodule Client.DashboardLive do
             <tr :for={{id, app} <- @streams.apps} id={id} class="hover">
               <td>
                 <div><%= app.name %></div>
+                <div class="text-xs text-red-500 italic"><%= app.error %></div>
               </td>
               <td><%= app.state %></td>
               <td></td>

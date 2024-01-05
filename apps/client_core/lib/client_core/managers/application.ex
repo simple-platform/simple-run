@@ -10,8 +10,9 @@ defmodule ClientCore.Entities.Application do
     :name,
     :url,
     :path,
-    :file_to_run,
     :state,
+    :error,
+    :file_to_run,
     :created_at,
     :updated_at
   ]
@@ -72,14 +73,21 @@ defmodule ClientCore.Managers.Application do
     {:reply, {:error, @err_invalid_reg_req}, db}
   end
 
-  def handle_cast({:update, %App{id: id} = app}, db) do
+  def handle_call({:update, %App{id: id} = app}, _from, db) do
     app = %App{app | updated_at: DateTime.utc_now() |> DateTime.to_unix()}
 
     CubDB.put(db, {:apps, id}, app)
     broadcast({:app_updated, app})
 
+    {:reply, {:ok, app}, db}
+  end
+
+  def handle_cast({:start, app}, db) do
+    IO.puts("!!! Starting application #{app.name}...")
     {:noreply, db}
   end
+
+  ##########
 
   defp broadcast(message) do
     Phoenix.PubSub.broadcast(ClientCore.PubSub, "applications", message)
@@ -118,14 +126,24 @@ defmodule ClientCore.Managers.Application do
   defp build_app(provider, _kvp), do: {:error, "#{@err_invalid_reg_req}: #{provider}"}
 
   defp enrich_app(%App{org: org, repo: repo, url: url} = app) do
-    {:ok,
-     %App{
-       app
-       | id: UUID.uuid5(:url, url),
-         name: "#{org}/#{repo}",
-         created_at: DateTime.utc_now() |> DateTime.to_unix()
-     }}
+    case get_repo_root(app.provider) do
+      {:error, reason} ->
+        {:error, reason}
+
+      {:ok, repo_root} ->
+        {:ok,
+         %App{
+           app
+           | id: UUID.uuid5(:url, url),
+             name: "#{org}/#{repo}",
+             path: System.user_home!() |> Path.join("simplerun/#{repo_root}/#{org}/#{repo}"),
+             created_at: DateTime.utc_now() |> DateTime.to_unix()
+         }}
+    end
   end
+
+  defp get_repo_root(:github), do: {:ok, "github.com"}
+  defp get_repo_root(provider), do: {:error, "#{@err_invalid_reg_req}: #{provider}"}
 
   defp get_repo_url(%App{org: org, repo: repo, provider: provider}) when provider == :github,
     do: {:ok, "https://github.com/#{org}/#{repo}"}
