@@ -52,7 +52,7 @@ defmodule Actions.MixProject do
       {:cors_plug, "~> 3.0"},
       {:yaml_elixir, "~> 2.8"},
       {:absinthe_client, "~> 0.1.0"},
-      {:req, "~> 0.3"},
+      {:req, "~> 0.4"},
       {:mox, "~> 1.0", only: :test},
       {:excoveralls, "~> 0.18", only: :test},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false}
