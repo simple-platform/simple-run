@@ -16,7 +16,7 @@ reqwest = { version = "0.11", features = ["blocking", "json"] }
 rand = "0.8.5"
 base64 = "0.21.5"
 
-tauri = { version = "1.5.4", features = [
+tauri = { version = "1.5.4", features = [ "shell-open",
   "system-tray",
   "window-start-dragging",
   "shell-sidecar",
