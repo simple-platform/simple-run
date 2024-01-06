@@ -6,6 +6,9 @@ defmodule Client.Managers.Container.State do
 end
 
 defmodule Client.Managers.Container do
+  @moduledoc """
+  Module for managing the container, including Docker installation and running status.
+  """
   use GenServer
 
   alias Client.Utils.Docker
