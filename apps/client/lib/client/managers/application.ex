@@ -26,7 +26,9 @@ defmodule Client.Managers.Application do
 
   use GenServer
 
+  require Logger
   alias Client.Entities.Application, as: App
+  alias Client.Utils.Docker
 
   @name :application_manager
   @repo_manager :repository_manager
@@ -41,20 +43,17 @@ defmodule Client.Managers.Application do
   end
 
   def init(db) do
+    process_scheduled_apps(db)
+
     {:ok, db}
   end
 
   def handle_call(:get_all, _from, db) do
-    apps =
-      db
-      |> CubDB.select(min_key: @min_key, max_key: @max_key)
-      |> Stream.map(fn {_key, value} -> value end)
-
-    {:reply, {:ok, apps}, db}
+    {:reply, {:ok, get_apps(db)}, db}
   end
 
   def handle_call({:register, "simplerun:" <> request}, _from, db) do
-    request = request |> String.trim() |> String.downcase()
+    request = request |> String.trim()
 
     with {provider, req} <- process_request(request),
          {:ok, kvp} <- parse_request(req),
@@ -76,17 +75,34 @@ defmodule Client.Managers.Application do
     {:reply, {:error, @err_invalid_reg_req}, db}
   end
 
-  def handle_call({:update, %App{id: id} = app}, _from, db) do
-    app = %App{app | updated_at: DateTime.utc_now() |> DateTime.to_unix()}
-
-    db |> CubDB.put({:apps, id}, app)
-    broadcast({:app_updated, app})
-
-    {:reply, {:ok, app}, db}
+  def handle_call({:update, app}, _from, db) do
+    {:reply, {:ok, update_app_in_db(db, app)}, db}
   end
 
-  def handle_cast({:start, app}, db) do
-    IO.puts("!!! Starting application #{app.name}...")
+  def handle_info({:update, app}, db) do
+    update_app_in_db(db, app)
+    {:noreply, db}
+  end
+
+  def handle_info(:process_scheduled_apps, db) do
+    process_scheduled_apps(db)
+    {:noreply, db}
+  end
+
+  def handle_info({:start_scheduled, %App{id: id} = app}, db) do
+    scheduled_app_id = {:scheduled_app, id}
+    scheduled_app = db |> CubDB.get(scheduled_app_id)
+
+    case is_nil(scheduled_app) do
+      false ->
+        Logger.info("#{app.name}: is already scheduled, skipping")
+        nil
+
+      true ->
+        db |> CubDB.put(scheduled_app_id, now())
+        start_scheduled_app(app)
+    end
+
     {:noreply, db}
   end
 
@@ -94,6 +110,66 @@ defmodule Client.Managers.Application do
 
   defp broadcast(message) do
     Phoenix.PubSub.broadcast(Client.PubSub, "application", message)
+  end
+
+  defp get_apps(db) do
+    db
+    |> CubDB.select(min_key: @min_key, max_key: @max_key)
+    |> Stream.map(fn {_key, value} -> value end)
+  end
+
+  defp process_scheduled_apps(db) do
+    pid = self()
+
+    db
+    |> get_apps()
+    |> Stream.filter(fn %App{state: state} -> state == :scheduled end)
+    |> Enum.each(fn app -> pid |> Process.send({:start_scheduled, app}, []) end)
+
+    pid |> Process.send_after(:process_scheduled_apps, :timer.seconds(5))
+  end
+
+  defp start_scheduled_app(%App{file_to_run: file} = app) when not is_nil(file) do
+    case Docker.dockerfile?(file) do
+      true -> build_dockerfile(app)
+      false -> run_docker_compose(app)
+    end
+  end
+
+  defp start_scheduled_app(%App{file_to_run: file} = app) when is_nil(file) do
+    IO.puts("!!! Starting #{app.name} with simple-run.yaml...")
+  end
+
+  defp build_dockerfile(app) do
+    app = %App{app | state: :building, updated_at: now()}
+    broadcast({:app_updated, app})
+
+    pid = self()
+
+    Docker.build_dockerfile(app)
+    |> Enum.reduce(nil, fn output, error ->
+      case output do
+        {:stdout, line} ->
+          IO.puts(line)
+          error
+
+        {:stderr, line} ->
+          IO.puts(line)
+          line
+
+        {:exit, {:status, 0}} ->
+          pid |> set_state(app, :starting)
+          nil
+
+        {:exit, {:status, _nonzero}} ->
+          pid |> set_state(app, :build_failed, error)
+          nil
+      end
+    end)
+  end
+
+  defp run_docker_compose(%App{file_to_run: file} = app) do
+    IO.puts("Running docker-compose for: #{app.name} / #{file}")
   end
 
   defp parse_request(request) do
@@ -142,9 +218,26 @@ defmodule Client.Managers.Application do
            | id: UUID.uuid5(:url, url),
              name: "#{org}/#{repo}",
              path: System.user_home!() |> Path.join("simplerun/#{repo_root}/#{org}/#{repo}"),
-             created_at: DateTime.utc_now() |> DateTime.to_unix()
+             created_at: now()
          }}
     end
+  end
+
+  defp set_state(pid, app, state) do
+    pid |> Process.send({:update, %App{app | state: state, error: nil}}, [])
+  end
+
+  defp set_state(pid, app, state, error) do
+    pid |> Process.send({:update, %App{app | state: state, error: error}}, [])
+  end
+
+  defp update_app_in_db(db, %App{id: id} = app) do
+    app = %App{app | updated_at: now()}
+
+    db |> CubDB.put({:apps, id}, app)
+    broadcast({:app_updated, app})
+
+    app
   end
 
   defp get_repo_root(:github), do: {:ok, "github.com"}
@@ -163,4 +256,6 @@ defmodule Client.Managers.Application do
 
   defp process_request("gh?" <> request), do: {:github, request}
   defp process_request(_), do: {:error, @err_invalid_reg_req}
+
+  defp now(), do: DateTime.utc_now() |> DateTime.to_unix()
 end
