@@ -1,9 +1,0 @@
-{
-  "name": "@simple-run/client-core",
-  "version": "0.0.0",
-  "private": true,
-  "scripts": {
-    "build": "mix compile --force",
-    "test": "MIX_ENV=test mix coveralls.html"
-  }
-}

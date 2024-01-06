@@ -20,4 +20,63 @@ defmodule Client.SimpleComponents do
     </div>
     """
   end
+
+  def label(assigns) when is_atom(assigns.state) do
+    ~H"""
+    <span class={"#{label_style(@state)} badge text-xs"}>
+      <%= @state |> Atom.to_string() |> String.replace("_", " ") %>
+    </span>
+    """
+  end
+
+  defp label_style(nil), do: ""
+  defp label_style(state) when state in [:cloning], do: "badge-outline"
+  defp label_style(state) when state in [:starting], do: "badge-outline badge-primary"
+  defp label_style(state) when state in [:cloning_failed], do: "badge-outline badge-error"
+
+  def footer(assigns) when is_nil(assigns.docker_version) and is_nil(assigns.docker_running) do
+    ~H"""
+
+    """
+  end
+
+  def footer(assigns) when is_nil(assigns.docker_version) do
+    ~H"""
+    <footer
+      role="alert"
+      class="alert-warning alert rounded-md flex items-center px-3 py-1.5 w-full text-xs gap-0 space-x-1.5 rounded-none"
+    >
+      <Heroicons.LiveView.icon name="exclamation-triangle" class="h-4 w-4" />
+      <span>
+        We couldn't find Docker on your machine. Applications won't run until you
+        <a
+          class="link underline underline-offset-2 decoration-dotted"
+          href="https://www.docker.com/products/docker-desktop"
+          target="_blank"
+        >
+          install
+        </a>
+        it.
+      </span>
+    </footer>
+    """
+  end
+
+  def footer(assigns) when not assigns.docker_running do
+    ~H"""
+    <footer
+      role="alert"
+      class="alert-warning alert rounded-md flex items-center px-3 py-1.5 w-full text-xs gap-0 space-x-1.5 rounded-none"
+    >
+      <Heroicons.LiveView.icon name="exclamation-triangle" class="h-4 w-4" />
+      <span>Docker is not running. Please start Docker to run applications.</span>
+    </footer>
+    """
+  end
+
+  def footer(assigns) do
+    ~H"""
+
+    """
+  end
 end
