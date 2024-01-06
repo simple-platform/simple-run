@@ -20,7 +20,7 @@ config :client, Client.Endpoint,
     formats: [html: Client.ErrorHTML, json: Client.ErrorJSON],
     layout: false
   ],
-  pubsub_server: ClientCore.PubSub,
+  pubsub_server: Client.PubSub,
   live_view: [signing_salt: "MEho23Jd"]
 
 # Configure esbuild (the version is required)
@@ -68,7 +68,6 @@ config :actions, Actions.Endpoint,
 #       format: "$date $time [$level] $metadata$message\n",
 #       metadata: [:user_id]
 #
-import Config
 
 # Configures Elixir's Logger
 config :logger, :console,

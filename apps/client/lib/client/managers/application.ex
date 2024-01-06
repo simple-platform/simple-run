@@ -1,7 +1,8 @@
-defmodule ClientCore.Entities.Application do
+defmodule Client.Entities.Application do
   @moduledoc """
   This module represents the application entity and its attributes.
   """
+
   defstruct [
     :id,
     :provider,
@@ -18,13 +19,14 @@ defmodule ClientCore.Entities.Application do
   ]
 end
 
-defmodule ClientCore.Managers.Application do
+defmodule Client.Managers.Application do
   @moduledoc """
   This module manages the application data and provides functions for interacting with the application manager.
   """
 
   use GenServer
-  alias ClientCore.Entities.Application, as: App
+
+  alias Client.Entities.Application, as: App
 
   @name :application_manager
   @repo_manager :repository_manager
@@ -44,7 +46,8 @@ defmodule ClientCore.Managers.Application do
 
   def handle_call(:get_all, _from, db) do
     apps =
-      CubDB.select(db, min_key: @min_key, max_key: @max_key)
+      db
+      |> CubDB.select(min_key: @min_key, max_key: @max_key)
       |> Stream.map(fn {_key, value} -> value end)
 
     {:reply, {:ok, apps}, db}
@@ -58,7 +61,7 @@ defmodule ClientCore.Managers.Application do
          {:ok, app} <- build_app(provider, kvp),
          {:ok, url} <- get_repo_url(app),
          {:ok, app} <- enrich_app(%App{app | url: url}) do
-      CubDB.put(db, {:apps, app.id}, app)
+      db |> CubDB.put({:apps, app.id}, app)
 
       broadcast({:app_registered, app})
       GenServer.cast(@repo_manager, {:clone, app})
@@ -76,7 +79,7 @@ defmodule ClientCore.Managers.Application do
   def handle_call({:update, %App{id: id} = app}, _from, db) do
     app = %App{app | updated_at: DateTime.utc_now() |> DateTime.to_unix()}
 
-    CubDB.put(db, {:apps, id}, app)
+    db |> CubDB.put({:apps, id}, app)
     broadcast({:app_updated, app})
 
     {:reply, {:ok, app}, db}
@@ -90,7 +93,7 @@ defmodule ClientCore.Managers.Application do
   ##########
 
   defp broadcast(message) do
-    Phoenix.PubSub.broadcast(ClientCore.PubSub, "applications", message)
+    Phoenix.PubSub.broadcast(Client.PubSub, "applications", message)
   end
 
   defp parse_request(request) do
@@ -114,8 +117,10 @@ defmodule ClientCore.Managers.Application do
   end
 
   defp build_app(provider, kvp) when provider == :github do
+    init_app = %App{provider: provider}
+
     kvp
-    |> Enum.reduce_while({:ok, %App{provider: provider}}, fn [key, val], {:ok, app} ->
+    |> Enum.reduce_while({:ok, init_app}, fn [key, val], {:ok, app} ->
       case update_app(key, val, app) do
         {:error, reason} -> {:halt, {:error, reason}}
         {:ok, updated_app} -> {:cont, {:ok, updated_app}}

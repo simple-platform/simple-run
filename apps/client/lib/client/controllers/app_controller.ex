@@ -2,7 +2,7 @@ defmodule Client.AppController do
   use Client, :controller
 
   import Client.Response
-  alias ClientCore.Api.Applications
+  alias Client.Api.Applications
 
   def register_app(conn, %{"request" => request}) do
     case Applications.register(request) do

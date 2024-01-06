@@ -1,9 +1,9 @@
-defmodule ClientCore.Api.Applications do
+defmodule Client.Api.Applications do
   @moduledoc """
   This module provides functions for interacting with the application manager.
   """
 
-  alias ClientCore.Entities.Application, as: App
+  alias Client.Entities.Application, as: App
 
   @name :application_manager
 
@@ -29,6 +29,6 @@ defmodule ClientCore.Api.Applications do
   end
 
   def subscribe do
-    Phoenix.PubSub.subscribe(ClientCore.PubSub, "applications")
+    Phoenix.PubSub.subscribe(Client.PubSub, "applications")
   end
 end

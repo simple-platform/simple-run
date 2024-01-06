@@ -20,4 +20,16 @@ defmodule Client.SimpleComponents do
     </div>
     """
   end
+
+  def label(assigns) when is_atom(assigns.state) do
+    ~H"""
+    <span class={"#{label_style(@state)} badge text-xs"}>
+      <%= @state |> Atom.to_string() |> String.replace("_", " ") %>
+    </span>
+    """
+  end
+
+  defp label_style(state) when state in [:cloning], do: "badge-outline"
+  defp label_style(state) when state in [:starting], do: "badge-outline badge-primary"
+  defp label_style(state) when state in [:cloning_failed], do: "badge-outline badge-warning"
 end

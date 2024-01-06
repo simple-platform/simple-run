@@ -7,15 +7,22 @@ defmodule Client.Application do
 
   @impl true
   def start(_type, _args) do
+    {:ok, db} =
+      CubDB.start_link(
+        name: :db,
+        auto_compact: true,
+        auto_file_sync: true,
+        data_dir: System.user_home!() |> Path.join(".simple/run/data")
+      )
+
     children = [
       Client.Telemetry,
-
-      # Start a worker by calling: Client.Worker.start_link(arg)
-      # {Client.Worker, arg},
+      {Client.Managers.Application, db},
+      Client.Managers.Repository,
 
       # Start to serve requests, typically the last entry
       Client.Endpoint,
-      {Phoenix.PubSub, name: ClientCore.PubSub}
+      {Phoenix.PubSub, name: Client.PubSub}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
