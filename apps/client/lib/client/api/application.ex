@@ -1,4 +1,4 @@
-defmodule Client.Api.Applications do
+defmodule Client.Api.Application do
   @moduledoc """
   This module provides functions for interacting with the application manager.
   """
@@ -29,6 +29,6 @@ defmodule Client.Api.Applications do
   end
 
   def subscribe do
-    Phoenix.PubSub.subscribe(Client.PubSub, "applications")
+    Phoenix.PubSub.subscribe(Client.PubSub, "application")
   end
 end

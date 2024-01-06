@@ -33,4 +33,63 @@ defmodule Client.SimpleComponents do
   defp label_style(state) when state in [:cloning], do: "badge-outline"
   defp label_style(state) when state in [:starting], do: "badge-outline badge-primary"
   defp label_style(state) when state in [:cloning_failed], do: "badge-outline badge-warning"
+
+  def footer(assigns) when is_nil(assigns.docker_version) and is_nil(assigns.docker_running) do
+    ~H"""
+
+    """
+  end
+
+  def footer(assigns) when is_nil(assigns.docker_version) do
+    ~H"""
+    <footer
+      role="alert"
+      class="alert-warning alert rounded-md flex items-center px-3 py-1.5 w-full text-xs gap-0 space-x-1.5 rounded-none"
+    >
+      <Heroicons.LiveView.icon name="exclamation-triangle" class="h-5 w-5" />
+      <span>
+        We couldn't find Docker on your machine. Applications won't run until you
+        <a
+          class="link underline underline-offset-2 decoration-dotted"
+          href="https://www.docker.com/products/docker-desktop"
+          target="_blank"
+        >
+          install
+        </a>
+        it.
+      </span>
+    </footer>
+    """
+  end
+
+  def footer(assigns) when not assigns.docker_running do
+    ~H"""
+    <footer
+      role="alert"
+      class="alert-warning alert rounded-md flex items-center px-3 py-1.5 w-full text-xs gap-0 space-x-1.5 rounded-none"
+    >
+      <Heroicons.LiveView.icon name="exclamation-triangle" class="h-5 w-5" />
+      <span>Docker is not running. Please start Docker to run applications.</span>
+    </footer>
+    """
+  end
+
+  def footer(assigns) when assigns.docker_running do
+    ~H"""
+    <footer
+      role="alert"
+      class="alert-success alert rounded-md flex items-center px-3 py-1.5 w-full text-xs gap-0 space-x-1.5 rounded-none"
+    >
+      <div class="grow"></div>
+      <div class="flex items-center space-x-3">
+        <div class="flex items-center">
+          <%!-- <Icons.simplerun class="h-6 w-6" /> --%>
+          <span>
+            Simple Run v<%= Application.spec(:client, :vsn) %>
+          </span>
+        </div>
+      </div>
+    </footer>
+    """
+  end
 end

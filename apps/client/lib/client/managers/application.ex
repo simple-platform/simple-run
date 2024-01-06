@@ -93,7 +93,7 @@ defmodule Client.Managers.Application do
   ##########
 
   defp broadcast(message) do
-    Phoenix.PubSub.broadcast(Client.PubSub, "applications", message)
+    Phoenix.PubSub.broadcast(Client.PubSub, "application", message)
   end
 
   defp parse_request(request) do

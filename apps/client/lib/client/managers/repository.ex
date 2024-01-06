@@ -5,7 +5,7 @@ defmodule Client.Managers.Repository do
   use GenServer
 
   alias Client.Utils.Git
-  alias Client.Api.Applications
+  alias Client.Api.Application
   alias Client.Entities.Application, as: App
 
   @name :repository_manager
@@ -19,17 +19,15 @@ defmodule Client.Managers.Repository do
   end
 
   def handle_cast({:clone, %App{url: url, path: path} = app}, state) do
-    {:ok, app} = app |> Applications.set_state(:cloning)
+    {:ok, app} = app |> Application.set_state(:cloning)
 
     case Git.clone(url, path) do
       {:ok, stream} -> stream |> monitor_cloning(app)
-      {:error, reason} -> app |> Applications.set_state(:cloning_failed, reason)
+      {:error, reason} -> app |> Application.set_state(:cloning_failed, reason)
     end
 
     {:noreply, state}
   end
-
-  # https://github.com/simple-platform/simple-run
 
   defp monitor_cloning(stream, app) do
     Enum.reduce(stream, [], fn output, errors ->
@@ -38,12 +36,12 @@ defmodule Client.Managers.Repository do
           [line | errors]
 
         {:exit, {:status, 0}} ->
-          app |> Applications.start()
+          app |> Application.start()
           []
 
         {:exit, {:status, _nonzero}} ->
           error = errors |> Enum.reverse() |> Enum.join(" ")
-          app |> Applications.set_state(:cloning_failed, error)
+          app |> Application.set_state(:cloning_failed, error)
           []
       end
     end)

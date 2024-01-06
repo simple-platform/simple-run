@@ -17,12 +17,13 @@ defmodule Client.Application do
 
     children = [
       Client.Telemetry,
+      {Phoenix.PubSub, name: Client.PubSub},
       {Client.Managers.Application, db},
       Client.Managers.Repository,
+      Client.Managers.Container,
 
       # Start to serve requests, typically the last entry
-      Client.Endpoint,
-      {Phoenix.PubSub, name: Client.PubSub}
+      Client.Endpoint
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
