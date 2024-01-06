@@ -30,9 +30,11 @@ defmodule Client.SimpleComponents do
   end
 
   defp label_style(nil), do: ""
-  defp label_style(state) when state in [:cloning], do: "badge-outline"
-  defp label_style(state) when state in [:starting], do: "badge-outline badge-primary"
-  defp label_style(state) when state in [:cloning_failed], do: "badge-outline badge-error"
+  defp label_style(state) when state in [:cloning, :scheduled], do: "badge-outline"
+  defp label_style(state) when state in [:building, :starting], do: "badge-outline badge-primary"
+
+  defp label_style(state) when state in [:cloning_failed, :build_failed],
+    do: "badge-outline badge-error"
 
   def footer(assigns) when is_nil(assigns.docker_version) and is_nil(assigns.docker_running) do
     ~H"""

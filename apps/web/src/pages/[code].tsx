@@ -12,7 +12,7 @@ function closeTab() {
 }
 
 function buildRequest(c?: string): string {
-  const code = (c || '').trim().toLowerCase()
+  const code = (c || '').trim()
 
   if (code === '')
     return ''
