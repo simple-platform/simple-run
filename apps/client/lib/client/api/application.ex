@@ -12,8 +12,7 @@ defmodule Client.Api.Application do
   end
 
   def start(app) do
-    set_state(app, :starting)
-    GenServer.cast(@name, {:start, app})
+    set_state(app, :scheduled)
   end
 
   def register(request) do

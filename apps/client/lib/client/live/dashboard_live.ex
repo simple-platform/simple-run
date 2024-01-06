@@ -56,7 +56,7 @@ defmodule Client.DashboardLive do
                       role="alert"
                       class="alert alert-warning rounded-md flex items-center p-3 w-full text-sm gap-0 space-x-1.5"
                     >
-                      <Heroicons.LiveView.icon name="exclamation-triangle" class="h-5 w-5" />
+                      <Heroicons.LiveView.icon name="exclamation-triangle" class="h-12 w-12" />
                       <span><%= app.error %></span>
                     </div>
                   <% end %>
