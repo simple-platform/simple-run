@@ -29,6 +29,7 @@ defmodule Client.SimpleComponents do
     """
   end
 
+  defp label_style(nil), do: ""
   defp label_style(state) when state in [:cloning], do: "badge-outline"
   defp label_style(state) when state in [:starting], do: "badge-outline badge-primary"
   defp label_style(state) when state in [:cloning_failed], do: "badge-outline badge-warning"

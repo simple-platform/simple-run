@@ -2,10 +2,9 @@ defmodule Client.DashboardLive do
   use Client, :live_view
 
   import Client.SimpleComponents
-  alias Client.Components.Icons
 
+  alias Client.Components.Icons
   alias Client.Api.Applications
-  alias Client.Entities.Application, as: App
 
   def mount(_params, _session, socket) do
     if connected?(socket) do
@@ -31,7 +30,7 @@ defmodule Client.DashboardLive do
       <% else %>
         <div class="px-5 py-3 space-y-6">
           <h1 class="text-3xl">Applications</h1>
-          <ul class="space-y-6">
+          <ul id="applications" class="space-y-6" phx-update="stream">
             <li
               :for={{id, app} <- @streams.apps}
               id={id}
@@ -67,7 +66,7 @@ defmodule Client.DashboardLive do
 
   def handle_info({:app_registered, app}, socket) do
     socket = update(socket, :no_apps, fn _ -> false end)
-    {:noreply, stream_insert(socket, :apps, app)}
+    {:noreply, stream_insert(socket, :apps, app, at: 0)}
   end
 
   def handle_info({:app_updated, app}, socket) do
