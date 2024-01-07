@@ -51,13 +51,15 @@ defmodule Client.DashboardLive do
                       <a href={app.url} target="_blank"><Icons.github class="w-5 h-5" /></a>
                     </div>
                   </div>
-                  <%= if not is_nil(app.error) do %>
+                  <%= if not Enum.empty?(app.errors) do %>
                     <div
                       role="alert"
                       class="alert alert-warning rounded-md flex items-center p-3 w-full text-sm gap-0 space-x-1.5"
                     >
-                      <Heroicons.LiveView.icon name="exclamation-triangle" class="h-12 w-12" />
-                      <span><%= app.error %></span>
+                      <Heroicons.LiveView.icon name="exclamation-triangle" class="h-5 w-5" />
+                      <div :for={error <- app.errors}>
+                        <div><%= error %></div>
+                      </div>
                     </div>
                   <% end %>
                 </div>

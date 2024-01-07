@@ -8,10 +8,14 @@ defmodule Client.Api.Application do
   @name :application_manager
 
   def get_all do
-    GenServer.call(@name, :get_all)
+    GenServer.call(@name, {:get, :all})
   end
 
-  def start(app) do
+  def get_with_state(state) do
+    GenServer.call(@name, {:get, state})
+  end
+
+  def schedule_execution(app) do
     set_state(app, :scheduled)
   end
 
@@ -20,11 +24,15 @@ defmodule Client.Api.Application do
   end
 
   def set_state(app, state) do
-    GenServer.call(@name, {:update, %App{app | state: state, error: nil}})
+    GenServer.call(@name, {:update, %App{app | state: state, errors: []}})
   end
 
-  def set_state(app, state, error) do
-    GenServer.call(@name, {:update, %App{app | state: state, error: error}})
+  def set_state(app, state, error) when is_binary(error) do
+    GenServer.call(@name, {:update, %App{app | state: state, errors: [error]}})
+  end
+
+  def set_state(app, state, errors) when is_list(errors) do
+    GenServer.call(@name, {:update, %App{app | state: state, errors: errors}})
   end
 
   def subscribe do

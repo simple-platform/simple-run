@@ -19,7 +19,7 @@ defmodule Client.Application do
       Client.Telemetry,
       {Phoenix.PubSub, name: Client.PubSub},
       {Client.Managers.Application, db},
-      Client.Managers.Repository,
+      {Client.Managers.Repository, db},
       Client.Managers.Container,
 
       # Start to serve requests, typically the last entry
