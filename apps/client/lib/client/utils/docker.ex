@@ -9,7 +9,7 @@ defmodule Client.Utils.Docker do
   def get_status() do
     try do
       {get_version(), is_running()}
-    rescue
+    catch
       _ -> {nil, false}
     end
   end

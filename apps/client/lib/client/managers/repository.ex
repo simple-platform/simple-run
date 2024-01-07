@@ -39,7 +39,7 @@ defmodule Client.Managers.Repository do
       |> Enum.to_list()
       |> Enum.map(fn app -> Task.start(fn -> db |> clone(app) end) end)
 
-    Process.send_after(self(), :clone, :timer.seconds(10))
+    self() |> Process.send_after(:clone, :timer.seconds(10))
   end
 
   defp get_active_clones(db) do
