@@ -15,10 +15,6 @@ defmodule Client.Api.Application do
     GenServer.call(@name, {:get, state})
   end
 
-  def schedule_execution(app) do
-    set_state(app, :scheduled)
-  end
-
   def register(request) do
     GenServer.call(@name, {:register, request})
   end

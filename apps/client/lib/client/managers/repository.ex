@@ -39,22 +39,22 @@ defmodule Client.Managers.Repository do
       |> Enum.to_list()
       |> Enum.map(fn app -> Task.start(fn -> db |> clone(app) end) end)
 
-    self() |> Process.send_after(:clone, :timer.seconds(10))
+    self() |> Process.send_after(:clone, :timer.seconds(1))
   end
 
   defp get_active_clones(db) do
-    min_key = {:active_clones, "00000000-0000-0000-0000-000000000000"}
-    max_key = {:active_clones, "ffffffff-ffff-ffff-ffff-ffffffffffff"}
+    min_key = {:active, :clone, {}}
+    max_key = {:active, :clone, {nil, nil}}
 
     db
     |> CubDB.select(min_key: min_key, max_key: max_key)
-    |> Stream.map(fn {{:active_clones, id}, _value} -> id end)
+    |> Stream.map(fn {{:active, :clone, {id}}, _value} -> id end)
   end
 
   def clone(db, %App{id: id, url: url, path: path} = app) do
-    key = {:active_clones, id}
+    key = {:active, :clone, {id}}
 
-    db |> CubDB.put(key, {})
+    db |> CubDB.put(key, true)
 
     case Git.clone(url, path) do
       {:ok, stream} -> stream |> monitor_cloning(app)
@@ -71,7 +71,7 @@ defmodule Client.Managers.Repository do
           [line | errors]
 
         {:exit, {:status, 0}} ->
-          app |> Application.schedule_execution()
+          app |> Application.set_state(:scheduled)
           []
 
         {:exit, {:status, _nonzero}} ->

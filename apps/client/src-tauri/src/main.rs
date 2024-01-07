@@ -45,7 +45,7 @@ fn start_server() {
             .expect("Failed to setup `desktop` sidecar")
             .args(["--client", &generate_secret_key_base()])
             .spawn()
-            .expect("Failed to spawn packaged node");
+            .expect("Failed to spawn `desktop` sidecar");
 
         while let Some(event) = rx.recv().await {
             if let CommandEvent::Stdout(line) = event {

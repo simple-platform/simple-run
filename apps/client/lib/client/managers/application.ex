@@ -26,13 +26,12 @@ defmodule Client.Managers.Application do
 
   use GenServer
 
-  require Logger
   alias Client.Entities.Application, as: App
 
   @name :application_manager
 
-  @min_key {:apps, "00000000-0000-0000-0000-000000000000"}
-  @max_key {:apps, "ffffffff-ffff-ffff-ffff-ffffffffffff"}
+  @min_key {:app, {}}
+  @max_key {:app, {nil, nil}}
 
   @err_invalid_reg_req "Invalid application registration request"
 
@@ -65,7 +64,7 @@ defmodule Client.Managers.Application do
          {:ok, app} <- build_app(provider, kvp),
          {:ok, url} <- get_repo_url(app),
          {:ok, app} <- enrich_app(%App{app | url: url}) do
-      db |> CubDB.put({:apps, app.id}, app)
+      db |> CubDB.put({:app, {app.id}}, app)
 
       broadcast({:app_registered, app})
 
@@ -98,7 +97,7 @@ defmodule Client.Managers.Application do
   defp update_app(db, %App{id: id} = app) do
     app = %App{app | updated_at: now()}
 
-    db |> CubDB.put({:apps, id}, app)
+    db |> CubDB.put({:app, {id}}, app)
     broadcast({:app_updated, app})
 
     app

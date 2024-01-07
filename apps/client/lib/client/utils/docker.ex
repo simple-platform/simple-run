@@ -14,23 +14,11 @@ defmodule Client.Utils.Docker do
     end
   end
 
-  def dockerfile?(file) do
-    !String.ends_with?(file, ".yml") && !String.ends_with?(file, ".yaml")
-  end
-
-  def build_dockerfile(%App{name: name, file_to_run: file, path: path}) do
+  def build(%App{name: name, file_to_run: file, path: path}) do
     cmd = ~w(docker build -t #{name}:simplerun -f #{Path.join(path, file)} #{path})
     Logger.info("Executing command: #{Enum.join(cmd, " ")}")
 
     cmd |> Exile.stream(stderr: :consume)
-  end
-
-  def start_dockerfile(%App{name: _name, file_to_run: _file}) do
-    # cmd = ~w(docker run -t #{name}:simplerun -f #{file} . --verbose)
-  end
-
-  def start_docker_compose(%App{file_to_run: file}) do
-    IO.puts("!!! Starting Docker Compose: #{file}")
   end
 
   ##########
