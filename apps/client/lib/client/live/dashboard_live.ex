@@ -46,6 +46,9 @@ defmodule Client.DashboardLive do
                     <div class="w-full flex items-center space-x-1.5">
                       <h3 class="card-title"><%= app.name %></h3>
                       <.label state={app.state} />
+                      <%= if not is_nil(app.progress) do %>
+                        <div class="badge badge-secondary text-xs"><%= app.progress %></div>
+                      <% end %>
                     </div>
                     <div class="space-x-3 flex items-center">
                       <a href={app.url} target="_blank"><Icons.github class="w-5 h-5" /></a>
@@ -56,9 +59,15 @@ defmodule Client.DashboardLive do
                       role="alert"
                       class="alert alert-warning rounded-md flex items-center p-3 w-full text-sm gap-0 space-x-1.5"
                     >
-                      <Heroicons.LiveView.icon name="exclamation-triangle" class="h-5 w-5" />
-                      <div :for={error <- app.errors}>
-                        <div><%= error %></div>
+                      <div class="flex-grow">
+                        <Heroicons.LiveView.icon name="exclamation-triangle" class="h-5 w-5" />
+                      </div>
+                      <div class="flex flex-col">
+                        <div :for={error <- app.errors}>
+                          <code class="line-clamp-4 break-all text-xs my-1 select-text">
+                            <%= error %>
+                          </code>
+                        </div>
                       </div>
                     </div>
                   <% end %>

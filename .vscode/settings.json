@@ -187,12 +187,14 @@
     "Titlebar",
     "topbar",
     "treeshake",
+    "trunc",
     "tsup",
     "uidotdev",
     "usehooks",
     "vsintellicode",
     "wailsapp",
     "wailsjs",
-    "wailsjsdir"
+    "wailsjsdir",
+    "WORKDIR"
   ]
 }

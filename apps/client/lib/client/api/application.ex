@@ -31,6 +31,10 @@ defmodule Client.Api.Application do
     GenServer.call(@name, {:update, %App{app | state: state, errors: errors}})
   end
 
+  def set_progress(app, progress) do
+    GenServer.call(@name, {:update, %App{app | progress: progress}})
+  end
+
   def subscribe do
     Phoenix.PubSub.subscribe(Client.PubSub, "application")
   end

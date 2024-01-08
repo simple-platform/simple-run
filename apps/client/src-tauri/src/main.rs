@@ -41,9 +41,17 @@ fn main() {
 
 fn start_server() {
     tauri::async_runtime::spawn(async move {
+        let app_path = std::env::current_exe()
+            .expect("Failed to get the app path")
+            .parent()
+            .expect("Failed to get parent directory of Simple Run")
+            .to_str()
+            .expect("Path is not valid UTF-8")
+            .to_string();
+
         let (mut rx, mut _child) = Command::new_sidecar("desktop")
             .expect("Failed to setup `desktop` sidecar")
-            .args(["--client", &generate_secret_key_base()])
+            .args(["--client", &generate_secret_key_base(), &app_path])
             .spawn()
             .expect("Failed to spawn `desktop` sidecar");
 

@@ -10,6 +10,8 @@ defmodule Client.Managers.Execution do
 
   @name :execution_manager
 
+  @step_regex ~r/\b(FROM|RUN|COPY|WORKDIR)\b/
+
   def start_link(db) do
     GenServer.start_link(__MODULE__, db, name: @name)
   end
@@ -38,37 +40,63 @@ defmodule Client.Managers.Execution do
       docker_apps
       |> Stream.filter(fn %App{id: id} -> id not in active_builds end)
       |> Enum.to_list()
-      |> Enum.map(fn app -> Task.start(fn -> db |> build(app) end) end)
+      |> Enum.map(fn app -> Task.start_link(fn -> db |> build(app) end) end)
 
     self() |> Process.send_after({:process, :scheduled}, :timer.seconds(1))
   end
 
-  defp build(db, %App{id: id, name: name} = app) do
-    app |> Application.set_state(:building)
+  defp build(db, %App{id: id} = app) do
+    {:ok, app} = Application.set_state(app, :building)
 
     key = {:active, :build, {id}}
-    db |> CubDB.put(key, true)
+    CubDB.put(db, key, true)
+
+    total_steps = Docker.get_build_steps(app)
 
     _ =
-      app
-      |> Docker.build()
-      |> Enum.reduce([], fn output, errors ->
-        case output do
-          {:exit, {:status, 0}} ->
-            app |> Application.set_state(:starting)
-            []
-
-          {:exit, {:status, _nonzero}} ->
-            app |> Application.set_state(:build_failed, errors |> Enum.reverse() |> Enum.take(3))
-            []
-
-          {_, line} ->
-            IO.puts("[#{name}] #{line}")
-            [line | errors]
-        end
+      Docker.build(app)
+      |> Enum.reduce({0, nil, []}, fn output, acc ->
+        process_output(output, acc, app, total_steps)
       end)
 
-    db |> CubDB.delete(key)
+    CubDB.delete(db, key)
+  end
+
+  defp process_output({:exit, {:status, status}}, _, app, _) when status == 0 do
+    Application.set_state(app, :starting)
+    {nil, []}
+  end
+
+  defp process_output({:exit, {:status, _nonzero}}, {_, _, errors}, app, _) do
+    Application.set_state(app, :build_failed, errors |> Enum.take(3) |> Enum.reverse())
+    {nil, []}
+  end
+
+  defp process_output({_, line}, {completed_steps, progress, errors}, app, total_steps) do
+    line = String.trim(line)
+
+    if line != "" do
+      new_completed_steps = update_completed_steps(completed_steps, line)
+      updated_progress = update_progress(new_completed_steps, total_steps)
+
+      if updated_progress != progress, do: Application.set_progress(app, "#{updated_progress}%")
+      IO.puts("[#{app.name}] (#{updated_progress}%) #{line}")
+
+      {new_completed_steps, updated_progress, [line | errors]}
+    else
+      {completed_steps, progress, errors}
+    end
+  end
+
+  defp update_completed_steps(completed_steps, line) do
+    case Regex.run(@step_regex, line) do
+      nil -> completed_steps
+      _ -> completed_steps + 1
+    end
+  end
+
+  defp update_progress(completed_steps, total_steps) do
+    min((completed_steps / total_steps * 100) |> trunc(), 100)
   end
 
   defp get_active(db, state) do

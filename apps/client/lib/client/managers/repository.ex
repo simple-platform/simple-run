@@ -9,6 +9,8 @@ defmodule Client.Managers.Repository do
   alias Client.Entities.Application, as: App
 
   @name :repository_manager
+  @progress_regex ~r/(\d+)%/
+  @newline_regex ~r/\r|\n/
 
   def start_link(db) do
     GenServer.start_link(__MODULE__, db, name: @name)
@@ -37,7 +39,7 @@ defmodule Client.Managers.Repository do
       apps
       |> Stream.filter(fn %App{id: id} -> id not in active_clones end)
       |> Enum.to_list()
-      |> Enum.map(fn app -> Task.start(fn -> db |> clone(app) end) end)
+      |> Enum.map(fn app -> Task.start_link(fn -> db |> clone(app) end) end)
 
     self() |> Process.send_after(:clone, :timer.seconds(1))
   end
@@ -51,7 +53,7 @@ defmodule Client.Managers.Repository do
     |> Stream.map(fn {{:active, :clone, {id}}, _value} -> id end)
   end
 
-  def clone(db, %App{id: id, url: url, path: path} = app) do
+  defp clone(db, %App{id: id, url: url, path: path} = app) do
     key = {:active, :clone, {id}}
 
     db |> CubDB.put(key, true)
@@ -64,20 +66,69 @@ defmodule Client.Managers.Repository do
     db |> CubDB.delete(key)
   end
 
-  defp monitor_cloning(stream, app) do
-    Enum.reduce(stream, [], fn output, errors ->
-      case output do
-        {:stderr, line} ->
-          [line | errors]
-
-        {:exit, {:status, 0}} ->
-          app |> Application.set_state(:scheduled)
-          []
-
-        {:exit, {:status, _nonzero}} ->
-          app |> Application.set_state(:cloning_failed, errors |> Enum.reverse())
-          []
-      end
+  defp monitor_cloning(stream, %App{name: name} = app) do
+    Enum.reduce(stream, {0, 0, []}, fn
+      {:exit, {:status, status}}, acc -> handle_exit(app, status, acc)
+      {_, lines}, acc -> handle_lines(app, name, lines, acc)
     end)
+  end
+
+  defp handle_exit(app, 0, _), do: update_app_state(app, "100%", :scheduled, nil)
+
+  defp handle_exit(app, _nonzero, {_, _, errors}),
+    do: update_app_state(app, nil, :cloning_failed, errors)
+
+  defp handle_lines(app, name, lines, acc) do
+    String.split(lines, @newline_regex)
+    |> Enum.reduce(acc, &process_line(app, name, &1, &2))
+  end
+
+  defp process_line(app, name, line, {progress, prev_progress, errors}) do
+    line
+    |> String.trim()
+    |> maybe_process_non_empty_line(app, name, {progress, prev_progress, errors})
+  end
+
+  defp maybe_process_non_empty_line("", _, _, acc), do: acc
+
+  defp maybe_process_non_empty_line(line, app, name, {progress, prev_progress, errors}) do
+    updated_progress = get_progress(line)
+    total_progress = update_progress(progress, prev_progress, updated_progress)
+    log_progress(app, name, line, total_progress)
+    {total_progress, updated_progress, [line | errors]}
+  end
+
+  defp update_progress(progress, prev_progress, updated_progress) do
+    if updated_progress != prev_progress,
+      do: min(progress + updated_progress, 100),
+      else: progress
+  end
+
+  defp log_progress(app, name, line, total_progress) do
+    progress = "#{trunc(total_progress)}%"
+    Application.set_progress(app, progress)
+    IO.puts("[#{name}] (#{progress}) #{line}")
+  end
+
+  defp get_progress(line) do
+    case Regex.run(@progress_regex, line) do
+      [progress | _] -> calculate_progress(progress)
+      _ -> 0
+    end
+  end
+
+  defp calculate_progress(progress) do
+    (progress |> String.replace("%", "") |> String.to_integer()) / 100 * 0.4
+  end
+
+  defp update_app_state(app, progress, state, errors) do
+    Application.set_progress(app, progress)
+
+    case is_list(errors) do
+      false -> Application.set_state(app, state)
+      true -> Application.set_state(app, state, Enum.reverse(errors))
+    end
+
+    {nil, nil, []}
   end
 end

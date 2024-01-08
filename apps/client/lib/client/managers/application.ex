@@ -13,6 +13,7 @@ defmodule Client.Entities.Application do
     :state,
     :errors,
     :provider,
+    :progress,
     :file_to_run,
     :created_at,
     :updated_at
