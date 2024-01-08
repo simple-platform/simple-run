@@ -11,6 +11,7 @@ defmodule Client.Managers.Execution do
   @name :execution_manager
 
   @step_regex ~r/\b(FROM|RUN|COPY|WORKDIR)\b/
+  @newline_regex ~r/\r|\n/
 
   def start_link(db) do
     GenServer.start_link(__MODULE__, db, name: @name)
@@ -62,30 +63,46 @@ defmodule Client.Managers.Execution do
     CubDB.delete(db, key)
   end
 
-  defp process_output({:exit, {:status, status}}, _, app, _) when status == 0 do
+  defp process_output({:exit, {:status, status}}, _acc, app, _steps) when status == 0 do
     Application.set_state(app, :starting)
     {nil, []}
   end
 
-  defp process_output({:exit, {:status, _nonzero}}, {_, _, errors}, app, _) do
+  defp process_output({:exit, {:status, _nonzero}}, {_, _, errors}, app, _steps) do
     Application.set_state(app, :build_failed, errors |> Enum.take(3) |> Enum.reverse())
     {nil, []}
   end
 
-  defp process_output({_, line}, {completed_steps, progress, errors}, app, total_steps) do
+  defp process_output({_, output}, acc, app, total_steps) do
+    output
+    |> String.split(@newline_regex)
+    |> Enum.reduce(acc, fn line, acc ->
+      process_line(line, acc, app, total_steps)
+    end)
+  end
+
+  defp process_line(line, {completed_steps, progress, errors}, app, total_steps) do
     line = String.trim(line)
 
     if line != "" do
       new_completed_steps = update_completed_steps(completed_steps, line)
       updated_progress = update_progress(new_completed_steps, total_steps)
 
-      if updated_progress != progress, do: Application.set_progress(app, "#{updated_progress}%")
-      IO.puts("[#{app.name}] (#{updated_progress}%) #{line}")
+      maybe_update_progress(app, updated_progress, progress)
+      IO.puts(format_progress_line(app, updated_progress, line))
 
       {new_completed_steps, updated_progress, [line | errors]}
     else
       {completed_steps, progress, errors}
     end
+  end
+
+  defp maybe_update_progress(app, updated_progress, progress) do
+    if updated_progress != progress, do: Application.set_progress(app, "#{updated_progress}%")
+  end
+
+  defp format_progress_line(app, updated_progress, line) do
+    "[#{app.name}] (#{updated_progress}%) #{line}"
   end
 
   defp update_completed_steps(completed_steps, line) do
