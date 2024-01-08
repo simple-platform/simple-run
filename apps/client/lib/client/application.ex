@@ -20,7 +20,7 @@ defmodule Client.Application do
       {Phoenix.PubSub, name: Client.PubSub},
       {Client.Managers.Application, db},
       {Client.Managers.Repository, db},
-      {Client.Managers.Execution, db},
+      {Client.Managers.Build, db},
       Client.Managers.Container,
 
       # Start to serve requests, typically the last entry

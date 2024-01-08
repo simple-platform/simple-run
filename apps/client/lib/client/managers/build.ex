@@ -1,6 +1,6 @@
-defmodule Client.Managers.Execution do
+defmodule Client.Managers.Build do
   @moduledoc """
-  Module for managing the execution, including scheduled processing and building of applications.
+  Module for managing the build, including scheduled processing and building of applications.
   """
   use GenServer
 
@@ -8,7 +8,7 @@ defmodule Client.Managers.Execution do
   alias Client.Api.Application
   alias Client.Entities.Application, as: App
 
-  @name :execution_manager
+  @name :build_manager
 
   @step_regex ~r/\b(FROM|RUN|COPY|WORKDIR)\b/
   @newline_regex ~r/\r|\n/
