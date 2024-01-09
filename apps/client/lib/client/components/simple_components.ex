@@ -21,6 +21,41 @@ defmodule Client.SimpleComponents do
     """
   end
 
+  def ports(assigns) when assigns.ports == [] do
+    ~H"""
+
+    """
+  end
+
+  def ports(assigns) do
+    ~H"""
+    <div :for={{container_port, {host_ip, host_port}, is_http?} <- @ports} class="flex">
+      <%= if is_http? do %>
+        <a
+          href={"http://#{host_ip}:#{host_port}"}
+          target="_blank"
+          class="text-xs badge badge-outline space-x-0.5"
+        >
+          <%= port(%{container_port: container_port, host_port: host_port, is_http?: is_http?}) %>
+        </a>
+      <% else %>
+        <div class="text-xs badge badge-outline space-x-0.5 border-dotted">
+          <%= port(%{container_port: container_port, host_port: host_port, is_http?: is_http?}) %>
+        </div>
+      <% end %>
+    </div>
+    """
+  end
+
+  defp port(assigns) do
+    ~H"""
+    <Heroicons.LiveView.icon name={if @is_http?, do: "globe-alt", else: "server"} class="h-3 w-3" />
+    <span><%= @container_port %></span>
+    <Heroicons.LiveView.icon name="arrow-long-right" class="h-4 w-4" />
+    <span><%= @host_port %></span>
+    """
+  end
+
   def label(assigns) when is_atom(assigns.state) do
     ~H"""
     <span class={"#{label_style(@state)} badge text-xs"}>
@@ -30,11 +65,15 @@ defmodule Client.SimpleComponents do
   end
 
   defp label_style(nil), do: ""
+  defp label_style(state) when state in [:running], do: "badge-primary"
   defp label_style(state) when state in [:cloning, :scheduled], do: "badge-outline"
-  defp label_style(state) when state in [:building, :starting], do: "badge-outline badge-primary"
 
-  defp label_style(state) when state in [:cloning_failed, :build_failed],
-    do: "badge-outline badge-error"
+  defp label_style(state) when state in [:building, :starting, :started],
+    do: "badge-outline badge-primary"
+
+  defp label_style(state)
+       when state in [:cloning_failed, :build_failed, :start_failed, :run_failed],
+       do: "badge-outline badge-error"
 
   def footer(assigns) when is_nil(assigns.docker_version) and is_nil(assigns.docker_running) do
     ~H"""

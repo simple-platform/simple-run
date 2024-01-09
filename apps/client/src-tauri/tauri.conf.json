@@ -18,9 +18,24 @@
         "scope": [
           {
             "args": [
-              "start"
+              "--client",
+              {
+                "validator": "\\S+"
+              },
+              {
+                "validator": "\\S+"
+              }
             ],
             "name": "../burrito_out/desktop",
+            "sidecar": true
+          },
+          {
+            "args": [
+              {
+                "validator": "\\S+"
+              }
+            ],
+            "name": "../sidecars/dockerfile-json",
             "sidecar": true
           }
         ],
@@ -43,7 +58,8 @@
         "depends": []
       },
       "externalBin": [
-        "../burrito_out/desktop"
+        "../burrito_out/desktop",
+        "../sidecars/dockerfile-json-1.0.8/dockerfile-json"
       ],
       "icon": [
         "icons/32x32.png",

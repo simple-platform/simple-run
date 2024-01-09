@@ -2,7 +2,7 @@ import Config
 
 if config_env() == :prod do
   args = Burrito.Util.Args.get_arguments()
-  run_client = length(args) == 2 and Enum.at(args, 0) == "--client"
+  run_client = length(args) == 3 and Enum.at(args, 0) == "--client"
 
   if not run_client do
     # The secret key base is used to sign/encrypt cookies and other secrets.
@@ -103,6 +103,8 @@ if config_env() == :prod do
     config :client, Client.Endpoint,
       http: [ip: {127, 0, 0, 1}, port: 3156],
       secret_key_base: secret_key_base
+
+    config :client, :app_path, Enum.at(args, 2)
 
     # ## Using releases
     #
