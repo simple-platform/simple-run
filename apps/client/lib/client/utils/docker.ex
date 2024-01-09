@@ -25,6 +25,25 @@ defmodule Client.Utils.Docker do
     cmd |> Exile.stream(stderr: :consume)
   end
 
+  def run(%App{name: name, org: org, repo: repo, run_number: run_number}) do
+    cmd = ~w(docker run -d -P --name sr-#{org}-#{repo}-#{run_number} #{name}:simplerun)
+
+    Logger.info("Executing command: #{Enum.join(cmd, " ")}")
+
+    cmd |> Exile.stream(stderr: :consume)
+  end
+
+  def inspect(%App{org: org, repo: repo, run_number: run_number}) do
+    cmd = ~w(docker inspect sr-#{org}-#{repo}-#{run_number})
+
+    Logger.info("Executing command: #{Enum.join(cmd, " ")}")
+
+    cmd
+    |> Exile.stream!()
+    |> Enum.into("")
+    |> Jason.decode!()
+  end
+
   def get_build_steps(%App{file_to_run: file, path: path}) do
     {:ok, cwd} = File.cwd()
 

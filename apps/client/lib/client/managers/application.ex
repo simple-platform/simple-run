@@ -11,9 +11,11 @@ defmodule Client.Entities.Application do
     :url,
     :path,
     :state,
+    :ports,
     :errors,
     :provider,
     :progress,
+    :run_number,
     :file_to_run,
     :created_at,
     :updated_at
@@ -125,7 +127,7 @@ defmodule Client.Managers.Application do
   end
 
   defp build_app(provider, kvp) when provider == :github do
-    init_app = %App{provider: provider, state: :cloning, errors: []}
+    init_app = %App{provider: provider, state: :cloning, errors: [], ports: []}
 
     kvp
     |> Enum.reduce_while({:ok, init_app}, fn [key, val], {:ok, app} ->

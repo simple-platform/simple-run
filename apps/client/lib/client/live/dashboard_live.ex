@@ -49,6 +49,7 @@ defmodule Client.DashboardLive do
                       <%= if not is_nil(app.progress) do %>
                         <div class="badge badge-secondary text-xs"><%= app.progress %></div>
                       <% end %>
+                      <.ports ports={app.ports} />
                     </div>
                     <div class="space-x-3 flex items-center">
                       <a href={app.url} target="_blank"><Icons.github class="w-5 h-5" /></a>

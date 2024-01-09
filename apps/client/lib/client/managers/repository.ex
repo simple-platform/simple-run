@@ -39,9 +39,9 @@ defmodule Client.Managers.Repository do
       apps
       |> Stream.filter(fn %App{id: id} -> id not in active_clones end)
       |> Enum.to_list()
-      |> Enum.map(fn app -> Task.start_link(fn -> db |> clone(app) end) end)
+      |> Enum.map(fn app -> Task.start(fn -> db |> clone(app) end) end)
 
-    self() |> Process.send_after(:clone, :timer.seconds(1))
+    self() |> Process.send_after(:clone, :timer.seconds(3))
   end
 
   defp get_active_clones(db) do
@@ -58,12 +58,14 @@ defmodule Client.Managers.Repository do
 
     db |> CubDB.put(key, true)
 
-    case Git.clone(url, path) do
-      {:ok, stream} -> stream |> monitor_cloning(app)
-      {:error, reason} -> app |> Application.set_state(:cloning_failed, reason)
+    try do
+      case Git.clone(url, path) do
+        {:ok, stream} -> stream |> monitor_cloning(app)
+        {:error, reason} -> app |> Application.set_state(:cloning_failed, reason)
+      end
+    after
+      db |> CubDB.delete(key)
     end
-
-    db |> CubDB.delete(key)
   end
 
   defp monitor_cloning(stream, %App{name: name} = app) do
@@ -76,7 +78,7 @@ defmodule Client.Managers.Repository do
   defp handle_exit(app, 0, _), do: update_app_state(app, "100%", :scheduled, nil)
 
   defp handle_exit(app, _nonzero, {_, _, errors}),
-    do: update_app_state(app, nil, :cloning_failed, errors)
+    do: update_app_state(app, nil, :cloning_failed, errors |> Enum.reverse())
 
   defp handle_lines(app, name, lines, acc) do
     String.split(lines, @newline_regex)
@@ -95,7 +97,7 @@ defmodule Client.Managers.Repository do
     updated_progress = get_progress(line)
     total_progress = update_progress(progress, prev_progress, updated_progress)
     log_progress(app, name, line, total_progress)
-    {total_progress, updated_progress, [line | errors]}
+    {total_progress, updated_progress, [line | errors |> Enum.take(3)]}
   end
 
   defp update_progress(progress, prev_progress, updated_progress) do

@@ -19,6 +19,14 @@ defmodule Client.Api.Application do
     GenServer.call(@name, {:register, request})
   end
 
+  def inc_run_number(app) do
+    GenServer.call(@name, {:update, %App{app | run_number: (app.run_number || 0) + 1}})
+  end
+
+  def set_ports(app, ports) do
+    GenServer.call(@name, {:update, %App{app | ports: ports}})
+  end
+
   def set_state(app, state) do
     GenServer.call(@name, {:update, %App{app | state: state, errors: []}})
   end

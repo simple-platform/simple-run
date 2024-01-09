@@ -173,6 +173,7 @@
     "reduxjs",
     "rehype",
     "reqlog",
+    "reuseaddr",
     "rvest",
     "sarif",
     "selfsigned",
