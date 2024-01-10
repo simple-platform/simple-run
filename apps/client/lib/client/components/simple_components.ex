@@ -102,12 +102,6 @@ defmodule Client.SimpleComponents do
        when state in [:cloning_failed, :build_failed, :start_failed, :run_failed],
        do: "badge-outline badge-error"
 
-  def footer(assigns) when is_nil(assigns.docker_version) and is_nil(assigns.docker_running) do
-    ~H"""
-
-    """
-  end
-
   def errors(assigns) when assigns.errors == [] do
     ~H"""
 
@@ -131,6 +125,12 @@ defmodule Client.SimpleComponents do
         </div>
       </div>
     </div>
+    """
+  end
+
+  def footer(assigns) when is_nil(assigns.docker_version) and is_nil(assigns.docker_running) do
+    ~H"""
+
     """
   end
 
