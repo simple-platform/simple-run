@@ -2,7 +2,6 @@ defmodule Client.DashboardLive do
   use Client, :live_view
 
   import Client.SimpleComponents
-  alias Client.Components.Icons
 
   alias Client.Api.Container
   alias Client.Api.Application
@@ -46,20 +45,14 @@ defmodule Client.DashboardLive do
                     <div class="w-full flex items-center space-x-1.5">
                       <h3 class="card-title"><%= app.name %></h3>
                       <.label state={app.state} />
+                      <.progress progress={app.progress} />
+                      <div class="!ml-6 flex space-x-1.5"><.ports ports={app.ports} /></div>
                     </div>
                     <div class="space-x-3 flex items-center">
-                      <a href={app.url} target="_blank"><Icons.github class="w-5 h-5" /></a>
+                      <.actions app={app} />
                     </div>
                   </div>
-                  <%= if not is_nil(app.error) do %>
-                    <div
-                      role="alert"
-                      class="alert alert-warning rounded-md flex items-center p-3 w-full text-sm gap-0 space-x-1.5"
-                    >
-                      <Heroicons.LiveView.icon name="exclamation-triangle" class="h-12 w-12" />
-                      <span><%= app.error %></span>
-                    </div>
-                  <% end %>
+                  <.errors errors={app.errors} />
                 </div>
               </li>
             </ul>

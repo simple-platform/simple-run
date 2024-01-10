@@ -5,6 +5,8 @@ defmodule Client.SimpleComponents do
 
   use Phoenix.Component
 
+  alias Client.Components.Icons
+
   def no_apps(assigns) do
     ~H"""
     <div class="h-full w-full flex justify-center items-center">
@@ -21,6 +23,66 @@ defmodule Client.SimpleComponents do
     """
   end
 
+  def actions(assigns) do
+    ~H"""
+    <%= if @app.state == :running do %>
+      <button class="btn btn-circle btn-outline btn-xs">
+        <Heroicons.LiveView.icon name="stop" class="h-3 w-3" />
+      </button>
+    <% end %>
+    <%= if @app.state == :stopped do %>
+      <button class="btn btn-circle btn-outline btn-xs">
+        <Heroicons.LiveView.icon name="play" class="h-3 w-3" />
+      </button>
+    <% end %>
+    <button class="btn btn-circle btn-outline btn-xs">
+      <Heroicons.LiveView.icon name="trash" class="h-3 w-3" />
+    </button>
+    <a href={@app.url} target="_blank" class="btn btn-circle btn-outline btn-xs">
+      <Icons.github class="w-3 h-3" />
+    </a>
+    """
+  end
+
+  def progress(assigns) do
+    ~H"""
+    <%= if not is_nil(@progress) do %>
+      <div class="badge badge-secondary text-xs"><%= @progress %></div>
+    <% end %>
+    """
+  end
+
+  def ports(assigns) when assigns.ports == [] do
+    ~H"""
+
+    """
+  end
+
+  def ports(assigns) do
+    ~H"""
+    <div :for={{container_port, {host_ip, host_port}, is_http?} <- @ports} class="flex">
+      <%= if is_http? do %>
+        <a href={"http://#{host_ip}:#{host_port}"} target="_blank" class="btn btn-outline btn-xs">
+          <%= port(%{container_port: container_port, host_port: host_port, is_http?: is_http?}) %>
+        </a>
+      <% else %>
+        <button class="btn btn-active btn-ghost btn-xs pointer-events-none">
+          <%= port(%{container_port: container_port, host_port: host_port, is_http?: is_http?}) %>
+        </button>
+      <% end %>
+    </div>
+    """
+  end
+
+  defp port(assigns) do
+    ~H"""
+    <Heroicons.LiveView.icon name={if @is_http?, do: "globe-alt", else: "server"} class="h-3 w-3" />
+    <span><%= @container_port %></span>
+    <Heroicons.LiveView.icon name="arrow-long-right" class="h-4 w-4" />
+    <span><%= @host_port %></span>
+    """
+  end
+
   def label(assigns) when is_atom(assigns.state) do
     ~H"""
     <span class={"#{label_style(@state)} badge text-xs"}>
@@ -30,15 +92,45 @@ defmodule Client.SimpleComponents do
   end
 
   defp label_style(nil), do: ""
+  defp label_style(state) when state in [:running], do: "badge-primary"
   defp label_style(state) when state in [:cloning, :scheduled], do: "badge-outline"
-  defp label_style(state) when state in [:building, :starting], do: "badge-outline badge-primary"
 
-  defp label_style(state) when state in [:cloning_failed, :build_failed],
-    do: "badge-outline badge-error"
+  defp label_style(state) when state in [:building, :starting, :started],
+    do: "badge-outline badge-primary"
+
+  defp label_style(state)
+       when state in [:cloning_failed, :build_failed, :start_failed, :run_failed],
+       do: "badge-outline badge-error"
 
   def footer(assigns) when is_nil(assigns.docker_version) and is_nil(assigns.docker_running) do
     ~H"""
 
+    """
+  end
+
+  def errors(assigns) when assigns.errors == [] do
+    ~H"""
+
+    """
+  end
+
+  def errors(assigns) do
+    ~H"""
+    <div
+      role="alert"
+      class="alert alert-warning rounded-md flex items-center p-3 w-full text-sm gap-0 space-x-1.5"
+    >
+      <div class="flex-grow">
+        <Heroicons.LiveView.icon name="exclamation-triangle" class="h-5 w-5" />
+      </div>
+      <div class="flex flex-col">
+        <div :for={error <- @errors}>
+          <code class="line-clamp-4 break-all text-xs my-1 select-text">
+            <%= error %>
+          </code>
+        </div>
+      </div>
+    </div>
     """
   end
 

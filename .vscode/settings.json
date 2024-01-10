@@ -103,7 +103,7 @@
   "[elixir]": {
     "editor.insertSpaces": true,
     "editor.tabSize": 2,
-    "editor.wordBasedSuggestions": false,
+    "editor.wordBasedSuggestions": "off",
     "editor.formatOnType": true,
     "editor.trimAutoWhitespace": false,
     "files.trimTrailingWhitespace": true,
@@ -173,6 +173,7 @@
     "reduxjs",
     "rehype",
     "reqlog",
+    "reuseaddr",
     "rvest",
     "sarif",
     "selfsigned",
@@ -187,12 +188,14 @@
     "Titlebar",
     "topbar",
     "treeshake",
+    "trunc",
     "tsup",
     "uidotdev",
     "usehooks",
     "vsintellicode",
     "wailsapp",
     "wailsjs",
-    "wailsjsdir"
+    "wailsjsdir",
+    "WORKDIR"
   ]
 }
