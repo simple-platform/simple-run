@@ -66,3 +66,5 @@ erl_crash.dump
 bin
 
 burrito_out
+
+!apps/client/lib/client/managers/build

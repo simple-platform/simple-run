@@ -18,12 +18,13 @@ defmodule Client.Application do
     children = [
       Client.Telemetry,
       {Phoenix.PubSub, name: Client.PubSub},
+      {Client.Managers.Build.Docker, db},
       {Client.Managers.Application, db},
       {Client.Managers.Repository, db},
       {Client.Managers.Execution, db},
-      {Client.Managers.Build, db},
       {Client.Managers.Run, db},
       Client.Managers.Container,
+      Client.Managers.Build,
 
       # Start to serve requests, typically the last entry
       Client.Endpoint

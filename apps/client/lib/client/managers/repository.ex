@@ -55,7 +55,6 @@ defmodule Client.Managers.Repository do
 
   defp clone(db, %App{id: id, url: url, path: path} = app) do
     key = {:active, :clone, {id}}
-
     db |> CubDB.put(key, true)
 
     try do

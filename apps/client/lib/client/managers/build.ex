@@ -4,118 +4,39 @@ defmodule Client.Managers.Build do
   """
   use GenServer
 
-  alias Client.Utils.Docker
   alias Client.Api.Application
   alias Client.Managers.Helpers
-  alias Client.Entities.Application, as: App
 
   @name :build_manager
 
-  @step_regex ~r/\b(FROM|RUN|COPY|WORKDIR)\b/
-  @newline_regex ~r/\r|\n/
+  @docker_builder :docker_build_manager
 
-  def start_link(db) do
-    GenServer.start_link(__MODULE__, db, name: @name)
+  def start_link(state) do
+    GenServer.start_link(__MODULE__, state, name: @name)
   end
 
-  def init(db) do
-    process_scheduled(db)
+  def init(state) do
+    process_scheduled()
 
-    {:ok, db}
+    {:ok, state}
   end
 
-  def handle_info({:process, :scheduled}, db) do
-    process_scheduled(db)
+  def handle_info({:process, :scheduled}, state) do
+    process_scheduled()
 
-    {:noreply, db}
+    {:noreply, state}
   end
 
   ##########
 
-  defp process_scheduled(db) do
+  defp process_scheduled() do
     {:ok, apps} = Application.get_with_state(:scheduled)
     {docker_apps, _compose_apps, _simplerun_apps} = apps |> Helpers.chunk_by_category()
 
-    active_builds = db |> Helpers.get_active(:build) |> Enum.to_list()
-
     _ =
       docker_apps
-      |> Stream.filter(fn %App{id: id} -> id not in active_builds end)
-      |> Enum.to_list()
-      |> Enum.map(fn app -> Task.start(fn -> db |> build(app) end) end)
+      |> Enum.map(fn app -> GenServer.cast(@docker_builder, {:build, app}) end)
 
     self() |> Process.send_after({:process, :scheduled}, :timer.seconds(3))
-  end
-
-  defp build(db, %App{id: id} = app) do
-    {:ok, app} = Application.set_state(app, :building)
-
-    key = {:active, :build, {id}}
-    CubDB.put(db, key, true)
-
-    try do
-      total_steps = Docker.get_build_steps(app)
-
-      _ =
-        Docker.build(app)
-        |> Enum.reduce({0, nil, []}, fn output, acc ->
-          process_output(output, acc, app, total_steps)
-        end)
-    after
-      CubDB.delete(db, key)
-    end
-  end
-
-  defp process_output({:exit, {:status, status}}, _acc, app, _steps) when status == 0 do
-    Application.set_state(app, :starting)
-    {nil, []}
-  end
-
-  defp process_output({:exit, {:status, _nonzero}}, {_, _, errors}, app, _steps) do
-    Application.set_state(app, :build_failed, errors |> Enum.reverse())
-    {nil, []}
-  end
-
-  defp process_output({_, output}, acc, app, total_steps) do
-    output
-    |> String.split(@newline_regex)
-    |> Enum.reduce(acc, fn line, acc ->
-      process_line(line, acc, app, total_steps)
-    end)
-  end
-
-  defp process_line(line, {completed_steps, progress, errors}, app, total_steps) do
-    line = String.trim(line)
-
-    if line != "" do
-      new_completed_steps = update_completed_steps(completed_steps, line)
-      updated_progress = update_progress(new_completed_steps, total_steps)
-
-      maybe_update_progress(app, updated_progress, progress)
-      IO.puts(format_progress_line(app, updated_progress, line))
-
-      {new_completed_steps, updated_progress, [line | errors |> Enum.take(3)]}
-    else
-      {completed_steps, progress, errors}
-    end
-  end
-
-  defp maybe_update_progress(app, updated_progress, progress) do
-    if updated_progress != progress, do: Application.set_progress(app, "#{updated_progress}%")
-  end
-
-  defp format_progress_line(app, updated_progress, line) do
-    "[#{app.name}] (#{updated_progress}%) #{line}"
-  end
-
-  defp update_completed_steps(completed_steps, line) do
-    case Regex.run(@step_regex, line) do
-      nil -> completed_steps
-      _ -> completed_steps + 1
-    end
-  end
-
-  defp update_progress(completed_steps, total_steps) do
-    min((completed_steps / total_steps * 100) |> trunc(), 100)
   end
 end
