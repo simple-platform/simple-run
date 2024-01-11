@@ -31,7 +31,7 @@ defmodule Client.Managers.Build do
 
   defp process_scheduled() do
     {:ok, apps} = Application.get_with_state(:scheduled)
-    {docker_apps, _compose_apps, _simplerun_apps} = apps |> Helpers.chunk_by_category()
+    {docker_apps, _simplerun_apps} = apps |> Helpers.chunk_by_category()
 
     _ =
       docker_apps

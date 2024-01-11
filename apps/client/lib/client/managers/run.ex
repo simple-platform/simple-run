@@ -31,7 +31,7 @@ defmodule Client.Managers.Run do
 
   defp process_started(db) do
     {:ok, apps} = Application.get_with_state(:started)
-    {docker_apps, _compose_apps, _simplerun_apps} = apps |> Helpers.chunk_by_category()
+    {docker_apps, _simplerun_apps} = apps |> Helpers.chunk_by_category()
 
     actively_mapping_ports = db |> Helpers.get_active(:mapping_ports) |> Enum.to_list()
 

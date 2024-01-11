@@ -33,7 +33,7 @@ defmodule Client.Managers.Execution do
 
   defp process_starting(db) do
     {:ok, apps} = Application.get_with_state(:starting)
-    {docker_apps, _compose_apps, _simplerun_apps} = apps |> Helpers.chunk_by_category()
+    {docker_apps, _simplerun_apps} = apps |> Helpers.chunk_by_category()
 
     actively_starting = db |> Helpers.get_active(:starting) |> Enum.to_list()
 
