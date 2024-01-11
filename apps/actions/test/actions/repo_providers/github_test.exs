@@ -80,7 +80,7 @@ defmodule Actions.RepoProviders.GitHubTest do
         :name => "simple-run",
         :desc => data["description"],
         :iconUrl => data["owner"]["avatarUrl"],
-        :dockerFiles => ["docker-compose.yaml", "Dockerfile"],
+        :dockerFiles => ["Dockerfile"],
         :simplerun => nil
       }
 
@@ -126,7 +126,7 @@ defmodule Actions.RepoProviders.GitHubTest do
         :name => "simple-run",
         :desc => data["description"],
         :iconUrl => data["owner"]["avatarUrl"],
-        :dockerFiles => ["docker-compose.yaml", "Dockerfile"],
+        :dockerFiles => ["Dockerfile"],
         :simplerun => %{
           :config => %{
             "version" => "1.0.0",
@@ -183,7 +183,7 @@ defmodule Actions.RepoProviders.GitHubTest do
         :name => "simple-run",
         :desc => data["description"],
         :iconUrl => data["owner"]["avatarUrl"],
-        :dockerFiles => ["docker-compose.yaml", "Dockerfile"],
+        :dockerFiles => ["Dockerfile"],
         :simplerun => %{
           :error => @err_invalid_simplerun_config
         }

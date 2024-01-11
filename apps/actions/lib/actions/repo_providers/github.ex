@@ -79,7 +79,12 @@ defmodule Actions.RepoProviders.GitHub do
     entries
     |> Enum.filter(fn entry ->
       name = String.downcase(entry["name"])
-      entry["type"] == "blob" && String.contains?(name, "docker") && name != ".dockerignore"
+
+      entry["type"] == "blob" &&
+        String.contains?(name, "dockerfile") &&
+        !String.contains?(name, ".yaml") &&
+        !String.contains?(name, ".yml") &&
+        name != ".dockerignore"
     end)
     |> Enum.map(fn entry -> entry["name"] end)
   end
