@@ -7,24 +7,9 @@ defmodule Client.Application do
 
   @impl true
   def start(_type, _args) do
-    {:ok, db} =
-      CubDB.start_link(
-        name: :db,
-        auto_compact: true,
-        auto_file_sync: true,
-        data_dir: System.user_home!() |> Path.join(".simple/run/data")
-      )
-
     children = [
       Client.Telemetry,
       {Phoenix.PubSub, name: Client.PubSub},
-      {Client.Managers.Build.Docker, db},
-      {Client.Managers.Application, db},
-      {Client.Managers.Repository, db},
-      {Client.Managers.Execution, db},
-      {Client.Managers.Run, db},
-      Client.Managers.Container,
-      Client.Managers.Build,
 
       # Start to serve requests, typically the last entry
       Client.Endpoint
