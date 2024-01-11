@@ -49,19 +49,19 @@ defmodule Client.Managers.Build.Docker do
 
     _ =
       Docker.build(app)
-      |> Enum.reduce({0, nil, []}, fn output, acc ->
+      |> Enum.reduce({%{}, nil, []}, fn output, acc ->
         process_output(output, acc, app, total_steps)
       end)
   end
 
   defp process_output({:exit, {:status, status}}, _acc, app, _steps) when status == 0 do
     Application.set_state(app, :starting)
-    {nil, []}
+    {%{}, nil, []}
   end
 
   defp process_output({:exit, {:status, _nonzero}}, {_, _, errors}, app, _steps) do
     Application.set_state(app, :build_failed, errors |> Enum.reverse())
-    {nil, []}
+    {%{}, nil, []}
   end
 
   defp process_output({_, output}, acc, app, total_steps) do
@@ -77,10 +77,13 @@ defmodule Client.Managers.Build.Docker do
 
     if line != "" do
       new_completed_steps = update_completed_steps(completed_steps, line)
-      updated_progress = update_progress(new_completed_steps, total_steps)
+      completed_steps_count = new_completed_steps |> Map.keys() |> length()
 
+      updated_progress = update_progress(completed_steps_count, total_steps)
       maybe_update_progress(app, updated_progress, progress)
-      IO.puts(format_progress_line(app, updated_progress, line))
+
+      steps = "#{completed_steps_count}/#{total_steps}"
+      IO.puts(format_progress_line(app, steps, updated_progress, line))
 
       {new_completed_steps, updated_progress, [line | errors |> Enum.take(3)]}
     else
@@ -92,18 +95,18 @@ defmodule Client.Managers.Build.Docker do
     if updated_progress != progress, do: Application.set_progress(app, "#{updated_progress}%")
   end
 
-  defp format_progress_line(app, updated_progress, line) do
-    "[#{app.name}] (#{updated_progress}%) #{line}"
+  defp format_progress_line(app, steps, progress, line) do
+    "[#{app.name}] (#{steps} #{progress}%) #{line}"
   end
 
   defp update_completed_steps(completed_steps, line) do
     case Regex.run(@step_regex, line) do
       nil -> completed_steps
-      _ -> completed_steps + 1
+      _ -> completed_steps |> Map.put(line, true)
     end
   end
 
   defp update_progress(completed_steps, total_steps) do
-    min((completed_steps / total_steps * 100) |> trunc(), 100)
+    max(0, min((completed_steps / total_steps * 100) |> trunc(), 100))
   end
 end

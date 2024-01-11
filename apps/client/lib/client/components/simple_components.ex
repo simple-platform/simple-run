@@ -77,9 +77,9 @@ defmodule Client.SimpleComponents do
   defp port(assigns) do
     ~H"""
     <Heroicons.LiveView.icon name={if @is_http?, do: "globe-alt", else: "server"} class="h-3 w-3" />
-    <span><%= @container_port %></span>
-    <Heroicons.LiveView.icon name="arrow-long-right" class="h-4 w-4" />
     <span><%= @host_port %></span>
+    <Heroicons.LiveView.icon name="arrow-long-right" class="h-4 w-4" />
+    <span><%= @container_port %></span>
     """
   end
 
