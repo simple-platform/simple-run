@@ -7,6 +7,14 @@ defmodule Client.Application do
 
   @impl true
   def start(_type, _args) do
+    {:ok, db} =
+      CubDB.start_link(
+        name: :db,
+        auto_compact: true,
+        auto_file_sync: true,
+        data_dir: System.user_home!() |> Path.join(get_db_path())
+      )
+
     children = [
       Client.Telemetry,
       {Phoenix.PubSub, name: Client.PubSub},
@@ -27,5 +35,13 @@ defmodule Client.Application do
   def config_change(changed, _new, removed) do
     Client.Endpoint.config_change(changed, removed)
     :ok
+  end
+
+  defp get_db_path() do
+    case Mix.env() do
+      :dev -> ".simple/run/data/dev"
+      :test -> ".simple/run/data/test"
+      _ -> ".simple/run/data"
+    end
   end
 end

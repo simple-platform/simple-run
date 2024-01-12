@@ -64,7 +64,8 @@ defmodule Client.MixProject do
       {:excoveralls, "~> 0.18", only: :test},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:ex_heroicons, "~> 2.0.0"},
-      {:machinery, "~> 1.1.0"}
+      {:machinery, "~> 1.1.0"},
+      {:cubdb, "~> 2.0.2"}
     ]
   end
 
