@@ -53,12 +53,17 @@ defmodule Client.Entities.App do
 
   def register(%__MODULE__{id: id} = app) do
     db() |> CubDB.put({:app, {id}}, app)
+    broadcast({:app_registered, app})
   end
 
   def get_all() do
     db()
     |> CubDB.select(min_key: {:app, {}}, max_key: {:app, {nil}, {nil}})
     |> Stream.map(fn {_key, val} -> val end)
+  end
+
+  def subscribe() do
+    Phoenix.PubSub.subscribe(Client.PubSub, "app")
   end
 
   ##########
@@ -81,5 +86,9 @@ defmodule Client.Entities.App do
       nil -> {:error, "Request with a missing #{field}"}
       _ -> {:ok, val}
     end
+  end
+
+  defp broadcast(message) do
+    Phoenix.PubSub.broadcast(Client.PubSub, "app", message)
   end
 end
