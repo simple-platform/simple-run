@@ -28,6 +28,10 @@ defmodule Client.Entities.AppTest do
 
   @valid_request "simplerun:gh?o=#{@org}&r=#{@repo}"
 
+  setup do
+    db() |> CubDB.clear()
+  end
+
   describe "new/1" do
     test "responds with error for unknown provider" do
       assert {:error, @err_unknown_provider} = App.new("simplerun:x?o=org&r=repo")
@@ -50,4 +54,20 @@ defmodule Client.Entities.AppTest do
       assert {:ok, app} = App.new("#{@valid_request}&f=Dockerfile")
     end
   end
+
+  describe "register/1" do
+    test "adds the app in db" do
+      App.register(@app)
+      assert db() |> CubDB.get({:app, {@app.id}}) == @app
+    end
+  end
+
+  describe "get_all/0" do
+    test "returns all apps in db" do
+      App.register(@app)
+      assert App.get_all() |> Enum.to_list() == [@app]
+    end
+  end
+
+  defp db, do: GenServer.whereis(:db)
 end

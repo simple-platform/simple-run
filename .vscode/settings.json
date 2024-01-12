@@ -196,6 +196,7 @@
     "wailsapp",
     "wailsjs",
     "wailsjsdir",
+    "whereis",
     "WORKDIR"
   ]
 }

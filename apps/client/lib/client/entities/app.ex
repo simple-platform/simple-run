@@ -3,6 +3,8 @@ defmodule Client.Entities.App do
   Module for managing applications.
   """
 
+  # @db GenServer.whereis(:db)
+
   @err_unknown_provider "Request with an unknown provider"
 
   defstruct [
@@ -49,7 +51,19 @@ defmodule Client.Entities.App do
 
   def new(_), do: {:error, @err_unknown_provider}
 
+  def register(%__MODULE__{id: id} = app) do
+    db() |> CubDB.put({:app, {id}}, app)
+  end
+
+  def get_all() do
+    db()
+    |> CubDB.select(min_key: {:app, {}}, max_key: {:app, {nil}, {nil}})
+    |> Stream.map(fn {_key, val} -> val end)
+  end
+
   ##########
+
+  defp db, do: GenServer.whereis(:db)
 
   defp split_pair(pair) do
     kv = String.split(pair, "=")
