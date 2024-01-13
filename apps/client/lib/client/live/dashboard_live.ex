@@ -4,10 +4,12 @@ defmodule Client.DashboardLive do
   import Client.SimpleComponents
 
   alias Client.Entities.App
+  alias Client.Managers.Docker
 
   def mount(_params, _session, socket) do
     if connected?(socket) do
       App.subscribe()
+      Docker.subscribe()
     end
 
     apps = App.get_all() |> Enum.to_list()
@@ -17,6 +19,7 @@ defmodule Client.DashboardLive do
       |> stream(:apps, apps)
       |> assign(:no_apps, Enum.empty?(apps))
       |> assign(:active_app, Enum.at(apps, 0))
+      |> assign(:docker_status, %{})
 
     {:ok, socket}
   end
@@ -50,6 +53,7 @@ defmodule Client.DashboardLive do
           </div>
         </section>
       <% end %>
+      <.footer docker_status={@docker_status} />
     </section>
     """
   end
@@ -61,5 +65,9 @@ defmodule Client.DashboardLive do
       |> update(:no_apps, fn _ -> false end)
 
     {:noreply, socket}
+  end
+
+  def handle_info({:docker_status, status}, socket) do
+    {:noreply, socket |> assign(:docker_status, status)}
   end
 end

@@ -20,3 +20,5 @@ config :actions, Actions.Endpoint,
   cors_origin: ["https://simple.dev"],
   pixel_image_url: "https://simple.dev/run/pixel.png",
   button_image_url: "https://simple.dev/run/simple-run-locally@2x.png"
+
+config :client, env: :prod

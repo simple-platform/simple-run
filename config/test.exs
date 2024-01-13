@@ -16,3 +16,5 @@ config :actions, Actions.Endpoint,
 
 config :actions, :http_client, Actions.HttpClientMock
 config :actions, :github_provider, Actions.RepoProviderMock
+
+config :client, env: :test

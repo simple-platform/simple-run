@@ -19,6 +19,9 @@ defmodule Client.Application do
       Client.Telemetry,
       {Phoenix.PubSub, name: Client.PubSub},
 
+      # Simple managers
+      Client.Managers.Docker,
+
       # Start to serve requests, typically the last entry
       Client.Endpoint
     ]
@@ -38,10 +41,10 @@ defmodule Client.Application do
   end
 
   defp get_db_path() do
-    case Mix.env() do
+    case Application.get_env(:client, :env) do
       :dev -> ".simple/run/data/dev"
       :test -> ".simple/run/data/test"
-      _ -> ".simple/run/data"
+      :prod -> ".simple/run/data"
     end
   end
 end

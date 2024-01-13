@@ -61,4 +61,32 @@ defmodule Client.SimpleComponents do
     </div>
     """
   end
+
+  def footer(assigns)
+      when not assigns.docker_status.installed or not assigns.docker_status.running do
+    ~H"""
+    <footer class="alert alert-warning gap-1.5 rounded-none text-xs p-1.5">
+      <Heroicons.LiveView.icon name="exclamation-triangle" class="h-4 w-4" />
+      <%= if not @docker_status.installed do %>
+        <div>
+          We couldn't find Docker on your machine. Applications won't run until you <a
+            class="link underline underline-offset-2 decoration-dotted"
+            href="https://www.docker.com/products/docker-desktop"
+            target="_blank"
+          >
+            install
+          </a>it.
+        </div>
+      <% else %>
+        <div>Docker is not running. Please start Docker to run applications.</div>
+      <% end %>
+    </footer>
+    """
+  end
+
+  def footer(assigns) do
+    ~H"""
+
+    """
+  end
 end
