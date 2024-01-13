@@ -3,7 +3,7 @@ defmodule Client.Entities.App do
   Module for managing applications.
   """
 
-  # @db GenServer.whereis(:db)
+  @app __MODULE__
 
   @err_unknown_provider "Request with an unknown provider"
 
@@ -13,13 +13,20 @@ defmodule Client.Entities.App do
     :org,
     :repo,
     :name,
-    :state,
     :progress,
     :provider,
     :dockerfile,
+    state: "registered",
     errors: [],
     containers: []
   ]
+
+  use Machinery,
+    states: ["registered", "cloning", "cloning failed"],
+    transitions: %{
+      "registered" => "cloning",
+      "cloning" => ["cloning failed"]
+    }
 
   def new("simplerun:gh?" <> request) do
     params =
@@ -33,7 +40,7 @@ defmodule Client.Entities.App do
       name = "#{org}/#{repo}"
       url = "https://github.com/#{name}"
 
-      app = %__MODULE__{
+      app = %@app{
         id: UUID.uuid5(:url, url),
         url: url,
         org: org,
@@ -51,9 +58,16 @@ defmodule Client.Entities.App do
 
   def new(_), do: {:error, @err_unknown_provider}
 
-  def register(%__MODULE__{id: id} = app) do
+  def register(%@app{id: id} = app) do
     db() |> CubDB.put({:app, {id}}, app)
     broadcast({:app_registered, app})
+
+    :ok
+  end
+
+  def update(%@app{id: id} = app) do
+    db() |> CubDB.put({:app, {id}}, app)
+    broadcast({:app_updated, app})
   end
 
   def get_all() do
@@ -64,6 +78,14 @@ defmodule Client.Entities.App do
 
   def subscribe() do
     Phoenix.PubSub.subscribe(Client.PubSub, "app")
+  end
+
+  # Machinery uses this to save state changes in DB
+  def persist(app, state) do
+    updated_app = %@app{app | state: state}
+    update(updated_app)
+
+    updated_app
   end
 
   ##########

@@ -18,19 +18,15 @@ defmodule Client.Entities.AppTest do
     org: @org,
     repo: @repo,
     name: "#{@org}/#{@repo}",
-    state: nil,
     progress: nil,
     dockerfile: nil,
+    state: "registered",
     provider: :github,
     errors: [],
     containers: []
   }
 
   @valid_request "simplerun:gh?o=#{@org}&r=#{@repo}"
-
-  setup do
-    db() |> CubDB.clear()
-  end
 
   describe "new/1" do
     test "responds with error for unknown provider" do
@@ -51,12 +47,14 @@ defmodule Client.Entities.AppTest do
 
     test "responds with app for valid request with dockerfile" do
       app = %App{@app | dockerfile: "Dockerfile"}
-      assert {:ok, app} = App.new("#{@valid_request}&f=Dockerfile")
+      assert {:ok, ^app} = App.new("#{@valid_request}&f=Dockerfile")
     end
   end
 
   describe "register/1" do
     test "adds the app in db" do
+      db() |> CubDB.clear()
+
       App.register(@app)
       assert db() |> CubDB.get({:app, {@app.id}}) == @app
     end
@@ -64,6 +62,8 @@ defmodule Client.Entities.AppTest do
 
   describe "get_all/0" do
     test "returns all apps in db" do
+      db() |> CubDB.clear()
+
       App.register(@app)
       assert App.get_all() |> Enum.to_list() == [@app]
     end

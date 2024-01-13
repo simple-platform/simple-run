@@ -5,10 +5,6 @@ defmodule Client.AppControllerTest do
   @err_missing_org "Request with a missing org"
   @err_missing_repo "Request with a missing repo"
 
-  setup do
-    db() |> CubDB.clear()
-  end
-
   describe "register_app/2" do
     test "responds with error for unknown provider", %{conn: conn} do
       conn = post(conn, "/api/application", %{"request" => "simplerun:x?o=org&r=repo"})
@@ -26,6 +22,8 @@ defmodule Client.AppControllerTest do
     end
 
     test "responds with success for valid request", %{conn: conn} do
+      db() |> CubDB.clear()
+
       conn = post(conn, "/api/application", %{"request" => "simplerun:gh?o=org&r=repo}"})
       assert json_response(conn, 201) == true
     end
