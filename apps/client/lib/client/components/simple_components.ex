@@ -78,7 +78,7 @@ defmodule Client.SimpleComponents do
           </a>it.
         </div>
       <% else %>
-        <div>Docker is not running. Please start Docker to run applications.</div>
+        <div>Docker is not running. Trying to start Docker so that we can run applications.</div>
       <% end %>
     </footer>
     """

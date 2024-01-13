@@ -5,7 +5,7 @@ defmodule Client.Utils.Docker do
 
   def get_status() do
     try do
-      ~w(docker ps) |> Exile.stream!()
+      _ = ~w(docker ps) |> Exile.stream!() |> Enum.into("")
 
       {true, true}
     rescue
@@ -16,7 +16,7 @@ defmodule Client.Utils.Docker do
 
   def start() do
     try do
-      ~w(open /Applications/Docker.app) |> Exile.stream!()
+      _ = ~w(open /Applications/Docker.app) |> Exile.stream!() |> Enum.into("")
     rescue
       _ -> :ok
     end
