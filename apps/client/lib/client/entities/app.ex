@@ -68,6 +68,14 @@ defmodule Client.Entities.App do
   def update(%@app{id: id} = app) do
     db() |> CubDB.put({:app, {id}}, app)
     broadcast({:app_updated, app})
+
+    app
+  end
+
+  # Machinery uses this to save state changes in DB
+  def persist(app, state, metadata \\ %{}) do
+    updated_app = %@app{app | state: state, errors: Map.get(metadata, :errors)}
+    update(updated_app)
   end
 
   def get_all() do
@@ -78,14 +86,6 @@ defmodule Client.Entities.App do
 
   def subscribe() do
     Phoenix.PubSub.subscribe(Client.PubSub, "app")
-  end
-
-  # Machinery uses this to save state changes in DB
-  def persist(app, state) do
-    updated_app = %@app{app | state: state}
-    update(updated_app)
-
-    updated_app
   end
 
   ##########

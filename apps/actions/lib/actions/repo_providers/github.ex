@@ -68,7 +68,7 @@ defmodule Actions.RepoProviders.GitHub do
     req =
       @req.new(
         url: "https://api.github.com/graphql",
-        headers: %{"Authorization" => "bearer #{@gh_token}"}
+        headers: %{"authorization" => "bearer #{@gh_token}"}
       )
       |> AbsintheClient.attach()
 

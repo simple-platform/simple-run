@@ -5,8 +5,6 @@ defmodule Client.SimpleComponents do
 
   use Phoenix.Component
 
-  alias Client.Components.Icons
-
   def no_apps(assigns) do
     ~H"""
     <div class="h-full w-full flex justify-center items-center">
@@ -23,15 +21,15 @@ defmodule Client.SimpleComponents do
     """
   end
 
-  def label(assigns) when not is_nil(assigns.state) do
+  def app_state(assigns) when assigns.state != "registered" do
     ~H"""
-    <span class={"#{label_style(@state)} badge text-xs"}>
-      <%= @state |> Atom.to_string() |> String.replace("_", " ") %>
+    <span class={"#{label_style(@state)} badge badge-sm"}>
+      <%= @state %>
     </span>
     """
   end
 
-  def label(assigns) do
+  def app_state(assigns) do
     ~H"""
 
     """
@@ -55,10 +53,19 @@ defmodule Client.SimpleComponents do
       <button class="btn btn-circle btn-outline btn-xs">
         <Heroicons.LiveView.icon name="trash" class="h-3 w-3" />
       </button>
-      <a href={@app.url} target="_blank" class="btn btn-circle btn-outline btn-xs">
-        <Icons.github class="w-3 h-3" />
-      </a>
     </div>
+    """
+  end
+
+  def progress(assigns) when is_nil(assigns.progress) do
+    ~H"""
+
+    """
+  end
+
+  def progress(assigns) do
+    ~H"""
+    <span class="badge badge-secondary badge-sm"><%= @progress %></span>
     """
   end
 

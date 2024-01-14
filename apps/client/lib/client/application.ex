@@ -7,7 +7,7 @@ defmodule Client.Application do
 
   @impl true
   def start(_type, _args) do
-    {:ok, db} =
+    {:ok, _db} =
       CubDB.start_link(
         name: :db,
         auto_compact: true,
@@ -20,6 +20,7 @@ defmodule Client.Application do
       {Phoenix.PubSub, name: Client.PubSub},
 
       # Simple managers
+      Client.Managers.Repo,
       Client.Managers.Docker,
 
       # Start to serve requests, typically the last entry
