@@ -16,12 +16,11 @@ defmodule Client.DashboardLive do
       Docker.subscribe()
     end
 
-    apps = Apps.get_all() |> Enum.to_list()
+    apps = Apps.get_all()
 
     socket =
       socket
-      |> stream(:apps, apps)
-      |> assign(:no_apps, Enum.empty?(apps))
+      |> assign(:apps, apps)
       |> assign(:active_app, Enum.at(apps, 0))
       |> assign(:docker_status, %{})
 
@@ -31,7 +30,7 @@ defmodule Client.DashboardLive do
   def render(assigns) do
     ~H"""
     <section class="h-full w-full flex flex-col overflow-hidden">
-      <%= if @no_apps do %>
+      <%= if Enum.empty?(@apps) do %>
         <.no_apps />
       <% else %>
         <section class="p-3 h-full flex space-x-3">
@@ -40,11 +39,10 @@ defmodule Client.DashboardLive do
             <div class="relative h-full w-full">
               <ul
                 id="applications"
-                class="menu menu-lg bg-base-200 rounded-box overflow-scroll flex-nowrap absolute inset-0 top-3 bottom-8 space-y-1.5"
-                phx-update="stream"
+                class="menu menu-lg bg-base-200 rounded-box rounded-md overflow-scroll flex-nowrap absolute inset-0 top-3 bottom-8 space-y-1.5"
               >
-                <li :for={{id, app} <- @streams.apps} id={id}>
-                  <div class={"flex px-3 cursor-pointer #{if @active_app.id == app.id, do: "active", else: ""}"}>
+                <li :for={app <- @apps} phx-click="app_selected" phx-value-id={app.id}>
+                  <div class={"flex px-3 cursor-pointer rounded-md #{get_active_class(app, @active_app)}"}>
                     <div class="w-full flex items-center space-x-1.5">
                       <span><%= app.name %></span>
                     </div>
@@ -58,11 +56,11 @@ defmodule Client.DashboardLive do
             <h1 class="text-2xl"><%= @active_app.name %></h1>
             <div class="relative h-full w-full">
               <ul class="overflow-scroll absolute inset-0 top-3 bottom-8 space-y-1.5">
-                <li class="card bg-base-200 shadow-md">
+                <li class="card bg-base-200 shadow-md rounded-md">
                   <div class="card-body p-3">
                     <div class="flex items-center">
                       <div class="w-full flex items-center space-x-1.5">
-                        <div class="card-title text-lg">Repository</div>
+                        <div class="text-sm font-medium">Repository</div>
                         <.state state={@active_app.state} type={:repo} />
                         <.progress progress={@active_app.progress} />
                       </div>
@@ -90,15 +88,20 @@ defmodule Client.DashboardLive do
   def handle_info({:app_registered, app}, socket) do
     socket =
       socket
-      |> stream_insert(:apps, app, at: 0)
-      |> update(:no_apps, fn _ -> false end)
+      |> update(:apps, fn apps -> [app | apps] end)
       |> update(:active_app, fn _ -> app end)
 
     {:noreply, socket}
   end
 
   def handle_info({:app_updated, %App{id: id} = app}, socket) do
-    socket = socket |> stream_insert(:apps, app)
+    apps =
+      socket.assigns.apps
+      |> Enum.map(fn %App{id: id} = existing_app ->
+        if id == app.id, do: app, else: existing_app
+      end)
+
+    socket = socket |> update(:apps, fn _ -> apps end)
 
     socket =
       case id == socket.assigns.active_app.id do
@@ -111,5 +114,13 @@ defmodule Client.DashboardLive do
 
   def handle_info({:docker_status, status}, socket) do
     {:noreply, socket |> update(:docker_status, fn _ -> status end)}
+  end
+
+  def handle_event("app_selected", %{"id" => id}, socket) do
+    {:noreply, socket |> update(:active_app, fn _ -> Apps.get_by_id(id) end)}
+  end
+
+  defp get_active_class(current_app, active_app) do
+    if active_app.id == current_app.id, do: "active", else: ""
   end
 end

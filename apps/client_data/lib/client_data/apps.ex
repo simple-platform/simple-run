@@ -22,6 +22,10 @@ defmodule ClientData.Apps do
     Repo.all(from a in App, order_by: [desc: a.inserted_at])
   end
 
+  def get_by_id(id) do
+    Repo.get(App, id)
+  end
+
   def get_by_state(state) do
     Repo.all(from a in App, where: a.state == ^state)
   end

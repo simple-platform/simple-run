@@ -9,7 +9,7 @@ export function RepoNotReady() {
         <div>
           Please add either
           {' '}
-          <pre className="inline italic">docker-compose.yaml</pre>
+          <pre className="inline italic">simple-run.yaml</pre>
           {' '}
           or
           {' '}
