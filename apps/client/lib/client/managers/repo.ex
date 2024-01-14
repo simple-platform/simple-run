@@ -1,8 +1,11 @@
 defmodule Client.Managers.Repo do
   use GenServer
 
+  alias Ecto.Changeset
+
   alias Client.Utils.Git
-  alias Client.Entities.App
+  alias ClientData.Apps
+  alias ClientData.Entities.App
 
   @name :repo_manager
 
@@ -26,20 +29,19 @@ defmodule Client.Managers.Repo do
   ##########
 
   defp clone_repos() do
-    App.get_all()
-    |> Stream.filter(fn %App{state: state} -> state == "registered" end)
+    Apps.get_by_state("registered")
     |> Enum.each(&start_cloning/1)
 
     self() |> Process.send_after(:clone, :timer.seconds(3))
   end
 
   defp start_cloning(app) do
-    case app |> Machinery.transition_to(App, "cloning") do
+    case app |> Machinery.transition_to(Apps, "cloning") do
       {:ok, app} ->
         Task.start_link(fn -> clone_repo(app) end)
 
       {:error, reason} ->
-        app |> Machinery.transition_to(App, "cloning failed", %{errors: [reason]})
+        app |> Machinery.transition_to(Apps, "cloning failed", %{errors: [reason]})
     end
   end
 
@@ -52,12 +54,12 @@ defmodule Client.Managers.Repo do
         |> Enum.reduce({app, 0, 0, []}, &process_clone_output/2)
     else
       {:error, reason} ->
-        app |> Machinery.transition_to(App, "cloning failed", %{errors: [reason]})
+        app |> Machinery.transition_to(Apps, "cloning failed", %{errors: [reason]})
     end
   end
 
   defp process_clone_output({:exit, {:status, 0}}, {app, _progress, _prev_progress, _errors}) do
-    app |> Machinery.transition_to(App, "starting", %{progress: nil, errors: []})
+    app |> Machinery.transition_to(Apps, "starting", %{progress: nil, errors: []})
     {nil, 0, 0, []}
   end
 
@@ -65,7 +67,7 @@ defmodule Client.Managers.Repo do
          {:exit, {:status, _nonzero}},
          {app, _progress, _prev_progress, errors}
        ) do
-    app |> Machinery.transition_to(App, "cloning failed", %{errors: Enum.reverse(errors)})
+    app |> Machinery.transition_to(Apps, "cloning failed", %{errors: Enum.reverse(errors)})
     {nil, 0, 0, []}
   end
 
@@ -88,8 +90,14 @@ defmodule Client.Managers.Repo do
       str_progress = "#{trunc(new_progress)}%"
       IO.puts("[#{app.name}] (#{str_progress}) #{line}")
 
-      app = App.update(%App{app | progress: str_progress})
-      {app, new_progress, step_progress, [line | errors |> Enum.take(3)]}
+      errors = [line | errors |> Enum.take(3)]
+
+      changeset = app |> Changeset.change(%{progress: str_progress})
+
+      case Apps.update(changeset) do
+        {:ok, app} -> {app, new_progress, step_progress, errors}
+        {:error, _reason} -> {app, new_progress, step_progress, errors}
+      end
     else
       {app, progress, prev_progress, errors}
     end

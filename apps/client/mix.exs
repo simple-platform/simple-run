@@ -59,13 +59,12 @@ defmodule Client.MixProject do
       {:plug_cowboy, "~> 2.5"},
       {:ex_tauri, git: "https://github.com/filipecabaco/ex_tauri.git"},
       {:exile, "~> 0.8.0"},
-      {:elixir_uuid, "~> 1.2.1"},
       {:mox, "~> 1.0", only: :test},
       {:excoveralls, "~> 0.18", only: :test},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:ex_heroicons, "~> 2.0.0"},
-      {:machinery, "~> 1.1.0"},
-      {:cubdb, "~> 2.0.2"}
+      {:ecto_sqlite3_extras, "~> 1.2.2"},
+      {:client_data, in_umbrella: true}
     ]
   end
 

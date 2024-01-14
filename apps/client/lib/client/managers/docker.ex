@@ -24,7 +24,7 @@ defmodule Client.Managers.Docker do
   end
 
   def subscribe() do
-    Phoenix.PubSub.subscribe(Client.PubSub, "docker")
+    Phoenix.PubSub.subscribe(ClientData.PubSub, "docker")
   end
 
   ##########
@@ -42,6 +42,6 @@ defmodule Client.Managers.Docker do
   end
 
   defp broadcast(message) do
-    Phoenix.PubSub.broadcast(Client.PubSub, "docker", message)
+    Phoenix.PubSub.broadcast(ClientData.PubSub, "docker", message)
   end
 end

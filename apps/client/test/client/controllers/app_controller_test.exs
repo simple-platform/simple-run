@@ -20,14 +20,5 @@ defmodule Client.AppControllerTest do
       conn = post(conn, "/api/application", %{"request" => "simplerun:gh?o=org"})
       assert json_response(conn, 422) == %{"errors" => [@err_missing_repo]}
     end
-
-    test "responds with success for valid request", %{conn: conn} do
-      db() |> CubDB.clear()
-
-      conn = post(conn, "/api/application", %{"request" => "simplerun:gh?o=org&r=repo}"})
-      assert json_response(conn, 201) == true
-    end
   end
-
-  defp db, do: GenServer.whereis(:db)
 end

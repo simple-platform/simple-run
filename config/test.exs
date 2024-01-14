@@ -1,5 +1,15 @@
 import Config
 
+# Configure your database
+#
+# The MIX_TEST_PARTITION environment variable can be used
+# to provide built-in test partitioning in CI environment.
+# Run `mix help test` for more information.
+config :client_data, ClientData.Repo,
+  database: Path.expand("../.db/simplerun.test.sqlite", Path.dirname(__ENV__.file)),
+  pool_size: 5,
+  pool: Ecto.Adapters.SQL.Sandbox
+
 # We don't run a server during test. If one is required,
 # you can enable the server option below.
 config :client, Client.Endpoint,
@@ -16,5 +26,3 @@ config :actions, Actions.Endpoint,
 
 config :actions, :http_client, Actions.HttpClientMock
 config :actions, :github_provider, Actions.RepoProviderMock
-
-config :client, env: :test

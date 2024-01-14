@@ -3,18 +3,20 @@ defmodule Client.DashboardLive do
 
   import Client.SimpleComponents
 
-  alias Client.Entities.App
+  alias ClientData.Apps
+  alias ClientData.Entities.App
+
   alias Client.Managers.Docker
 
   alias Client.Components.Icons
 
   def mount(_params, _session, socket) do
     if connected?(socket) do
-      App.subscribe()
+      Apps.subscribe()
       Docker.subscribe()
     end
 
-    apps = App.get_all() |> Enum.to_list()
+    apps = Apps.get_all() |> Enum.to_list()
 
     socket =
       socket

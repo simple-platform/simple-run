@@ -9,6 +9,7 @@
     "rust-lang.rust-analyzer",
     "swellaby.rust-pack",
     "phoenixframework.phoenix",
-    "fallenmax.mithril-emmet"
+    "fallenmax.mithril-emmet",
+    "alexcvzz.vscode-sqlite"
   ]
 }
