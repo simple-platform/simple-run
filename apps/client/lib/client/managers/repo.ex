@@ -17,28 +17,21 @@ defmodule Client.Managers.Repo do
   end
 
   def init(_init) do
-    clone_repos()
     {:ok, nil}
   end
 
-  def handle_info(:clone, _state) do
-    clone_repos()
+  def handle_cast({:clone, app}, _state) do
+    Task.start_link(fn -> start_cloning(app) end)
+
     {:noreply, nil}
   end
 
   ##########
 
-  defp clone_repos() do
-    Apps.get_by_state("registered")
-    |> Enum.each(&start_cloning/1)
-
-    self() |> Process.send_after(:clone, :timer.seconds(3))
-  end
-
   defp start_cloning(app) do
     case app |> Machinery.transition_to(Apps, "cloning") do
       {:ok, app} ->
-        Task.start_link(fn -> clone_repo(app) end)
+        clone_repo(app)
 
       {:error, reason} ->
         app |> Machinery.transition_to(Apps, "cloning failed", %{errors: [reason]})

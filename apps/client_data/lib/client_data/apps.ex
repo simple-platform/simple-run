@@ -73,6 +73,7 @@ defmodule ClientData.Apps do
       case Repo.insert(changeset) do
         {:ok, app} ->
           broadcast({:app_registered, app})
+          GenServer.cast(:repo_manager, {:clone, app})
           :ok
 
         {:error, reason} ->
