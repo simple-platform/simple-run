@@ -45,7 +45,6 @@ defmodule Client.DashboardLive do
                   <div class={"flex px-3 cursor-pointer #{if @active_app.id == app.id, do: "active", else: ""}"}>
                     <div class="w-full flex items-center space-x-1.5">
                       <span><%= app.name %></span>
-                      <.app_state state={app.state} />
                     </div>
                     <.app_actions app={app} />
                   </div>
@@ -60,8 +59,9 @@ defmodule Client.DashboardLive do
                 <li class="card bg-base-200 shadow-md">
                   <div class="card-body p-3">
                     <div class="flex items-center">
-                      <div class="w-full flex items-center">
-                        <h3 class="card-title text-sm">Repository</h3>
+                      <div class="w-full flex items-center space-x-1.5">
+                        <div class="card-title text-lg">Repository</div>
+                        <.state state={@active_app.state} />
                         <.progress progress={@active_app.progress} />
                       </div>
                       <a
@@ -72,6 +72,7 @@ defmodule Client.DashboardLive do
                         <Icons.github class="w-3 h-3" />
                       </a>
                     </div>
+                    <.errors errors={@active_app.errors} />
                   </div>
                 </li>
               </ul>
@@ -89,6 +90,7 @@ defmodule Client.DashboardLive do
       socket
       |> stream_insert(:apps, app, at: 0)
       |> update(:no_apps, fn _ -> false end)
+      |> update(:active_app, fn _ -> app end)
 
     {:noreply, socket}
   end
@@ -96,14 +98,16 @@ defmodule Client.DashboardLive do
   def handle_info({:app_updated, %App{id: id} = app}, socket) do
     socket = socket |> stream_insert(:apps, app)
 
-    if id == socket.assigns.active_app.id do
-      ^socket = socket |> assign(:active_app, app)
-    end
+    socket =
+      case id == socket.assigns.active_app.id do
+        true -> socket |> update(:active_app, fn _ -> app end)
+        false -> socket
+      end
 
     {:noreply, socket}
   end
 
   def handle_info({:docker_status, status}, socket) do
-    {:noreply, socket |> assign(:docker_status, status)}
+    {:noreply, socket |> update(:docker_status, fn _ -> status end)}
   end
 end

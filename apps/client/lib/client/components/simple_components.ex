@@ -21,7 +21,7 @@ defmodule Client.SimpleComponents do
     """
   end
 
-  def app_state(assigns) when assigns.state != "registered" do
+  def state(assigns) when assigns.state != "registered" do
     ~H"""
     <span class={"#{label_style(@state)} badge badge-sm"}>
       <%= @state %>
@@ -29,7 +29,7 @@ defmodule Client.SimpleComponents do
     """
   end
 
-  def app_state(assigns) do
+  def state(assigns) do
     ~H"""
 
     """
@@ -66,6 +66,32 @@ defmodule Client.SimpleComponents do
   def progress(assigns) do
     ~H"""
     <span class="badge badge-secondary badge-sm"><%= @progress %></span>
+    """
+  end
+
+  def errors(assigns) when assigns.errors == [] do
+    ~H"""
+
+    """
+  end
+
+  def errors(assigns) do
+    ~H"""
+    <div
+      role="alert"
+      class="alert alert-warning rounded-md flex items-center p-3 w-full text-sm gap-0 space-x-1.5"
+    >
+      <div class="flex-grow">
+        <Heroicons.LiveView.icon name="exclamation-triangle" class="h-5 w-5" />
+      </div>
+      <div class="flex flex-col">
+        <div :for={error <- @errors}>
+          <code class="line-clamp-4 break-all text-xs my-1 select-text">
+            <%= error %>
+          </code>
+        </div>
+      </div>
+    </div>
     """
   end
 

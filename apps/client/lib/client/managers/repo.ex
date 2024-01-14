@@ -57,14 +57,16 @@ defmodule Client.Managers.Repo do
   end
 
   defp process_clone_output({:exit, {:status, 0}}, {app, _progress, _prev_progress, _errors}) do
-    {App.update(%App{app | progress: nil, errors: []}), 0, 0, []}
+    app |> Machinery.transition_to(App, "starting", %{progress: nil, errors: []})
+    {nil, 0, 0, []}
   end
 
   defp process_clone_output(
          {:exit, {:status, _nonzero}},
          {app, _progress, _prev_progress, errors}
        ) do
-    {App.update(%App{app | errors: Enum.reverse(errors)}), 0, 0, []}
+    app |> Machinery.transition_to(App, "cloning failed", %{errors: Enum.reverse(errors)})
+    {nil, 0, 0, []}
   end
 
   defp process_clone_output({_, lines}, {app, progress, prev_progress, errors}) do

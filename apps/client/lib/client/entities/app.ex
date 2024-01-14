@@ -22,10 +22,10 @@ defmodule Client.Entities.App do
   ]
 
   use Machinery,
-    states: ["registered", "cloning", "cloning failed"],
+    states: ["registered", "cloning", "cloning failed", "starting"],
     transitions: %{
       "registered" => "cloning",
-      "cloning" => ["cloning failed"]
+      "cloning" => ["cloning failed", "starting"]
     }
 
   def new("simplerun:gh?" <> request) do
@@ -74,8 +74,14 @@ defmodule Client.Entities.App do
 
   # Machinery uses this to save state changes in DB
   def persist(app, state, metadata \\ %{}) do
-    updated_app = %@app{app | state: state, errors: Map.get(metadata, :errors)}
-    update(updated_app)
+    app_map =
+      app
+      |> Map.from_struct()
+      |> Map.merge(metadata)
+
+    updated_app = struct(@app, app_map)
+
+    update(%@app{updated_app | state: state})
   end
 
   def get_all() do
