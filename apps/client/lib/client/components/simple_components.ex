@@ -5,6 +5,10 @@ defmodule Client.SimpleComponents do
 
   use Phoenix.Component
 
+  @resource_type_states %{
+    repo: ["cloning", "cloning failed"]
+  }
+
   def no_apps(assigns) do
     ~H"""
     <div class="h-full w-full flex justify-center items-center">
@@ -21,21 +25,19 @@ defmodule Client.SimpleComponents do
     """
   end
 
-  def state(assigns) when assigns.state != "registered" do
-    ~H"""
-    <span class={"#{label_style(@state)} badge badge-sm"}>
-      <%= @state %>
-    </span>
-    """
-  end
-
   def state(assigns) do
     ~H"""
-
+    <%= if state_visible?(@state, @type) do %>
+      <span class={"#{label_style(@state)} badge badge-sm"}>
+        <%= @state %>
+      </span>
+    <% end %>
     """
   end
 
   defp label_style(_), do: "badge-outline"
+
+  defp state_visible?(state, type), do: @resource_type_states[type] |> Enum.any?(&(&1 == state))
 
   def app_actions(assigns) do
     ~H"""

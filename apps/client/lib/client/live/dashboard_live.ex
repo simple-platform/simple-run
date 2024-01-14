@@ -63,7 +63,7 @@ defmodule Client.DashboardLive do
                     <div class="flex items-center">
                       <div class="w-full flex items-center space-x-1.5">
                         <div class="card-title text-lg">Repository</div>
-                        <.state state={@active_app.state} />
+                        <.state state={@active_app.state} type={:repo} />
                         <.progress progress={@active_app.progress} />
                       </div>
                       <a
