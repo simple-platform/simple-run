@@ -5,11 +5,10 @@ defmodule Client.DashboardLive do
 
   alias ClientData.Apps
   alias ClientData.Entities.App
-
   alias ClientData.Containers
+  alias ClientData.Entities.Container
 
   alias Client.Managers.Docker
-
   alias Client.Components.Icons
 
   def mount(_params, _session, socket) do
@@ -44,10 +43,10 @@ defmodule Client.DashboardLive do
             <div class="relative h-full w-full">
               <ul
                 id="applications"
-                class="menu menu-lg bg-base-200 rounded-box rounded-md overflow-scroll flex-nowrap absolute inset-0 top-3 bottom-8 space-y-1.5"
+                class="menu menu-lg bg-base-200 rounded-box overflow-scroll flex-nowrap absolute inset-0 top-3 bottom-8 space-y-1.5"
               >
                 <li :for={app <- @apps} phx-click="app_selected" phx-value-id={app.id}>
-                  <div class={"flex px-3 cursor-pointer rounded-md #{get_active_class(app, @active_app)}"}>
+                  <div class={"flex px-3 cursor-pointer #{get_active_class(app, @active_app)}"}>
                     <div class="w-full flex items-center space-x-1.5">
                       <span><%= app.name %></span>
                     </div>
@@ -61,7 +60,7 @@ defmodule Client.DashboardLive do
             <h1 class="text-2xl"><%= @active_app.name %></h1>
             <div class="relative h-full w-full">
               <ul class="overflow-scroll absolute inset-0 top-3 bottom-8 space-y-3">
-                <li class="card bg-base-200 shadow-md rounded-md">
+                <li class="card bg-base-200 shadow-md">
                   <div class="card-body p-3">
                     <div class="flex items-center">
                       <div class="w-full flex items-center space-x-1.5">
@@ -80,10 +79,9 @@ defmodule Client.DashboardLive do
                     <.errors errors={@active_app.errors} />
                   </div>
                 </li>
-
                 <li
                   :for={c <- app_containers(@active_app, @containers)}
-                  class="card bg-base-200 shadow-md rounded-md"
+                  class="card bg-base-200 shadow-md"
                 >
                   <div class="card-body p-3">
                     <div class="flex items-center">
@@ -93,7 +91,7 @@ defmodule Client.DashboardLive do
                         <.progress progress={c.progress} />
                       </div>
                     </div>
-                    <.errors errors={@active_app.errors} />
+                    <.errors errors={c.errors} />
                   </div>
                 </li>
               </ul>
@@ -135,6 +133,16 @@ defmodule Client.DashboardLive do
 
   def handle_info({:container_created, container}, socket) do
     {:noreply, socket |> update(:containers, &[container | &1])}
+  end
+
+  def handle_info({:container_updated, container}, socket) do
+    containers =
+      socket.assigns.containers
+      |> Enum.map(fn %Container{id: id} = existing_container ->
+        if id == container.id, do: container, else: existing_container
+      end)
+
+    {:noreply, socket |> update(:containers, fn _ -> containers end)}
   end
 
   def handle_info({:docker_status, status}, socket) do

@@ -44,9 +44,8 @@ defmodule Client.Managers.Repo do
     end
   end
 
-  defp clone_repo(%App{provider: provider, name: name, url: url} = app) do
-    with {:ok, repo_root} <- get_repo_root(provider),
-         path <- System.user_home!() |> Path.join("simplerun/#{repo_root}/#{name}"),
+  defp clone_repo(%App{url: url} = app) do
+    with {:ok, path} <- Apps.get_path(app),
          {:ok, stream} <- Git.clone(url, path) do
       _ =
         stream
@@ -70,13 +69,10 @@ defmodule Client.Managers.Repo do
     {nil, 0, 0, []}
   end
 
-  defp process_clone_output({_, lines}, {app, progress, prev_progress, errors}) do
-    {app, progress, prev_progress, errors} =
-      lines
-      |> String.split(@newline_regex)
-      |> Enum.reduce({app, progress, prev_progress, errors}, &process_line/2)
-
-    {app, progress, prev_progress, errors}
+  defp process_clone_output({_, lines}, acc) do
+    lines
+    |> String.split(@newline_regex)
+    |> Enum.reduce(acc, &process_line/2)
   end
 
   defp process_line(line, {app, progress, prev_progress, errors}) do
@@ -90,7 +86,6 @@ defmodule Client.Managers.Repo do
       IO.puts("[#{app.name}] (#{str_progress}) #{line}")
 
       errors = [line | errors |> Enum.take(3)]
-
       changeset = app |> Changeset.change(%{progress: str_progress})
 
       case Apps.update(changeset) do
@@ -116,7 +111,4 @@ defmodule Client.Managers.Repo do
   def update_progress(progress, prev_progress, step_progress) do
     if prev_progress != step_progress, do: min(progress + step_progress, 100), else: progress
   end
-
-  defp get_repo_root(:github), do: {:ok, "github.com"}
-  defp get_repo_root(provider), do: {:error, "Unknown provider: #{provider}"}
 end

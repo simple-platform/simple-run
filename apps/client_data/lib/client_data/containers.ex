@@ -3,8 +3,20 @@ defmodule ClientData.Containers do
   This module provides functionality for managing containers.
   """
 
+  alias Ecto.Changeset
+
+  alias ClientData.StateMachine
   alias ClientData.Repo
   alias ClientData.Entities.Container
+
+  use StateMachine,
+    states: [:scheduled, :building, :build_failed, :starting, :running, :run_failed, :stopped],
+    transitions: %{
+      scheduled: [:building],
+      building: [:build_failed, :starting],
+      starting: [:running],
+      running: [:run_failed, :stopped]
+    }
 
   def get_all() do
     Repo.all(Container)
@@ -19,6 +31,7 @@ defmodule ClientData.Containers do
     case Repo.insert(changeset) do
       {:ok, container} ->
         broadcast({:container_created, container})
+        GenServer.cast(:build_manager, {:build, container, app})
         :ok
 
       {:error, reason} ->
@@ -35,6 +48,18 @@ defmodule ClientData.Containers do
       {:error, reason} ->
         {:error, reason}
     end
+  end
+
+  def persist_state_change(container, next_state, metadata) do
+    changeset = container |> Changeset.change(%{state: next_state} |> Map.merge(metadata))
+    update(changeset)
+  end
+
+  def pre_transition(container, _next_state, _metadata) do
+    {:ok, container}
+  end
+
+  def post_transition(_container, _state, _metadata) do
   end
 
   def subscribe() do

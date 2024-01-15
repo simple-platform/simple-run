@@ -14,9 +14,10 @@ defmodule ClientData.Entities.Container do
     field :name, :string
     field :progress, :string
     field :use_dockerfile, :boolean, default: false
+    field :errors, {:array, :string}, default: []
 
     field :state, Ecto.Enum,
-      values: [:scheduled, :building, :build_failed, :running, :run_failed, :stopped],
+      values: [:scheduled, :building, :build_failed, :starting, :running, :run_failed, :stopped],
       default: :scheduled
 
     belongs_to :app, App

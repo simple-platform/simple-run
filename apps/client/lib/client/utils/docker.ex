@@ -3,6 +3,8 @@ defmodule Client.Utils.Docker do
   Module for interacting with Docker.
   """
 
+  @step_commands ["FROM", "RUN", "COPY", "WORKDIR"]
+
   def get_status() do
     try do
       _ = ~w(docker ps) |> Exile.stream!() |> Enum.into("")
@@ -22,5 +24,43 @@ defmodule Client.Utils.Docker do
     end
   end
 
+  def build(name, path, dockerfile) do
+    ~w(docker build --progress=plain -t #{name}:simplerun -f #{Path.join(path, dockerfile)} #{path})
+    |> Exile.stream(stderr: :consume)
+  end
+
+  def get_build_steps(path, dockerfile) do
+    cwd = File.cwd!()
+
+    df_json =
+      Application.get_env(:client, :app_path, cwd)
+      |> resolve_df_json_path()
+
+    stages =
+      [df_json, path |> Path.join(dockerfile)]
+      |> Exile.stream!()
+      |> Enum.into("")
+      |> Jason.decode!()
+      |> Map.get("Stages")
+
+    stages |> Enum.reduce(length(stages), &count_stage_steps/2)
+  end
+
   ##########
+
+  defp resolve_df_json_path(app_path) do
+    case app_path |> String.contains?("Simple Run.app") do
+      true ->
+        Path.join(app_path, "dockerfile-json")
+
+      false ->
+        Path.join(app_path, "sidecars/dockerfile-json-1.0.8/dockerfile-json-x86_64-apple-darwin")
+    end
+  end
+
+  defp count_stage_steps(%{"Commands" => commands}, total_steps) do
+    total_steps + Enum.count(commands, &command_step?/1)
+  end
+
+  defp command_step?(%{"Name" => name}), do: name in @step_commands
 end

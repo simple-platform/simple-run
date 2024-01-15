@@ -7,7 +7,7 @@ defmodule Client.SimpleComponents do
 
   @visible_states %{
     repo: [:cloning, :cloning_failed],
-    container: [:scheduled, :building, :build_failed, :running, :run_failed, :stopped]
+    container: [:scheduled, :building, :build_failed, :starting, :running, :run_failed, :stopped]
   }
 
   def no_apps(assigns) do
@@ -84,10 +84,13 @@ defmodule Client.SimpleComponents do
       role="alert"
       class="alert alert-warning rounded-md flex items-center p-3 w-full text-sm gap-0 space-x-1.5"
     >
-      <div class="flex-grow">
-        <Heroicons.LiveView.icon name="exclamation-triangle" class="h-5 w-5" />
+      <div>
+        <Heroicons.LiveView.icon
+          name="exclamation-triangle"
+          class="h-5 w-5 min-h-5 min-w-5 max-w-5 max-h-5"
+        />
       </div>
-      <div class="flex flex-col">
+      <div class="flex flex-col flex-grow">
         <div :for={error <- @errors}>
           <code class="line-clamp-4 break-all text-xs my-1 select-text">
             <%= error %>

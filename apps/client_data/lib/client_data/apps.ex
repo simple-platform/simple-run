@@ -33,6 +33,16 @@ defmodule ClientData.Apps do
     Repo.all(from a in App, where: a.state == ^state)
   end
 
+  def get_path(%App{name: name, provider: provider}) do
+    case get_repo_root(provider) do
+      {:ok, repo_root} ->
+        {:ok, System.user_home!() |> Path.join("simplerun/#{repo_root}/#{name}")}
+
+      {:error, reason} ->
+        {:error, reason}
+    end
+  end
+
   def update(changeset) do
     case Repo.update(changeset) do
       {:ok, app} ->
@@ -123,6 +133,9 @@ defmodule ClientData.Apps do
       _ -> {:ok, val}
     end
   end
+
+  defp get_repo_root(:github), do: {:ok, "github.com"}
+  defp get_repo_root(provider), do: {:error, "Unknown provider: #{provider}"}
 
   defp broadcast(message) do
     Phoenix.PubSub.broadcast(ClientData.PubSub, "app", message)
