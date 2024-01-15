@@ -5,9 +5,9 @@ defmodule Client.SimpleComponents do
 
   use Phoenix.Component
 
-  @resource_type_states %{
-    repo: ["cloning", "cloning failed"],
-    container: ["scheduled", "building", "build failed", "running", "run failed", "stopped"]
+  @visible_states %{
+    repo: [:cloning, :cloning_failed],
+    container: [:scheduled, :building, :build_failed, :running, :run_failed, :stopped]
   }
 
   def no_apps(assigns) do
@@ -38,7 +38,7 @@ defmodule Client.SimpleComponents do
 
   defp label_style(_), do: "badge-outline"
 
-  defp state_visible?(state, type), do: @resource_type_states[type] |> Enum.any?(&(&1 == state))
+  defp state_visible?(state, type), do: @visible_states[type] |> Enum.any?(&(&1 == state))
 
   def app_actions(assigns) do
     ~H"""

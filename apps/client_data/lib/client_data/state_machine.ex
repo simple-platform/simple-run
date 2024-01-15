@@ -16,12 +16,12 @@ defmodule ClientData.StateMachine do
     transitions = opts |> Keyword.get(:transitions, %{})
 
     quote do
-      @states unquote(states)
-      @transitions unquote(transitions)
-
       import ClientData.StateMachine
 
       @before_compile ClientData.StateMachine
+
+      def states, do: unquote(states)
+      def transitions, do: unquote(transitions)
     end
   end
 
@@ -42,13 +42,13 @@ defmodule ClientData.StateMachine do
   end
 
   def transition_to(struct, module, next_state, metadata \\ %{}) do
-    states = module |> Module.get_attribute(:states)
+    states = module.states()
 
     unless states |> Enum.member?(next_state) do
       raise "Invalid state '#{next_state}' for #{module}"
     end
 
-    transitions = module |> Module.get_attribute(:transitions)
+    transitions = module.transitions()
 
     unless transitions[struct.state] |> Enum.member?(next_state) do
       raise "Transition from '#{struct.state}' to '#{next_state}' is not allowed for #{module}"
