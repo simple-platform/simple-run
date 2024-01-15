@@ -8,11 +8,16 @@ defmodule ClientData.Entities.Container do
 
   alias ClientData.Entities.App
 
+  @primary_key {:id, :binary_id, autogenerate: true}
+  @foreign_key_type :binary_id
   schema "containers" do
     field :name, :string
-    field :state, :string, default: "scheduled"
     field :progress, :string
     field :use_dockerfile, :boolean, default: false
+
+    field :state, Ecto.Enum,
+      values: [:scheduled, :building, :build_failed, :running, :run_failed, :stopped],
+      default: :scheduled
 
     belongs_to :app, App
 

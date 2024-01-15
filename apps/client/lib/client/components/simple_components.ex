@@ -30,7 +30,7 @@ defmodule Client.SimpleComponents do
     ~H"""
     <%= if state_visible?(@state, @type) do %>
       <span class={"#{label_style(@state)} badge badge-sm"}>
-        <%= @state %>
+        <%= @state |> Atom.to_string() |> String.replace("_", " ") %>
       </span>
     <% end %>
     """

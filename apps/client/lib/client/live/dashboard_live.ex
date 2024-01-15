@@ -60,12 +60,12 @@ defmodule Client.DashboardLive do
           <div class="w-full">
             <h1 class="text-2xl"><%= @active_app.name %></h1>
             <div class="relative h-full w-full">
-              <ul class="overflow-scroll absolute inset-0 top-3 bottom-8 space-y-1.5">
+              <ul class="overflow-scroll absolute inset-0 top-3 bottom-8 space-y-3">
                 <li class="card bg-base-200 shadow-md rounded-md">
                   <div class="card-body p-3">
                     <div class="flex items-center">
                       <div class="w-full flex items-center space-x-1.5">
-                        <div class="text-sm font-medium">Repository</div>
+                        <div class="text-md font-medium">Repository</div>
                         <.state state={@active_app.state} type={:repo} />
                         <.progress progress={@active_app.progress} />
                       </div>
@@ -82,13 +82,13 @@ defmodule Client.DashboardLive do
                 </li>
 
                 <li
-                  :for={c <- Enum.filter(@containers, &(&1.app_id == @active_app.id))}
+                  :for={c <- app_containers(@active_app, @containers)}
                   class="card bg-base-200 shadow-md rounded-md"
                 >
                   <div class="card-body p-3">
                     <div class="flex items-center">
                       <div class="w-full flex items-center space-x-1.5">
-                        <div class="text-sm font-medium">Container: <%= c.name %></div>
+                        <div class="text-md font-medium">Container: <%= c.name %></div>
                         <.state state={c.state} type={:container} />
                         <.progress progress={c.progress} />
                       </div>
@@ -147,5 +147,9 @@ defmodule Client.DashboardLive do
 
   defp get_active_class(current_app, active_app) do
     if active_app.id == current_app.id, do: "active", else: ""
+  end
+
+  def app_containers(app, containers) do
+    containers |> Enum.filter(fn c -> c.app_id == app.id end)
   end
 end

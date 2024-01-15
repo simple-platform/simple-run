@@ -2,7 +2,8 @@ defmodule ClientData.Repo.Migrations.CreateContainers do
   use Ecto.Migration
 
   def change do
-    create table(:containers) do
+    create table(:containers, primary_key: false) do
+      add :id, :binary_id, primary_key: true
       add :name, :string, null: false
       add :state, :string, default: "scheduled"
       add :progress, :string

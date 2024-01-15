@@ -3,25 +3,18 @@ defmodule ClientData.Containers do
   This module provides functionality for managing containers.
   """
 
-  alias Ecto.Changeset
-
   alias ClientData.Repo
   alias ClientData.Entities.Container
-
-  # use Machinery,
-  #   states: ["scheduled", "building", "build failed", "running", "run failed", "stopped"],
-  #   transitions: %{
-  #     "scheduled" => "building",
-  #     "building" => ["build failed", "running"],
-  #     "running" => ["run failed", "stopped"]
-  #   }
 
   def get_all() do
     Repo.all(Container)
   end
 
-  def create(container) do
-    changeset = Container.changeset(%Container{}, container)
+  def create(app, container) do
+    changeset =
+      app
+      |> Ecto.build_assoc(:containers)
+      |> Container.changeset(container)
 
     case Repo.insert(changeset) do
       {:ok, container} ->

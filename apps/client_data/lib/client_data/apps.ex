@@ -55,7 +55,7 @@ defmodule ClientData.Apps do
 
   def post_transition(%App{dockerfile: dockerfile} = app, :starting, _metadata)
       when not is_nil(dockerfile) and dockerfile != "" do
-    Containers.create(%{name: "sr-#{app.org}-#{app.repo}", use_dockerfile: true, app_id: app.id})
+    app |> Containers.create(%{name: "sr-#{app.org}-#{app.repo}", use_dockerfile: true})
   end
 
   def post_transition(_app, _state, _metadata) do
