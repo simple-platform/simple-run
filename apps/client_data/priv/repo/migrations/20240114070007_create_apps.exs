@@ -1,4 +1,4 @@
-defmodule ClientData.Repo.Migrations.AddAppsTable do
+defmodule ClientData.Repo.Migrations.CreateApps do
   use Ecto.Migration
 
   def change do
@@ -17,6 +17,7 @@ defmodule ClientData.Repo.Migrations.AddAppsTable do
       timestamps()
     end
 
+    create index(:apps, [:state])
     create unique_index(:apps, [:url])
     create unique_index(:apps, [:provider, :org, :repo])
   end

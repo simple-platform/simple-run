@@ -1,4 +1,8 @@
 defmodule Client.Managers.Repo do
+  @moduledoc """
+  Module for managing Repos.
+  """
+
   use GenServer
 
   alias Ecto.Changeset
@@ -6,6 +10,8 @@ defmodule Client.Managers.Repo do
   alias Client.Utils.Git
   alias ClientData.Apps
   alias ClientData.Entities.App
+
+  alias ClientData.StateMachine, as: SM
 
   @name :repo_manager
 
@@ -29,12 +35,12 @@ defmodule Client.Managers.Repo do
   ##########
 
   defp start_cloning(app) do
-    case app |> Machinery.transition_to(Apps, "cloning") do
+    case app |> SM.transition_to(Apps, :cloning) do
       {:ok, app} ->
         clone_repo(app)
 
       {:error, reason} ->
-        app |> Machinery.transition_to(Apps, "cloning failed", %{errors: [reason]})
+        app |> SM.transition_to(Apps, :cloning_failed, %{errors: [reason]})
     end
   end
 
@@ -47,12 +53,12 @@ defmodule Client.Managers.Repo do
         |> Enum.reduce({app, 0, 0, []}, &process_clone_output/2)
     else
       {:error, reason} ->
-        app |> Machinery.transition_to(Apps, "cloning failed", %{errors: [reason]})
+        app |> SM.transition_to(Apps, :cloning_failed, %{errors: [reason]})
     end
   end
 
   defp process_clone_output({:exit, {:status, 0}}, {app, _progress, _prev_progress, _errors}) do
-    app |> Machinery.transition_to(Apps, "starting", %{progress: nil, errors: []})
+    app |> SM.transition_to(Apps, :starting, %{progress: nil, errors: []})
     {nil, 0, 0, []}
   end
 
@@ -60,7 +66,7 @@ defmodule Client.Managers.Repo do
          {:exit, {:status, _nonzero}},
          {app, _progress, _prev_progress, errors}
        ) do
-    app |> Machinery.transition_to(Apps, "cloning failed", %{errors: Enum.reverse(errors)})
+    app |> SM.transition_to(Apps, :cloning_failed, %{errors: Enum.reverse(errors)})
     {nil, 0, 0, []}
   end
 

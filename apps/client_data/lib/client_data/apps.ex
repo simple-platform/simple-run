@@ -1,21 +1,24 @@
 defmodule ClientData.Apps do
   @moduledoc """
-  This module provides functionality for managing client applications.
+  This module provides functionality for managing applications.
   """
 
   alias Ecto.Changeset
-  alias ClientData.Repo
+
   alias ClientData.Entities.App
+  alias ClientData.StateMachine
+  alias ClientData.Containers
+  alias ClientData.Repo
 
   import Ecto.Query
 
   @err_unknown_provider "Request with an unknown provider"
 
-  use Machinery,
-    states: ["registered", "cloning", "cloning failed", "starting"],
+  use StateMachine,
+    states: [:registered, :cloning, :cloning_failed, :starting],
     transitions: %{
-      "registered" => "cloning",
-      "cloning" => ["cloning failed", "starting"]
+      registered: [:cloning],
+      cloning: [:cloning_failed, :starting]
     }
 
   def get_all() do
@@ -41,14 +44,18 @@ defmodule ClientData.Apps do
     end
   end
 
-  # Machinery uses this to save state changes in DB
-  def persist(app, state, metadata \\ %{}) do
-    changeset = app |> Changeset.change(%{state: state} |> Map.merge(metadata))
+  def persist_state_change(app, next_state, metadata) do
+    changeset = app |> Changeset.change(%{state: next_state} |> Map.merge(metadata))
+    update(changeset)
+  end
 
-    case update(changeset) do
-      {:ok, app} -> app
-      {:error, reason} -> {:error, reason}
-    end
+  def pre_transition(app, _next_state, _metadata) do
+    {:ok, app}
+  end
+
+  def post_transition(%App{dockerfile: dockerfile} = app, :starting, _metadata)
+      when not is_nil(dockerfile) and dockerfile != "" do
+    Containers.create(%{name: "sr-#{app.org}-#{app.repo}", app_id: app.id})
   end
 
   def register("simplerun:gh?" <> request) do

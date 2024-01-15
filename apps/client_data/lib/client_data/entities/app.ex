@@ -5,6 +5,8 @@ defmodule ClientData.Entities.App do
 
   use Ecto.Schema
 
+  alias ClientData.Entities.Container
+
   alias Ecto.Changeset
   import Ecto.Changeset
 
@@ -14,11 +16,17 @@ defmodule ClientData.Entities.App do
     field :org, :string
     field :repo, :string
     field :name, :string
-    field :state, :string, default: "registered"
     field :errors, {:array, :string}, default: []
     field :progress, :string
-    field :provider, Ecto.Enum, values: [:github], default: :github
     field :dockerfile, :string
+
+    field :provider, Ecto.Enum, values: [:github], default: :github
+
+    field :state, Ecto.Enum,
+      values: [:registered, :cloning, :cloning_failed, :starting],
+      default: :registered
+
+    has_many :containers, Container
 
     timestamps()
   end

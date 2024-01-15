@@ -6,7 +6,8 @@ defmodule Client.SimpleComponents do
   use Phoenix.Component
 
   @resource_type_states %{
-    repo: ["cloning", "cloning failed"]
+    repo: ["cloning", "cloning failed"],
+    container: ["scheduled", "building", "build failed", "running", "run failed", "stopped"]
   }
 
   def no_apps(assigns) do

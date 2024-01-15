@@ -6,6 +6,8 @@ defmodule Client.DashboardLive do
   alias ClientData.Apps
   alias ClientData.Entities.App
 
+  alias ClientData.Containers
+
   alias Client.Managers.Docker
 
   alias Client.Components.Icons
@@ -14,14 +16,17 @@ defmodule Client.DashboardLive do
     if connected?(socket) do
       Apps.subscribe()
       Docker.subscribe()
+      Containers.subscribe()
     end
 
     apps = Apps.get_all()
+    containers = Containers.get_all()
 
     socket =
       socket
       |> assign(:apps, apps)
       |> assign(:active_app, Enum.at(apps, 0))
+      |> assign(:containers, containers)
       |> assign(:docker_status, %{})
 
     {:ok, socket}
@@ -75,6 +80,22 @@ defmodule Client.DashboardLive do
                     <.errors errors={@active_app.errors} />
                   </div>
                 </li>
+
+                <li
+                  :for={c <- Enum.filter(@containers, &(&1.app_id == @active_app.id))}
+                  class="card bg-base-200 shadow-md rounded-md"
+                >
+                  <div class="card-body p-3">
+                    <div class="flex items-center">
+                      <div class="w-full flex items-center space-x-1.5">
+                        <div class="text-sm font-medium">Container: <%= c.name %></div>
+                        <.state state={c.state} type={:container} />
+                        <.progress progress={c.progress} />
+                      </div>
+                    </div>
+                    <.errors errors={@active_app.errors} />
+                  </div>
+                </li>
               </ul>
             </div>
           </div>
@@ -110,6 +131,10 @@ defmodule Client.DashboardLive do
       end
 
     {:noreply, socket}
+  end
+
+  def handle_info({:container_created, container}, socket) do
+    {:noreply, socket |> update(:containers, &[container | &1])}
   end
 
   def handle_info({:docker_status, status}, socket) do

@@ -13,6 +13,7 @@ defmodule Client.Application do
       # Simple managers
       Client.Managers.Repo,
       Client.Managers.Docker,
+      Client.Managers.Container,
 
       # Start to serve requests, typically the last entry
       Client.Endpoint
