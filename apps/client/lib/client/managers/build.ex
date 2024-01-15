@@ -29,7 +29,9 @@ defmodule Client.Managers.Build do
   end
 
   def handle_cast({:build, container, app}, _state) do
-    Task.start_link(fn -> start_building(container, app) end)
+    if container.use_dockerfile do
+      Task.start_link(fn -> start_building(container, app) end)
+    end
 
     {:noreply, nil}
   end
