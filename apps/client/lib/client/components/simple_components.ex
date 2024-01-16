@@ -86,7 +86,7 @@ defmodule Client.SimpleComponents do
 
   def ports(assigns) do
     ~H"""
-    <ul class="flex">
+    <ul class="flex space-x-3">
       <li
         :for={
           %{
