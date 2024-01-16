@@ -41,7 +41,7 @@ jobs:
         elixir: [1.15.7]
     steps:
       - uses: actions/checkout@v4
-      - uses: erlef/setup-beam@a34c98fd51e370b4d4981854aba1eb817ce4e483
+      - uses: erlef/setup-beam@980f47ea52afa4c3bf2a68d5a90051b7bb60f09c
         with:
           otp-version: ${{matrix.otp}}
           elixir-version: ${{matrix.elixir}}
