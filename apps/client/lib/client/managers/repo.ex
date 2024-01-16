@@ -57,7 +57,14 @@ defmodule Client.Managers.Repo do
   end
 
   defp process_clone_output({:exit, {:status, 0}}, {app, _progress, _prev_progress, _errors}) do
-    app |> SM.transition_to(Apps, :starting, %{progress: nil, errors: []})
+    case app |> SM.transition_to(Apps, :starting, %{progress: nil, errors: []}) do
+      {:ok, _app} ->
+        nil
+
+      {:error, reason} ->
+        app |> SM.transition_to(Apps, :cloning_failed, %{progress: nil, errors: [reason]})
+    end
+
     {nil, 0, 0, []}
   end
 

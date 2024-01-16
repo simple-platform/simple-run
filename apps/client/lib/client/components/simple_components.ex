@@ -130,7 +130,7 @@ defmodule Client.SimpleComponents do
     ~H"""
     <div
       role="alert"
-      class="alert alert-warning rounded-md flex items-center p-3 w-full text-sm gap-0 space-x-1.5"
+      class="alert alert-warning rounded-xl flex items-center p-3 w-full text-sm gap-0 space-x-1.5"
     >
       <div>
         <Heroicons.LiveView.icon

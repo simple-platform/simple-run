@@ -59,6 +59,19 @@ defmodule ClientData.Apps do
     update(changeset)
   end
 
+  def pre_transition(%App{dockerfile: dockerfile} = app, :starting, _metadata)
+      when is_nil(dockerfile) or dockerfile == "" do
+    case get_path(app) do
+      {:ok, path} ->
+        if path |> Path.join("simple-run.yaml") |> File.exists?(),
+          do: {:ok, app},
+          else: {:error, "Can not find simple-run.yaml at the repo root"}
+
+      {:error, reason} ->
+        {:error, reason}
+    end
+  end
+
   def pre_transition(app, _next_state, _metadata) do
     {:ok, app}
   end
