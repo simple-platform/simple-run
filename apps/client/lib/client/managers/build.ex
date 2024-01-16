@@ -3,8 +3,6 @@ defmodule Client.Managers.Build do
   Module for managing Builds.
   """
 
-  use GenServer
-
   alias Ecto.Changeset
 
   alias Client.Utils.Docker
@@ -14,6 +12,8 @@ defmodule Client.Managers.Build do
   alias ClientData.Entities.App
   alias ClientData.Entities.Container
   alias ClientData.StateMachine, as: SM
+
+  use GenServer
 
   @name :build_manager
 
@@ -30,7 +30,7 @@ defmodule Client.Managers.Build do
 
   def handle_cast({:build, container, app}, _state) do
     if container.use_dockerfile do
-      Task.start_link(fn -> start_building(container, app) end)
+      Task.start(fn -> start_building(container, app) end)
     end
 
     {:noreply, nil}
@@ -52,14 +52,14 @@ defmodule Client.Managers.Build do
 
         _ =
           Docker.build(name, path, dockerfile)
-          |> Enum.reduce({container, app, total_steps, %{}, nil, []}, &process_build_output/2)
+          |> Enum.reduce({container, app, total_steps, %{}, nil, []}, &process_output/2)
 
       {:error, reason} ->
         mark_build_failed(container, reason)
     end
   end
 
-  defp process_build_output(
+  defp process_output(
          {:exit, {:status, 0}},
          {container, _app, _total_steps, _completed_steps, _progress, _errors}
        ) do
@@ -68,7 +68,7 @@ defmodule Client.Managers.Build do
     {0, %{}, nil, []}
   end
 
-  defp process_build_output(
+  defp process_output(
          {:exit, {:status, _nonzero}},
          {container, _app, _total_steps, _completed_steps, _progress, errors}
        ) do
@@ -77,7 +77,7 @@ defmodule Client.Managers.Build do
     {0, %{}, nil, []}
   end
 
-  defp process_build_output({_, lines}, acc) do
+  defp process_output({_, lines}, acc) do
     lines
     |> String.split(@newline_regex)
     |> Enum.reduce(acc, &process_output_line/2)

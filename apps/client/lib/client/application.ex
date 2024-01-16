@@ -11,6 +11,7 @@ defmodule Client.Application do
       Client.Telemetry,
 
       # Simple managers
+      Client.Managers.Run,
       Client.Managers.Repo,
       Client.Managers.Build,
       Client.Managers.Docker,

@@ -3,9 +3,9 @@ defmodule Client.Managers.Docker do
   Module for managing Docker.
   """
 
-  use GenServer
-
   alias Client.Utils.Docker
+
+  use GenServer
 
   @name :docker_manager
 

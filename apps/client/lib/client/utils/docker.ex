@@ -29,6 +29,24 @@ defmodule Client.Utils.Docker do
     |> Exile.stream(stderr: :consume)
   end
 
+  def remove(name) do
+    ~w(docker rm -f #{name})
+    |> Exile.stream!()
+    |> Enum.into("")
+  end
+
+  def run(name) do
+    ~w(docker run -d -P --name #{name} #{name}:simplerun)
+    |> Exile.stream(stderr: :consume)
+  end
+
+  def inspect(name) do
+    ~w(docker inspect #{name})
+    |> Exile.stream!()
+    |> Enum.into("")
+    |> Jason.decode!()
+  end
+
   def get_build_steps(path, dockerfile) do
     cwd = File.cwd!()
 

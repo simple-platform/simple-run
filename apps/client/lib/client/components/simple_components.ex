@@ -36,7 +36,13 @@ defmodule Client.SimpleComponents do
     """
   end
 
-  defp label_style(_), do: "badge-outline"
+  defp label_style(:running), do: "badge-primary"
+
+  defp label_style(state) do
+    if state |> Atom.to_string() |> String.ends_with?("failed"),
+      do: "badge-outline badge-warning",
+      else: "badge-outline"
+  end
 
   defp state_visible?(state, type), do: @visible_states[type] |> Enum.any?(&(&1 == state))
 
@@ -69,6 +75,48 @@ defmodule Client.SimpleComponents do
   def progress(assigns) do
     ~H"""
     <span class="badge badge-secondary badge-sm"><%= @progress %></span>
+    """
+  end
+
+  def ports(assigns) when assigns.ports == [] do
+    ~H"""
+
+    """
+  end
+
+  def ports(assigns) do
+    ~H"""
+    <ul class="flex">
+      <li
+        :for={
+          %{
+            "port" => container_port,
+            "local" => %{"ip" => ip, "port" => local_port, "is_http" => is_http}
+          } <-
+            @ports
+        }
+        class="flex"
+      >
+        <%= if is_http do %>
+          <a href={"http://#{ip}:#{local_port}"} target="_blank" class="btn btn-outline btn-xs">
+            <%= port(%{container_port: container_port, local_port: local_port, is_http: is_http}) %>
+          </a>
+        <% else %>
+          <button class="btn btn-active btn-ghost btn-xs pointer-events-none">
+            <%= port(%{container_port: container_port, local_port: local_port, is_http: is_http}) %>
+          </button>
+        <% end %>
+      </li>
+    </ul>
+    """
+  end
+
+  defp port(assigns) do
+    ~H"""
+    <Heroicons.LiveView.icon name={if @is_http, do: "globe-alt", else: "server"} class="h-3 w-3" />
+    <span><%= @local_port %></span>
+    <Heroicons.LiveView.icon name="arrow-long-right" class="h-4 w-4" />
+    <span><%= @container_port %></span>
     """
   end
 

@@ -171,6 +171,7 @@
     "nowrap",
     "outdir",
     "outputfilename",
+    "proto",
     "reduxjs",
     "rehype",
     "reqlog",

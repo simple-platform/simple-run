@@ -59,6 +59,14 @@ defmodule ClientData.Containers do
     {:ok, container}
   end
 
+  def post_transition(container, :starting, _metadata) do
+    GenServer.cast(:run_manager, {:run, container})
+  end
+
+  def post_transition(container, :running, _metadata) do
+    GenServer.cast(:run_manager, {:map_ports, container})
+  end
+
   def post_transition(_container, _state, _metadata) do
   end
 

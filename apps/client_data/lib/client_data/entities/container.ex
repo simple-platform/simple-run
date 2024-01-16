@@ -14,6 +14,7 @@ defmodule ClientData.Entities.Container do
     field :name, :string
     field :progress, :string
     field :use_dockerfile, :boolean, default: false
+    field :ports, {:array, :map}, default: []
     field :errors, {:array, :string}, default: []
 
     field :state, Ecto.Enum,
@@ -28,7 +29,7 @@ defmodule ClientData.Entities.Container do
   @doc false
   def changeset(container, attrs) do
     container
-    |> cast(attrs, [:name, :state, :progress, :use_dockerfile])
-    |> validate_required([:name, :state, :use_dockerfile])
+    |> cast(attrs, [:name, :state, :progress, :use_dockerfile, :ports, :errors])
+    |> validate_required([:name, :state])
   end
 end

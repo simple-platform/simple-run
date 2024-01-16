@@ -3,8 +3,6 @@ defmodule Client.Managers.Repo do
   Module for managing Repos.
   """
 
-  use GenServer
-
   alias Ecto.Changeset
 
   alias Client.Utils.Git
@@ -12,6 +10,8 @@ defmodule Client.Managers.Repo do
   alias ClientData.Entities.App
 
   alias ClientData.StateMachine, as: SM
+
+  use GenServer
 
   @name :repo_manager
 
@@ -27,7 +27,7 @@ defmodule Client.Managers.Repo do
   end
 
   def handle_cast({:clone, app}, _state) do
-    Task.start_link(fn -> start_cloning(app) end)
+    Task.start(fn -> start_cloning(app) end)
 
     {:noreply, nil}
   end

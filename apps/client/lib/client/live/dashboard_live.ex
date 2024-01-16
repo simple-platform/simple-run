@@ -91,6 +91,7 @@ defmodule Client.DashboardLive do
                         <.progress progress={c.progress} />
                       </div>
                     </div>
+                    <.ports ports={c.ports} />
                     <.errors errors={c.errors} />
                   </div>
                 </li>
