@@ -7,7 +7,7 @@ defmodule Actions.RepoProviders.GitHubTest do
 
   @api_url "https://api.github.com/graphql"
   @gh_token Application.compile_env(:actions, :github_token)
-  @req_headers %{"Authorization" => "bearer #{@gh_token}"}
+  @req_headers %{"authorization" => "bearer #{@gh_token}"}
 
   @valid_repo_url "https://github.com/simple-platform/simple-run"
   @invalid_repo_url "https://invalid-repo"

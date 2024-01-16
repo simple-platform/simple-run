@@ -68,3 +68,5 @@ bin
 burrito_out
 
 !apps/client/lib/client/managers/build
+
+.db

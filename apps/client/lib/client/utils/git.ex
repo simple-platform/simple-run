@@ -1,15 +1,12 @@
 defmodule Client.Utils.Git do
   @moduledoc """
-  Module for Git utility functions.
+  Provides utility functions for interacting with Git.
   """
 
   def clone(url, path) do
     case File.mkdir_p(path) do
-      {:error, reason} ->
-        {:error, "Unable to clone repository: #{reason}"}
-
-      :ok ->
-        {:ok, Exile.stream(["git", "clone", "--progress", url, path], stderr: :consume)}
+      :ok -> {:ok, ~w(git clone --progress #{url} #{path}) |> Exile.stream(stderr: :consume)}
+      {:error, reason} -> {:error, "Unable to clone repository: #{reason}"}
     end
   end
 end

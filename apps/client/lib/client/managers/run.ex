@@ -1,88 +1,122 @@
 defmodule Client.Managers.Run do
   @moduledoc """
-  Module for managing the run of applications.
+  This module manages the running of containers.
   """
-  use GenServer
+
+  alias Ecto.Changeset
 
   alias Client.Utils.Docker
-  alias Client.Api.Application
-  alias Client.Managers.Helpers
-  alias Client.Entities.Application, as: App
+
+  alias ClientData.Containers
+  alias ClientData.Entities.Container
+  alias ClientData.StateMachine, as: SM
+
+  use GenServer
 
   @name :run_manager
 
-  def start_link(db) do
-    GenServer.start_link(__MODULE__, db, name: @name)
+  @newline_regex ~r/\r|\n/
+
+  def start_link(state) do
+    GenServer.start_link(__MODULE__, state, name: @name)
   end
 
-  def init(db) do
-    process_started(db)
-
-    {:ok, db}
+  def init(_init) do
+    {:ok, nil}
   end
 
-  def handle_info({:process, :started}, db) do
-    process_started(db)
+  def handle_cast({:run, container}, _state) do
+    if container.use_dockerfile do
+      Task.start(fn -> run_container(container) end)
+    end
 
-    {:noreply, db}
+    {:noreply, nil}
+  end
+
+  def handle_cast({:map_ports, container}, _state) do
+    if container.state == :running do
+      Task.start(fn -> map_ports(container) end)
+    end
+
+    {:noreply, nil}
   end
 
   ##########
 
-  defp process_started(db) do
-    {:ok, apps} = Application.get_with_state(:started)
-    {docker_apps, _simplerun_apps} = apps |> Helpers.chunk_by_category()
+  defp map_ports(%Container{name: name} = container) do
+    port_map =
+      Docker.inspect(name)
+      |> Enum.at(0)
+      |> Map.get("NetworkSettings")
+      |> Map.get("Ports")
+      |> Map.to_list()
+      |> Enum.map(&build_port_map/1)
 
-    actively_mapping_ports = db |> Helpers.get_active(:mapping_ports) |> Enum.to_list()
-
-    _ =
-      docker_apps
-      |> Stream.filter(fn %App{id: id} -> id not in actively_mapping_ports end)
-      |> Enum.to_list()
-      |> Enum.map(fn app -> Task.start(fn -> db |> map_ports(app) end) end)
-
-    self() |> Process.send_after({:process, :started}, :timer.seconds(3))
+    container
+    |> Changeset.change(%{ports: port_map})
+    |> Containers.update()
   end
 
-  defp map_ports(db, %App{id: id} = app) do
-    key = {:active, :mapping_ports, {id}}
-    CubDB.put(db, key, true)
+  defp build_port_map({port_key, port_bindings}) do
+    [port, proto] = port_key |> String.split("/")
 
-    try do
-      docker_config = Docker.inspect(app) |> Enum.at(0)
-      ports = docker_config["NetworkSettings"]["Ports"]
+    local =
+      if (port_bindings || []) != [] do
+        binding = port_bindings |> Enum.at(0)
 
-      port_map =
-        ports
-        |> Map.keys()
-        |> Enum.map(fn key ->
-          [port, _] = key |> String.split("/")
+        local_ip = binding["HostIp"]
+        local_port = binding["HostPort"]
 
-          port_binding = ports[key]
+        %{
+          "ip" => local_ip,
+          "port" => local_port,
+          "is_http" => http_service?(local_ip, local_port)
+        }
+      else
+        %{}
+      end
 
-          if length(port_binding) > 0 do
-            binding = port_binding |> Enum.at(0)
-
-            ip = binding["HostIp"]
-            local_port = binding["HostPort"]
-
-            {port, {ip, local_port}, http?(ip, local_port)}
-          else
-            {port, nil}
-          end
-        end)
-
-      {:ok, app} = app |> Application.set_ports(port_map)
-      app |> Application.set_state(:running)
-    after
-      CubDB.delete(db, key)
-    end
+    %{"port" => port, "proto" => proto, "local" => local}
   end
 
-  defp http?(ip, port) do
+  defp http_service?(ip, port) do
     case :httpc.request(:get, {"http://#{ip}:#{port}", []}, [], []) do
       {:ok, _} -> true
       _ -> false
+    end
+  end
+
+  defp run_container(%Container{name: name} = container) do
+    Docker.remove(name)
+
+    _ =
+      Docker.run(name)
+      |> Enum.reduce({container, []}, &process_output/2)
+  end
+
+  defp process_output({:exit, {:status, 0}}, {container, _errors}) do
+    container |> SM.transition_to(Containers, :running, %{errors: []})
+    {nil, []}
+  end
+
+  defp process_output({:exit, {:status, _nonzero}}, {container, errors}) do
+    container |> SM.transition_to(Containers, :run_failed, %{errors: errors |> Enum.reverse()})
+    {nil, []}
+  end
+
+  defp process_output({_, lines}, acc) do
+    lines
+    |> String.split(@newline_regex)
+    |> Enum.reduce(acc, &process_output_line/2)
+  end
+
+  defp process_output_line(line, {container, errors}) do
+    line = String.trim(line)
+
+    if line != "" do
+      {container, [line | errors |> Enum.take(3)]}
+    else
+      {container, errors}
     end
   end
 end

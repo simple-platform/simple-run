@@ -1,9 +1,9 @@
-defmodule Actions.MixProject do
+defmodule ClientData.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :actions,
+      app: :client_data,
       version: "0.0.0",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
@@ -29,8 +29,8 @@ defmodule Actions.MixProject do
   # Type `mix help compile.app` for more information.
   def application do
     [
-      mod: {Actions.Application, []},
-      extra_applications: [:logger, :runtime_tools, :os_mon]
+      mod: {ClientData.Application, []},
+      extra_applications: [:logger, :runtime_tools]
     ]
   end
 
@@ -43,17 +43,12 @@ defmodule Actions.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.7.10"},
-      {:phoenix_live_dashboard, "~> 0.8.2"},
-      {:telemetry_metrics, "~> 0.6"},
-      {:telemetry_poller, "~> 1.0"},
-      {:jason, "~> 1.4"},
-      {:plug_cowboy, "~> 2.5"},
-      {:cors_plug, "~> 3.0"},
-      {:yaml_elixir, "~> 2.8"},
-      {:absinthe_client, git: "https://github.com/CargoSense/absinthe_client.git"},
-      {:req, "~> 0.4.0"},
-      {:mox, "~> 1.0", only: :test},
+      {:dns_cluster, "~> 0.1.1"},
+      {:phoenix_pubsub, "~> 2.1"},
+      {:ecto_sql, "~> 3.10"},
+      {:ecto_sqlite3, ">= 0.0.0"},
+      {:jason, "~> 1.2"},
+      {:elixir_uuid, "~> 1.2.1"},
       {:excoveralls, "~> 0.18", only: :test},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false}
     ]
@@ -64,7 +59,10 @@ defmodule Actions.MixProject do
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
     [
-      setup: ["deps.get"]
+      setup: ["deps.get", "ecto.setup"],
+      "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
+      "ecto.reset": ["ecto.drop", "ecto.setup"],
+      test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"]
     ]
   end
 end

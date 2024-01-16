@@ -1,0 +1,10 @@
+{
+  "name": "@simple-run/client-data",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "mix ecto.setup",
+    "build": "mix compile --force",
+    "test": "MIX_ENV=test mix ecto.setup && mix coveralls.html"
+  }
+}

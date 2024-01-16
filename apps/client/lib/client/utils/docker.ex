@@ -1,62 +1,67 @@
 defmodule Client.Utils.Docker do
   @moduledoc """
-  Module for managing Docker-related utilities.
+  Module for interacting with Docker.
   """
-
-  require Logger
-  alias Client.Entities.Application, as: App
 
   @step_commands ["FROM", "RUN", "COPY", "WORKDIR"]
 
   def get_status() do
     try do
-      {get_version(), is_running()}
-    catch
-      _ -> {nil, false}
+      _ = ~w(docker ps) |> Exile.stream!() |> Enum.into("")
+
+      {true, true}
+    rescue
+      _ in Exile.Stream.AbnormalExit -> {true, false}
+      _ -> {false, false}
     end
   end
 
-  def build(%App{name: name, file_to_run: file, path: path}) do
-    cmd =
-      ~w(docker build --progress=plain -t #{name}:simplerun -f #{Path.join(path, file)} #{path})
-
-    Logger.info("Executing command: #{Enum.join(cmd, " ")}")
-
-    cmd |> Exile.stream(stderr: :consume)
+  def start() do
+    try do
+      _ = ~w(open /Applications/Docker.app) |> Exile.stream!() |> Enum.into("")
+    rescue
+      _ -> :ok
+    end
   end
 
-  def run(%App{name: name, org: org, repo: repo, run_number: run_number}) do
-    cmd = ~w(docker run -d -P --name sr-#{org}-#{repo}-#{run_number} #{name}:simplerun)
-
-    Logger.info("Executing command: #{Enum.join(cmd, " ")}")
-
-    cmd |> Exile.stream(stderr: :consume)
+  def build(name, path, dockerfile) do
+    ~w(docker build --progress=plain -t #{name}:simplerun -f #{Path.join(path, dockerfile)} #{path})
+    |> Exile.stream(stderr: :consume)
   end
 
-  def inspect(%App{org: org, repo: repo, run_number: run_number}) do
-    cmd = ~w(docker inspect sr-#{org}-#{repo}-#{run_number})
+  def remove(name) do
+    ~w(docker rm -f #{name})
+    |> Exile.stream!()
+    |> Enum.into("")
+  end
 
-    Logger.info("Executing command: #{Enum.join(cmd, " ")}")
+  def run(name) do
+    ~w(docker run -d -P --name #{name} #{name}:simplerun)
+    |> Exile.stream(stderr: :consume)
+  end
 
-    cmd
+  def inspect(name) do
+    ~w(docker inspect #{name})
     |> Exile.stream!()
     |> Enum.into("")
     |> Jason.decode!()
   end
 
-  def get_build_steps(%App{file_to_run: file, path: path}) do
-    {:ok, cwd} = File.cwd()
+  def get_build_steps(path, dockerfile) do
+    cwd = File.cwd!()
 
     df_json =
-      (Application.get_env(:client, :app_path) || cwd)
+      Application.get_env(:client, :app_path, cwd)
       |> resolve_df_json_path()
 
-    cmd = [df_json, Path.join(path, file)]
+    stages =
+      [df_json, path |> Path.join(dockerfile)]
+      |> Exile.stream!()
+      |> Enum.into("")
+      |> Jason.decode!()
+      |> Map.get("Stages")
 
-    Logger.info("Executing command: #{Enum.join(cmd, " ")}")
-    stages = parse_dockerfile_stages(cmd)
-
-    Enum.reduce(stages, length(stages), &count_stage_steps/2)
+    stages |> Enum.reduce(length(stages), &count_stage_steps/2)
   end
 
   ##########
@@ -71,35 +76,9 @@ defmodule Client.Utils.Docker do
     end
   end
 
-  defp parse_dockerfile_stages(cmd) do
-    cmd
-    |> Exile.stream!()
-    |> Enum.into("")
-    |> Jason.decode!()
-    |> Map.get("Stages")
-  end
-
   defp count_stage_steps(%{"Commands" => commands}, total_steps) do
-    stage_steps = Enum.count(commands, &command_step?/1)
-    total_steps + stage_steps
+    total_steps + Enum.count(commands, &command_step?/1)
   end
 
   defp command_step?(%{"Name" => name}), do: name in @step_commands
-
-  defp get_version() do
-    Exile.stream(["docker", "-v"], stderr: :consume)
-    |> Enum.reduce(nil, fn
-      {:exit, {:status, 0}}, version -> version
-      {:exit, {:status, _}}, _version -> nil
-      {_, version}, _version -> version
-    end)
-  end
-
-  defp is_running() do
-    Exile.stream(["docker", "ps"], stderr: :consume)
-    |> Enum.reduce(false, fn
-      {:exit, {:status, 0}}, _running -> true
-      _, _running -> false
-    end)
-  end
 end

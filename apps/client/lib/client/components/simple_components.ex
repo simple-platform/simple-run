@@ -5,7 +5,10 @@ defmodule Client.SimpleComponents do
 
   use Phoenix.Component
 
-  alias Client.Components.Icons
+  @visible_states %{
+    repo: [:cloning, :cloning_failed],
+    container: [:scheduled, :building, :build_failed, :starting, :running, :run_failed, :stopped]
+  }
 
   def no_apps(assigns) do
     ~H"""
@@ -23,32 +26,55 @@ defmodule Client.SimpleComponents do
     """
   end
 
-  def actions(assigns) do
+  def state(assigns) do
     ~H"""
-    <%= if @app.state == :running do %>
-      <button class="btn btn-circle btn-outline btn-xs">
-        <Heroicons.LiveView.icon name="stop" class="h-3 w-3" />
-      </button>
+    <%= if state_visible?(@state, @type) do %>
+      <span class={"#{label_style(@state)} badge badge-sm"}>
+        <%= @state |> Atom.to_string() |> String.replace("_", " ") %>
+      </span>
     <% end %>
-    <%= if @app.state == :stopped do %>
+    """
+  end
+
+  defp label_style(:running), do: "badge-primary"
+
+  defp label_style(state) do
+    if state |> Atom.to_string() |> String.ends_with?("failed"),
+      do: "badge-outline badge-warning",
+      else: "badge-outline"
+  end
+
+  defp state_visible?(state, type), do: @visible_states[type] |> Enum.any?(&(&1 == state))
+
+  def app_actions(assigns) do
+    ~H"""
+    <div class="actions flex space-x-1.5">
+      <%= if @app.state == :running do %>
+        <button class="btn btn-circle btn-outline btn-xs">
+          <Heroicons.LiveView.icon name="stop" class="h-3 w-3" />
+        </button>
+      <% end %>
+      <%= if @app.state == :stopped do %>
+        <button class="btn btn-circle btn-outline btn-xs">
+          <Heroicons.LiveView.icon name="play" class="h-3 w-3" />
+        </button>
+      <% end %>
       <button class="btn btn-circle btn-outline btn-xs">
-        <Heroicons.LiveView.icon name="play" class="h-3 w-3" />
+        <Heroicons.LiveView.icon name="trash" class="h-3 w-3" />
       </button>
-    <% end %>
-    <button class="btn btn-circle btn-outline btn-xs">
-      <Heroicons.LiveView.icon name="trash" class="h-3 w-3" />
-    </button>
-    <a href={@app.url} target="_blank" class="btn btn-circle btn-outline btn-xs">
-      <Icons.github class="w-3 h-3" />
-    </a>
+    </div>
+    """
+  end
+
+  def progress(assigns) when is_nil(assigns.progress) do
+    ~H"""
+
     """
   end
 
   def progress(assigns) do
     ~H"""
-    <%= if not is_nil(@progress) do %>
-      <div class="badge badge-secondary text-xs"><%= @progress %></div>
-    <% end %>
+    <span class="badge badge-secondary badge-sm"><%= @progress %></span>
     """
   end
 
@@ -60,47 +86,39 @@ defmodule Client.SimpleComponents do
 
   def ports(assigns) do
     ~H"""
-    <div :for={{container_port, {host_ip, host_port}, is_http?} <- @ports} class="flex">
-      <%= if is_http? do %>
-        <a href={"http://#{host_ip}:#{host_port}"} target="_blank" class="btn btn-outline btn-xs">
-          <%= port(%{container_port: container_port, host_port: host_port, is_http?: is_http?}) %>
-        </a>
-      <% else %>
-        <button class="btn btn-active btn-ghost btn-xs pointer-events-none">
-          <%= port(%{container_port: container_port, host_port: host_port, is_http?: is_http?}) %>
-        </button>
-      <% end %>
-    </div>
+    <ul class="flex">
+      <li
+        :for={
+          %{
+            "port" => container_port,
+            "local" => %{"ip" => ip, "port" => local_port, "is_http" => is_http}
+          } <-
+            @ports
+        }
+        class="flex"
+      >
+        <%= if is_http do %>
+          <a href={"http://#{ip}:#{local_port}"} target="_blank" class="btn btn-outline btn-xs">
+            <%= port(%{container_port: container_port, local_port: local_port, is_http: is_http}) %>
+          </a>
+        <% else %>
+          <button class="btn btn-active btn-ghost btn-xs pointer-events-none">
+            <%= port(%{container_port: container_port, local_port: local_port, is_http: is_http}) %>
+          </button>
+        <% end %>
+      </li>
+    </ul>
     """
   end
 
   defp port(assigns) do
     ~H"""
-    <Heroicons.LiveView.icon name={if @is_http?, do: "globe-alt", else: "server"} class="h-3 w-3" />
-    <span><%= @host_port %></span>
+    <Heroicons.LiveView.icon name={if @is_http, do: "globe-alt", else: "server"} class="h-3 w-3" />
+    <span><%= @local_port %></span>
     <Heroicons.LiveView.icon name="arrow-long-right" class="h-4 w-4" />
     <span><%= @container_port %></span>
     """
   end
-
-  def label(assigns) when is_atom(assigns.state) do
-    ~H"""
-    <span class={"#{label_style(@state)} badge text-xs"}>
-      <%= @state |> Atom.to_string() |> String.replace("_", " ") %>
-    </span>
-    """
-  end
-
-  defp label_style(nil), do: ""
-  defp label_style(state) when state in [:running], do: "badge-primary"
-  defp label_style(state) when state in [:cloning, :scheduled], do: "badge-outline"
-
-  defp label_style(state) when state in [:building, :starting, :started],
-    do: "badge-outline badge-primary"
-
-  defp label_style(state)
-       when state in [:cloning_failed, :build_failed, :start_failed, :run_failed],
-       do: "badge-outline badge-error"
 
   def errors(assigns) when assigns.errors == [] do
     ~H"""
@@ -114,10 +132,13 @@ defmodule Client.SimpleComponents do
       role="alert"
       class="alert alert-warning rounded-md flex items-center p-3 w-full text-sm gap-0 space-x-1.5"
     >
-      <div class="flex-grow">
-        <Heroicons.LiveView.icon name="exclamation-triangle" class="h-5 w-5" />
+      <div>
+        <Heroicons.LiveView.icon
+          name="exclamation-triangle"
+          class="h-5 w-5 min-h-5 min-w-5 max-w-5 max-h-5"
+        />
       </div>
-      <div class="flex flex-col">
+      <div class="flex flex-col flex-grow">
         <div :for={error <- @errors}>
           <code class="line-clamp-4 break-all text-xs my-1 select-text">
             <%= error %>
@@ -128,42 +149,24 @@ defmodule Client.SimpleComponents do
     """
   end
 
-  def footer(assigns) when is_nil(assigns.docker_version) and is_nil(assigns.docker_running) do
+  def footer(assigns)
+      when not assigns.docker_status.installed or not assigns.docker_status.running do
     ~H"""
-
-    """
-  end
-
-  def footer(assigns) when is_nil(assigns.docker_version) do
-    ~H"""
-    <footer
-      role="alert"
-      class="alert-warning alert rounded-md flex items-center px-3 py-1.5 w-full text-xs gap-0 space-x-1.5 rounded-none"
-    >
+    <footer class="alert alert-warning gap-1.5 rounded-none text-xs p-1.5">
       <Heroicons.LiveView.icon name="exclamation-triangle" class="h-4 w-4" />
-      <span>
-        We couldn't find Docker on your machine. Applications won't run until you
-        <a
-          class="link underline underline-offset-2 decoration-dotted"
-          href="https://www.docker.com/products/docker-desktop"
-          target="_blank"
-        >
-          install
-        </a>
-        it.
-      </span>
-    </footer>
-    """
-  end
-
-  def footer(assigns) when not assigns.docker_running do
-    ~H"""
-    <footer
-      role="alert"
-      class="alert-warning alert rounded-md flex items-center px-3 py-1.5 w-full text-xs gap-0 space-x-1.5 rounded-none"
-    >
-      <Heroicons.LiveView.icon name="exclamation-triangle" class="h-4 w-4" />
-      <span>Docker is not running. Please start Docker to run applications.</span>
+      <%= if not @docker_status.installed do %>
+        <div>
+          We couldn't find Docker on your machine. Applications won't run until you <a
+            class="link underline underline-offset-2 decoration-dotted"
+            href="https://www.docker.com/products/docker-desktop"
+            target="_blank"
+          >
+            install
+          </a>it.
+        </div>
+      <% else %>
+        <div>Docker is not running. Trying to start Docker so that we can run applications.</div>
+      <% end %>
     </footer>
     """
   end

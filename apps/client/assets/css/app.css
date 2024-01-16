@@ -33,3 +33,14 @@ h1, h2, h3, h4, h5, h6 {
     font-family: Outfit, Inter, ui-sans-serif, system-ui;
   }
 }
+
+.menu li > .active svg {
+  --tw-text-opacity: 1;
+  color: var(--fallback-nc,oklch(var(--nc)/var(--tw-text-opacity)));
+}
+
+.menu li > .active .actions a,
+.menu li > .active .actions button {
+  --tw-border-opacity: 1;
+  border-color: var(--fallback-nc,oklch(var(--nc)/var(--tw-text-opacity)));
+}

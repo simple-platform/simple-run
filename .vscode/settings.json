@@ -138,6 +138,7 @@
     "defmock",
     "describedby",
     "donot",
+    "ecto",
     "enctype",
     "erlef",
     "esbenp",
@@ -170,6 +171,7 @@
     "nowrap",
     "outdir",
     "outputfilename",
+    "proto",
     "reduxjs",
     "rehype",
     "reqlog",
@@ -196,6 +198,7 @@
     "wailsapp",
     "wailsjs",
     "wailsjsdir",
+    "whereis",
     "WORKDIR"
   ]
 }
