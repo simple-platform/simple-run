@@ -1,4 +1,4 @@
-defmodule ClientData.Script do
+defmodule ClientData.Entities.Script do
   @moduledoc """
   This module represents the schema for the 'scripts' table in the database.
   """
@@ -12,13 +12,14 @@ defmodule ClientData.Script do
   @foreign_key_type :binary_id
   schema "scripts" do
     field :name, :string
+    field :file, :string
     field :order, :integer
     field :type, Ecto.Enum, values: [:pre, :post]
     field :errors, {:array, :string}, default: []
 
     field :state, Ecto.Enum,
-      values: [:scheduled, :running, :failed, :success],
-      default: :scheduled
+      values: [:registered, :running, :failed, :success],
+      default: :registered
 
     belongs_to :app, App
 
@@ -28,7 +29,7 @@ defmodule ClientData.Script do
   @doc false
   def changeset(script, attrs) do
     script
-    |> cast(attrs, [:name, :order, :type, :errors, :state])
-    |> validate_required([:name, :order, :type, :state])
+    |> cast(attrs, [:name, :file, :order, :type, :errors, :state])
+    |> validate_required([:name, :file, :order, :type, :state])
   end
 end

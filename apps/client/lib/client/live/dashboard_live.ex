@@ -4,8 +4,9 @@ defmodule Client.DashboardLive do
   import Client.SimpleComponents
 
   alias ClientData.Apps
-  alias ClientData.Entities.App
+  alias ClientData.Scripts
   alias ClientData.Containers
+  alias ClientData.Entities.App
   alias ClientData.Entities.Container
 
   alias Client.Managers.Docker
@@ -15,17 +16,20 @@ defmodule Client.DashboardLive do
     if connected?(socket) do
       Apps.subscribe()
       Docker.subscribe()
+      Scripts.subscribe()
       Containers.subscribe()
     end
 
     apps = Apps.get_all()
+    scripts = Scripts.get_all()
     containers = Containers.get_all()
 
     socket =
       socket
       |> assign(:apps, apps)
-      |> assign(:active_app, Enum.at(apps, 0))
+      |> assign(:scripts, scripts)
       |> assign(:containers, containers)
+      |> assign(:active_app, Enum.at(apps, 0))
       |> assign(:docker_status, %{})
 
     {:ok, socket}
@@ -79,6 +83,22 @@ defmodule Client.DashboardLive do
                     <.errors errors={@active_app.errors} />
                   </div>
                 </li>
+
+                <li
+                  :for={s <- app_scripts(@active_app, @scripts, :pre)}
+                  class="card bg-base-200 dark:bg-slate-800 shadow-md"
+                >
+                  <div class="card-body p-3">
+                    <div class="flex items-center">
+                      <div class="w-full flex items-center space-x-1.5">
+                        <div class="text-md font-medium">Pre Script: <%= s.name %></div>
+                        <.state state={s.state} type={:script} />
+                      </div>
+                    </div>
+                    <.errors errors={s.errors} />
+                  </div>
+                </li>
+
                 <li
                   :for={c <- app_containers(@active_app, @containers)}
                   class="card bg-base-200 dark:bg-slate-800 shadow-md"
@@ -93,6 +113,21 @@ defmodule Client.DashboardLive do
                     </div>
                     <.ports ports={c.ports} />
                     <.errors errors={c.errors} />
+                  </div>
+                </li>
+
+                <li
+                  :for={s <- app_scripts(@active_app, @scripts, :post)}
+                  class="card bg-base-200 dark:bg-slate-800 shadow-md"
+                >
+                  <div class="card-body p-3">
+                    <div class="flex items-center">
+                      <div class="w-full flex items-center space-x-1.5">
+                        <div class="text-md font-medium">Post Script: <%= s.name %></div>
+                        <.state state={s.state} type={:script} />
+                      </div>
+                    </div>
+                    <.errors errors={s.errors} />
                   </div>
                 </li>
               </ul>
@@ -146,6 +181,10 @@ defmodule Client.DashboardLive do
     {:noreply, socket |> update(:containers, fn _ -> containers end)}
   end
 
+  def handle_info({:script_registered, script}, socket) do
+    {:noreply, socket |> update(:scripts, &[script | &1])}
+  end
+
   def handle_info({:docker_status, status}, socket) do
     {:noreply, socket |> update(:docker_status, fn _ -> status end)}
   end
@@ -160,5 +199,9 @@ defmodule Client.DashboardLive do
 
   def app_containers(app, containers) do
     containers |> Enum.filter(fn c -> c.app_id == app.id end)
+  end
+
+  def app_scripts(app, scripts, type) do
+    scripts |> Enum.filter(fn s -> s.app_id == app.id && s.type == type end)
   end
 end

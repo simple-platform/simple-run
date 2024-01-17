@@ -6,7 +6,8 @@ defmodule Client.SimpleComponents do
   use Phoenix.Component
 
   @visible_states %{
-    repo: [:cloning, :cloning_failed],
+    repo: [:cloning, :clone_failed, :start_failed],
+    script: [:running, :failed, :success],
     container: [:scheduled, :building, :build_failed, :starting, :running, :run_failed, :stopped]
   }
 
@@ -40,7 +41,7 @@ defmodule Client.SimpleComponents do
 
   defp label_style(state) do
     if state |> Atom.to_string() |> String.ends_with?("failed"),
-      do: "badge-outline badge-warning",
+      do: "badge-warning",
       else: "badge-outline"
   end
 

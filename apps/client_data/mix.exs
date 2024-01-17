@@ -49,6 +49,7 @@ defmodule ClientData.MixProject do
       {:ecto_sqlite3, ">= 0.0.0"},
       {:jason, "~> 1.2"},
       {:elixir_uuid, "~> 1.2.1"},
+      {:yaml_elixir, "~> 2.8"},
       {:excoveralls, "~> 0.18", only: :test},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false}
     ]
