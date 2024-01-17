@@ -63,74 +63,81 @@ defmodule Client.DashboardLive do
           <div class="w-full">
             <h1 class="text-2xl"><%= @active_app.name %></h1>
             <div class="relative h-full w-full">
-              <ul class="overflow-scroll absolute inset-0 top-3 bottom-8 space-y-6">
-                <li class="card bg-base-200 dark:bg-slate-800 shadow-md">
-                  <div class="card-body p-3">
-                    <div class="flex items-center">
-                      <div class="w-full flex items-center space-x-1.5">
-                        <div class="text-md font-medium">Repository</div>
-                        <.state state={@active_app.state} type={:repo} />
+              <div class="absolute inset-0 top-3 bottom-8 overflow-scroll">
+                <table class="table table-xs">
+                  <thead>
+                    <tr>
+                      <th></th>
+                      <th></th>
+                      <th class="w-full"></th>
+                      <th></th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr class="hover">
+                      <td><.state state={@active_app.state} type={:repo} /></td>
+                      <td><.type type="repository" /></td>
+                      <td class="flex items-center space-x-1.5">
+                        <div class="font-medium text-sm"><%= get_repo_path(@active_app) %></div>
                         <.progress progress={@active_app.progress} />
-                      </div>
-                      <a
-                        href={@active_app.url}
-                        target="_blank"
-                        class="btn btn-circle btn-outline btn-xs"
-                      >
-                        <Icons.github class="w-3 h-3" />
-                      </a>
-                    </div>
+                      </td>
+                      <td>
+                        <a
+                          href={@active_app.url}
+                          target="_blank"
+                          class="btn btn-circle btn-outline btn-xs"
+                        >
+                          <Icons.github class="w-3 h-3" />
+                        </a>
+                      </td>
+                    </tr>
                     <.errors errors={@active_app.errors} />
-                  </div>
-                </li>
 
-                <li
-                  :for={s <- app_scripts(@active_app, @scripts, :pre)}
-                  class="card bg-base-200 dark:bg-slate-800 shadow-md"
-                >
-                  <div class="card-body p-3">
-                    <div class="flex items-center">
-                      <div class="w-full flex items-center space-x-1.5">
-                        <div class="text-md font-medium">Pre Script: <%= s.name %></div>
-                        <.state state={s.state} type={:script} />
-                      </div>
-                    </div>
-                    <.errors errors={s.errors} />
-                  </div>
-                </li>
+                    <%= for s <- app_scripts(@active_app, @scripts, :pre) do %>
+                      <tr class="hover">
+                        <td><.state state={s.state} type={:script} /></td>
+                        <td><.type type="pre script" /></td>
+                        <td>
+                          <div class="font-medium text-sm"><%= s.name %></div>
+                          <div class="text-xs italic"><%= s.file %></div>
+                        </td>
+                        <td></td>
+                      </tr>
+                      <.errors errors={s.errors} />
+                    <% end %>
 
-                <li
-                  :for={c <- app_containers(@active_app, @containers)}
-                  class="card bg-base-200 dark:bg-slate-800 shadow-md"
-                >
-                  <div class="card-body p-3">
-                    <div class="flex items-center">
-                      <div class="w-full flex items-center space-x-1.5">
-                        <div class="text-md font-medium">Container: <%= c.name %></div>
-                        <.state state={c.state} type={:container} />
-                        <.progress progress={c.progress} />
-                      </div>
-                    </div>
-                    <.ports ports={c.ports} />
-                    <.errors errors={c.errors} />
-                  </div>
-                </li>
+                    <%= for c <- app_containers(@active_app, @containers) do %>
+                      <tr class="hover">
+                        <td><.state state={c.state} type={:container} /></td>
+                        <td><.type type="container" /></td>
+                        <td class="space-y-1.5">
+                          <div class="flex items-center space-x-1.5">
+                            <div class="font-medium text-sm"><%= c.name %></div>
+                            <.progress progress={c.progress} />
+                          </div>
+                          <.ports ports={c.ports} />
+                        </td>
+                        <td></td>
+                      </tr>
+                      <.errors errors={c.errors} />
+                    <% end %>
 
-                <li
-                  :for={s <- app_scripts(@active_app, @scripts, :post)}
-                  class="card bg-base-200 dark:bg-slate-800 shadow-md"
-                >
-                  <div class="card-body p-3">
-                    <div class="flex items-center">
-                      <div class="w-full flex items-center space-x-1.5">
-                        <div class="text-md font-medium">Post Script: <%= s.name %></div>
-                        <.state state={s.state} type={:script} />
-                      </div>
-                    </div>
-                    <.errors errors={s.errors} />
-                  </div>
-                </li>
-              </ul>
+                    <%= for s <- app_scripts(@active_app, @scripts, :post) do %>
+                      <tr class="hover">
+                        <td><.state state={s.state} type={:script} /></td>
+                        <td><.type type="post script" /></td>
+                        <td>
+                          <div class="font-medium text-sm"><%= s.name %></div>
+                          <div class="text-xs italic"><%= s.file %></div>
+                        </td>
+                        <td></td>
+                      </tr>
+                      <.errors errors={s.errors} />
+                    <% end %>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </section>
@@ -193,15 +200,21 @@ defmodule Client.DashboardLive do
     {:noreply, socket |> update(:active_app, fn _ -> Apps.get_by_id(id) end)}
   end
 
+  ##########
+
   defp get_active_class(current_app, active_app) do
     if active_app.id == current_app.id, do: "active", else: ""
   end
 
-  def app_containers(app, containers) do
+  defp get_repo_path(app) do
+    Apps.get_short_path!(app)
+  end
+
+  defp app_containers(app, containers) do
     containers |> Enum.filter(fn c -> c.app_id == app.id end)
   end
 
-  def app_scripts(app, scripts, type) do
+  defp app_scripts(app, scripts, type) do
     scripts |> Enum.filter(fn s -> s.app_id == app.id && s.type == type end)
   end
 end

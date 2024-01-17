@@ -45,6 +45,13 @@ defmodule ClientData.Apps do
     end
   end
 
+  def get_short_path!(%App{name: name, provider: provider}) do
+    case get_repo_root(provider) do
+      {:ok, repo_root} -> "~/simplerun/#{repo_root}/#{name}"
+      {:error, reason} -> raise reason
+    end
+  end
+
   def update(changeset) do
     case Repo.update(changeset) do
       {:ok, app} ->
