@@ -85,7 +85,8 @@ defmodule ClientData.Apps do
 
         if config_file |> File.exists?() do
           with {:ok, config} <- YamlElixir.read_from_file(config_file),
-               :ok <- app |> Scripts.create(config) do
+               :ok <- app |> Scripts.create(config),
+               :ok <- app |> Scripts.run(:pre) do
           else
             {:error, reason} -> app |> mark_start_failed(reason)
           end

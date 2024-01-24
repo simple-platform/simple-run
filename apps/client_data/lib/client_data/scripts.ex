@@ -3,8 +3,20 @@ defmodule ClientData.Scripts do
   Module for managing client scripts
   """
 
+  alias Ecto.Changeset
+
   alias ClientData.Repo
+  alias ClientData.StateMachine
   alias ClientData.Entities.Script
+
+  import Ecto.Query
+
+  use StateMachine,
+    states: [:registered, :running, :failed, :success],
+    transitions: %{
+      registered: [:running],
+      running: [:failed, :success]
+    }
 
   def get_all() do
     Repo.all(Script)
@@ -20,6 +32,40 @@ defmodule ClientData.Scripts do
     else
       {:error, reason} -> {:error, reason}
     end
+  end
+
+  def run(app, type) do
+    scripts =
+      Repo.all(
+        from s in Script,
+          where: s.app_id == ^app.id and s.type == ^type,
+          order_by: s.order
+      )
+
+    GenServer.cast(:script_manager, {:run, app, scripts})
+  end
+
+  def update(changeset) do
+    case Repo.update(changeset) do
+      {:ok, script} ->
+        broadcast({:script_updated, script})
+        {:ok, script}
+
+      {:error, reason} ->
+        {:error, reason}
+    end
+  end
+
+  def persist_state_change(script, next_state, metadata) do
+    changeset = script |> Changeset.change(%{state: next_state} |> Map.merge(metadata))
+    update(changeset)
+  end
+
+  def pre_transition(app, _next_state, _metadata) do
+    {:ok, app}
+  end
+
+  def post_transition(_app, _state, _metadata) do
   end
 
   def subscribe() do

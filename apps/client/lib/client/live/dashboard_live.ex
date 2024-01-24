@@ -1,4 +1,5 @@
 defmodule Client.DashboardLive do
+  alias ClientData.Entities.Script
   use Client, :live_view
 
   import Client.SimpleComponents
@@ -70,7 +71,6 @@ defmodule Client.DashboardLive do
                       <th></th>
                       <th></th>
                       <th class="w-full"></th>
-                      <th></th>
                       <th></th>
                     </tr>
                   </thead>
@@ -190,6 +190,16 @@ defmodule Client.DashboardLive do
 
   def handle_info({:script_registered, script}, socket) do
     {:noreply, socket |> update(:scripts, &[script | &1])}
+  end
+
+  def handle_info({:script_updated, script}, socket) do
+    scripts =
+      socket.assigns.scripts
+      |> Enum.map(fn %Script{id: id} = existing_script ->
+        if id == script.id, do: script, else: existing_script
+      end)
+
+    {:noreply, socket |> update(:scripts, fn _ -> scripts end)}
   end
 
   def handle_info({:docker_status, status}, socket) do
