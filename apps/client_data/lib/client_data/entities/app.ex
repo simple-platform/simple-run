@@ -5,6 +5,7 @@ defmodule ClientData.Entities.App do
 
   use Ecto.Schema
 
+  alias ClientData.Entities.Script
   alias ClientData.Entities.Container
 
   alias Ecto.Changeset
@@ -23,9 +24,10 @@ defmodule ClientData.Entities.App do
     field :provider, Ecto.Enum, values: [:github], default: :github
 
     field :state, Ecto.Enum,
-      values: [:registered, :cloning, :cloning_failed, :starting],
+      values: [:registered, :cloning, :clone_failed, :starting, :start_failed],
       default: :registered
 
+    has_many :scripts, Script
     has_many :containers, Container
 
     timestamps()

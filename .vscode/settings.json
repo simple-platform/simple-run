@@ -131,6 +131,7 @@
     "clippy",
     "codeql",
     "Colour",
+    "colspan",
     "commitlint",
     "cubdb",
     "daisyui",
@@ -199,6 +200,7 @@
     "wailsjs",
     "wailsjsdir",
     "whereis",
-    "WORKDIR"
+    "WORKDIR",
+    "yamerl"
   ]
 }

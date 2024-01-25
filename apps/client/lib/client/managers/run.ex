@@ -69,21 +69,13 @@ defmodule Client.Managers.Run do
 
         %{
           "ip" => local_ip,
-          "port" => local_port,
-          "is_http" => http_service?(local_ip, local_port)
+          "port" => local_port
         }
       else
         %{}
       end
 
     %{"port" => port, "proto" => proto, "local" => local}
-  end
-
-  defp http_service?(ip, port) do
-    case :httpc.request(:get, {"http://#{ip}:#{port}", []}, [], []) do
-      {:ok, _} -> true
-      _ -> false
-    end
   end
 
   defp run_container(%Container{name: name} = container) do

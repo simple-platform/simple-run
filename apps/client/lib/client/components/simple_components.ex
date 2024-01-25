@@ -6,7 +6,8 @@ defmodule Client.SimpleComponents do
   use Phoenix.Component
 
   @visible_states %{
-    repo: [:cloning, :cloning_failed],
+    repo: [:cloning, :clone_failed, :start_failed],
+    script: [:running, :failed, :success],
     container: [:scheduled, :building, :build_failed, :starting, :running, :run_failed, :stopped]
   }
 
@@ -29,9 +30,11 @@ defmodule Client.SimpleComponents do
   def state(assigns) do
     ~H"""
     <%= if state_visible?(@state, @type) do %>
-      <span class={"#{label_style(@state)} badge badge-sm"}>
-        <%= @state |> Atom.to_string() |> String.replace("_", " ") %>
-      </span>
+      <div class="text-right w-full">
+        <span class={"#{label_style(@state)} badge badge-xs p-2 whitespace-nowrap"}>
+          <%= @state |> Atom.to_string() |> String.replace("_", " ") %>
+        </span>
+      </div>
     <% end %>
     """
   end
@@ -40,7 +43,7 @@ defmodule Client.SimpleComponents do
 
   defp label_style(state) do
     if state |> Atom.to_string() |> String.ends_with?("failed"),
-      do: "badge-outline badge-warning",
+      do: "badge-warning",
       else: "badge-outline"
   end
 
@@ -74,7 +77,7 @@ defmodule Client.SimpleComponents do
 
   def progress(assigns) do
     ~H"""
-    <span class="badge badge-secondary badge-sm"><%= @progress %></span>
+    <span class="badge badge-secondary badge-xs p-2"><%= @progress %></span>
     """
   end
 
@@ -86,24 +89,24 @@ defmodule Client.SimpleComponents do
 
   def ports(assigns) do
     ~H"""
-    <ul class="flex">
+    <ul class="flex space-x-3">
       <li
         :for={
           %{
             "port" => container_port,
-            "local" => %{"ip" => ip, "port" => local_port, "is_http" => is_http}
+            "local" => %{"ip" => ip, "port" => local_port}
           } <-
             @ports
         }
         class="flex"
       >
-        <%= if is_http do %>
+        <%= if http_service?(ip,local_port) do %>
           <a href={"http://#{ip}:#{local_port}"} target="_blank" class="btn btn-outline btn-xs">
-            <%= port(%{container_port: container_port, local_port: local_port, is_http: is_http}) %>
+            <%= port(%{container_port: container_port, local_port: local_port, is_http: true}) %>
           </a>
         <% else %>
           <button class="btn btn-active btn-ghost btn-xs pointer-events-none">
-            <%= port(%{container_port: container_port, local_port: local_port, is_http: is_http}) %>
+            <%= port(%{container_port: container_port, local_port: local_port, is_http: false}) %>
           </button>
         <% end %>
       </li>
@@ -128,23 +131,40 @@ defmodule Client.SimpleComponents do
 
   def errors(assigns) do
     ~H"""
-    <div
-      role="alert"
-      class="alert alert-warning rounded-md flex items-center p-3 w-full text-sm gap-0 space-x-1.5"
-    >
-      <div>
-        <Heroicons.LiveView.icon
-          name="exclamation-triangle"
-          class="h-5 w-5 min-h-5 min-w-5 max-w-5 max-h-5"
-        />
-      </div>
-      <div class="flex flex-col flex-grow">
-        <div :for={error <- @errors}>
-          <code class="line-clamp-4 break-all text-xs my-1 select-text">
-            <%= error %>
-          </code>
+    <tr>
+      <td></td>
+      <td></td>
+      <td>
+        <div
+          role="alert"
+          class="alert alert-warning rounded-md flex items-center p-1 w-full text-sm gap-0 space-x-1.5"
+        >
+          <div>
+            <Heroicons.LiveView.icon
+              name="exclamation-triangle"
+              class="h-5 w-5 min-h-5 min-w-5 max-w-5 max-h-5"
+            />
+          </div>
+          <div class="flex flex-col flex-grow">
+            <div :for={error <- @errors}>
+              <code class="line-clamp-4 break-all text-xs my-1 select-text">
+                <%= error %>
+              </code>
+            </div>
+          </div>
         </div>
-      </div>
+      </td>
+      <td></td>
+    </tr>
+    """
+  end
+
+  def type(assigns) do
+    ~H"""
+    <div class="w-full text-right">
+      <span class="badge badge-xs badge-secondary badge-outline whitespace-nowrap p-2">
+        <%= @type %>
+      </span>
     </div>
     """
   end
@@ -175,5 +195,12 @@ defmodule Client.SimpleComponents do
     ~H"""
 
     """
+  end
+
+  defp http_service?(ip, port) do
+    case :httpc.request(:get, {"http://#{ip}:#{port}", []}, [], []) do
+      {:ok, _} -> true
+      _ -> false
+    end
   end
 end

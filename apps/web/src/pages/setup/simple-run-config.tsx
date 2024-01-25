@@ -42,7 +42,16 @@ function showConfig(config: SimplerunConfig) {
             ? showFiles('Pre Scripts', config.prescripts)
             : null}
 
-          {showFiles('Containers', config.containers)}
+          <li>
+            <div className="font-semibold">Docker Compose</div>
+            <ol className="w-full list-disc pl-3 md:pl-6">
+              <li className="w-full">
+                <span className="italic">
+                  <pre className="inline">{config.compose_file}</pre>
+                </span>
+              </li>
+            </ol>
+          </li>
 
           {config.postscripts && config.postscripts.length > 0
             ? showFiles('Post Scripts', config.postscripts)

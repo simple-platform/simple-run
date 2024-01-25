@@ -22,6 +22,11 @@ defmodule ClientData.Containers do
     Repo.all(Container)
   end
 
+  def create_from_config(app, config) do
+    GenServer.cast(:container_manager, {:create, app, config})
+    :ok
+  end
+
   def create(app, container) do
     changeset =
       app

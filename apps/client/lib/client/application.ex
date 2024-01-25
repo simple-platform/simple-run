@@ -15,6 +15,8 @@ defmodule Client.Application do
       Client.Managers.Repo,
       Client.Managers.Build,
       Client.Managers.Docker,
+      Client.Managers.Script,
+      Client.Managers.Container,
 
       # Start to serve requests, typically the last entry
       Client.Endpoint

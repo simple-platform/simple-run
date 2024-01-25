@@ -8,6 +8,8 @@ defmodule ClientData.Apps do
   alias ClientData.Entities.App
   alias ClientData.StateMachine
   alias ClientData.Containers
+  alias ClientData.Scripts
+  alias ClientData.Config
   alias ClientData.Repo
 
   import Ecto.Query
@@ -15,10 +17,11 @@ defmodule ClientData.Apps do
   @err_unknown_provider "Request with an unknown provider"
 
   use StateMachine,
-    states: [:registered, :cloning, :cloning_failed, :starting],
+    states: [:registered, :cloning, :clone_failed, :starting, :start_failed],
     transitions: %{
       registered: [:cloning],
-      cloning: [:cloning_failed, :starting]
+      cloning: [:clone_failed, :starting],
+      starting: [:start_failed]
     }
 
   def get_all() do
@@ -40,6 +43,13 @@ defmodule ClientData.Apps do
 
       {:error, reason} ->
         {:error, reason}
+    end
+  end
+
+  def get_short_path!(%App{name: name, provider: provider}) do
+    case get_repo_root(provider) do
+      {:ok, repo_root} -> "~/simplerun/#{repo_root}/#{name}"
+      {:error, reason} -> raise reason
     end
   end
 
@@ -66,6 +76,17 @@ defmodule ClientData.Apps do
   def post_transition(%App{dockerfile: dockerfile} = app, :starting, _metadata)
       when not is_nil(dockerfile) and dockerfile != "" do
     app |> Containers.create(%{name: "sr-#{app.org}-#{app.repo}", use_dockerfile: true})
+  end
+
+  def post_transition(%App{dockerfile: dockerfile} = app, :starting, _metadata)
+      when is_nil(dockerfile) or dockerfile == "" do
+    with {:ok, config} <- Config.get(app),
+         :ok <- app |> Scripts.create(config),
+         :ok <- app |> Scripts.run(:pre),
+         :ok <- app |> Containers.create_from_config(config) do
+    else
+      {:error, reason} -> app |> mark_start_failed(reason)
+    end
   end
 
   def post_transition(_app, _state, _metadata) do
@@ -136,6 +157,10 @@ defmodule ClientData.Apps do
 
   defp get_repo_root(:github), do: {:ok, "github.com"}
   defp get_repo_root(provider), do: {:error, "Unknown provider: #{provider}"}
+
+  defp mark_start_failed(app, reason) do
+    app |> StateMachine.transition_to(__MODULE__, :start_failed, %{errors: [reason]})
+  end
 
   defp broadcast(message) do
     Phoenix.PubSub.broadcast(ClientData.PubSub, "app", message)

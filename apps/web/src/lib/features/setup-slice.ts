@@ -8,7 +8,7 @@ export interface NameFilePair {
 }
 
 export interface SimplerunConfig {
-  containers: NameFilePair[]
+  compose_file: string
   postscripts?: NameFilePair[]
   prescripts?: NameFilePair[]
   version: string
