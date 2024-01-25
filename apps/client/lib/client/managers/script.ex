@@ -22,13 +22,13 @@ defmodule Client.Managers.Script do
     {:ok, nil}
   end
 
-  def handle_cast({:run, app, scripts}, _state) do
+  def handle_call({:run, app, scripts}, _from, state) do
     case app |> Apps.get_path() do
       {:ok, path} -> run_scripts(app, path, scripts)
       {:error, _reason} -> nil
     end
 
-    {:noreply, nil}
+    {:reply, :ok, state}
   end
 
   ##########

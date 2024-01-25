@@ -9,6 +9,7 @@ defmodule ClientData.Apps do
   alias ClientData.StateMachine
   alias ClientData.Containers
   alias ClientData.Scripts
+  alias ClientData.Config
   alias ClientData.Repo
 
   import Ecto.Query
@@ -79,23 +80,12 @@ defmodule ClientData.Apps do
 
   def post_transition(%App{dockerfile: dockerfile} = app, :starting, _metadata)
       when is_nil(dockerfile) or dockerfile == "" do
-    case get_path(app) do
-      {:ok, path} ->
-        config_file = path |> Path.join("simple-run.yaml")
-
-        if config_file |> File.exists?() do
-          with {:ok, config} <- YamlElixir.read_from_file(config_file),
-               :ok <- app |> Scripts.create(config),
-               :ok <- app |> Scripts.run(:pre) do
-          else
-            {:error, reason} -> app |> mark_start_failed(reason)
-          end
-        else
-          app |> mark_start_failed("Can not find simple-run.yaml at the repo root")
-        end
-
-      {:error, reason} ->
-        app |> mark_start_failed(reason)
+    with {:ok, config} <- Config.get(app),
+         :ok <- app |> Scripts.create(config),
+         :ok <- app |> Scripts.run(:pre),
+         :ok <- app |> Containers.create_from_config(config) do
+    else
+      {:error, reason} -> app |> mark_start_failed(reason)
     end
   end
 

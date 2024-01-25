@@ -47,6 +47,11 @@ defmodule Client.Utils.Docker do
     |> Jason.decode!()
   end
 
+  def compose_dry_run(path) do
+    ~w(docker compose -f #{path} up --dry-run)
+    |> Exile.stream(stderr: :consume)
+  end
+
   def get_build_steps(path, dockerfile) do
     cwd = File.cwd!()
 

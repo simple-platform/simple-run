@@ -31,7 +31,7 @@ defmodule Client.SimpleComponents do
     ~H"""
     <%= if state_visible?(@state, @type) do %>
       <div class="text-right w-full">
-        <span class={"#{label_style(@state)} badge badge-xs p-2"}>
+        <span class={"#{label_style(@state)} badge badge-xs p-2 whitespace-nowrap"}>
           <%= @state |> Atom.to_string() |> String.replace("_", " ") %>
         </span>
       </div>

@@ -42,7 +42,7 @@ defmodule ClientData.Scripts do
           order_by: s.order
       )
 
-    GenServer.cast(:script_manager, {:run, app, scripts})
+    GenServer.call(:script_manager, {:run, app, scripts})
   end
 
   def update(changeset) do
@@ -82,9 +82,7 @@ defmodule ClientData.Scripts do
 
   defp create_script(script, {errors, order, app, type}) do
     errors =
-      with name <- script |> Map.get("name", {:error, build_error("name", order, type)}),
-           file <- script |> Map.get("file", {:error, build_error("file", order, type)}),
-           script <- %{name: name, file: file, order: order, type: type},
+      with script <- %{name: script["name"], file: script["file"], order: order, type: type},
            changeset <- app |> Ecto.build_assoc(:scripts, script),
            {:ok, script} <- Repo.insert(changeset) do
         broadcast({:script_registered, script})
@@ -95,9 +93,6 @@ defmodule ClientData.Scripts do
 
     {errors, order + 1, app, type}
   end
-
-  defp build_error(key, order, type),
-    do: "Missing '#{key}' for #{type} script at index #{order - 1}"
 
   defp broadcast(message) do
     Phoenix.PubSub.broadcast(ClientData.PubSub, "script", message)
