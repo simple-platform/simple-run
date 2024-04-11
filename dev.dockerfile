@@ -1,4 +1,4 @@
-FROM node:21.5.0
+FROM node:21.7.3
 
 RUN apt-get update && apt-get install -y \
     lsof elixir erlang-dev erlang-xmerl erlang-os-mon && \
