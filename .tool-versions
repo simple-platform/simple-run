@@ -1,5 +1,5 @@
 elixir 1.15.7-otp-26
-erlang 26.1.2
+erlang 26.2.5
 nodejs 21.5.0
 pnpm 8.14.1
 rust 1.75.0
