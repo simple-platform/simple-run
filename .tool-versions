@@ -1,6 +1,6 @@
 elixir 1.15.7-otp-26
 erlang 26.1.2
 nodejs 21.5.0
-pnpm 8.14.1
+pnpm 8.15.9
 rust 1.75.0
 zig 0.11.0
