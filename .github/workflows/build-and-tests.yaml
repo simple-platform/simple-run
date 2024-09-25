@@ -26,7 +26,7 @@ jobs:
         with:
           version: 8.13.1
           run_install: false
-      - uses: erlef/setup-beam@b60baf47530760859821edca21cbcd3a1bd366cd
+      - uses: erlef/setup-beam@5304e04ea2b355f03681464e683d92e3b2f18451
         with:
           elixir-version: 1.15.7
           otp-version: 26.1.2
